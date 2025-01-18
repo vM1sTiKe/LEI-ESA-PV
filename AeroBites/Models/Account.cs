@@ -5,7 +5,7 @@
         //https://console.cloud.google.com/apis/dashboard?inv=1&invt=AbmrFA&project=esa-pv
         public int Id { get; set; }
 
-        public int GoogleId { get; set; }
+        public required string GoogleId { get; set; }
 
         public bool IsAdmin { get; set; }
 

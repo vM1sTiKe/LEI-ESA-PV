@@ -1,7 +1,5 @@
 ﻿using AeroBites.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Numerics;
 using System.Text;
 using System.Text.Json;
 
@@ -59,7 +57,7 @@ namespace AeroBites.Controllers
             return RedirectToAction("Index", "Restaurantes");
         }
 
-        private JsonElement? DecodeJwt(string token)
+        private static JsonElement? DecodeJwt(string token)
         {
             try
             {
@@ -80,7 +78,7 @@ namespace AeroBites.Controllers
             }
         }
 
-        private string PadBase64(string input)
+        private static string PadBase64(string input)
         {
             var count = 3 - ((input.Length + 3) % 4);
             if (count == 0) return input;

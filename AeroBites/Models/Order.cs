@@ -14,6 +14,6 @@ namespace AeroBites.Models
 
         public DateTime? Delivered { get; set; }
 
-        public List<OrderItem>? Items { get; set; }
+        public required List<OrderItem> Items { get; set; }
     }
 }

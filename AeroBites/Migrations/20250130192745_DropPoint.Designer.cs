@@ -4,6 +4,7 @@ using AeroBites.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AeroBites.Migrations
 {
     [DbContext(typeof(AeroBitesContext))]
-    partial class AeroBitesContextModelSnapshot : ModelSnapshot
+    [Migration("20250130192745_DropPoint")]
+    partial class DropPoint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,6 +33,9 @@ namespace AeroBites.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("DropPointId")
+                        .HasColumnType("int");
+
                     b.Property<string>("GoogleId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -38,6 +44,8 @@ namespace AeroBites.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DropPointId");
 
                     b.ToTable("Account");
                 });
@@ -83,29 +91,6 @@ namespace AeroBites.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DropPoint");
-                });
-
-            modelBuilder.Entity("AeroBites.Models.DropPointFavourite", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DropPointId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("DropPointId");
-
-                    b.ToTable("DropPointFavourite");
                 });
 
             modelBuilder.Entity("AeroBites.Models.Item", b =>
@@ -235,6 +220,13 @@ namespace AeroBites.Migrations
                     b.ToTable("Restaurant");
                 });
 
+            modelBuilder.Entity("AeroBites.Models.Account", b =>
+                {
+                    b.HasOne("AeroBites.Models.DropPoint", null)
+                        .WithMany("FavoritedBy")
+                        .HasForeignKey("DropPointId");
+                });
+
             modelBuilder.Entity("AeroBites.Models.Address", b =>
                 {
                     b.HasOne("AeroBites.Models.Account", "Account")
@@ -244,25 +236,6 @@ namespace AeroBites.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("AeroBites.Models.DropPointFavourite", b =>
-                {
-                    b.HasOne("AeroBites.Models.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AeroBites.Models.DropPoint", "DropPoint")
-                        .WithMany()
-                        .HasForeignKey("DropPointId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("DropPoint");
                 });
 
             modelBuilder.Entity("AeroBites.Models.Item", b =>
@@ -307,6 +280,11 @@ namespace AeroBites.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("AeroBites.Models.DropPoint", b =>
+                {
+                    b.Navigation("FavoritedBy");
                 });
 
             modelBuilder.Entity("AeroBites.Models.Order", b =>

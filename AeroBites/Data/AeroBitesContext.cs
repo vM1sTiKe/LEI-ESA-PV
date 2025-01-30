@@ -13,6 +13,8 @@ namespace AeroBites.Data
 
         public DbSet<AeroBites.Models.Account> Account { set; get; } = default!;
         public DbSet<AeroBites.Models.Restaurant> Restaurant { set; get; } = default!;
+        public DbSet<AeroBites.Models.DropPoint> DropPoint { set; get; } = default!;
+        public DbSet<AeroBites.Models.DropPointFavourite> DropPointFavourite { set; get; } = default!;
         public DbSet<AeroBites.Models.Item> Item { set; get; } = default!;
         public DbSet<AeroBites.Models.Order> Order { set; get; } = default!;
         public DbSet<AeroBites.Models.OrderItem> OrderItem { set; get; } = default!;

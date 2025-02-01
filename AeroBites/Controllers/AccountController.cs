@@ -1,5 +1,8 @@
-﻿using AeroBites.Models;
+﻿using AeroBites.Data;
+using AeroBites.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
@@ -8,10 +11,12 @@ namespace AeroBites.Controllers
     public class AccountController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly AeroBitesContext _context;
 
-        public AccountController(IConfiguration configuration)
+        public AccountController(IConfiguration configuration, AeroBitesContext context)
         {
             _configuration = configuration;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -23,7 +28,7 @@ namespace AeroBites.Controllers
         }
 
         [HttpPost]
-        public IActionResult SignIn()
+        public async Task<IActionResult> SignIn()
         {
             var credential = HttpContext.Request.Form["credential"].FirstOrDefault();
 
@@ -41,20 +46,58 @@ namespace AeroBites.Controllers
 
             string? googleID = payload.GetValueOrDefault().GetProperty("sub").GetString();
 
-            var account = new Account
+            if(!AccountExists(googleID))
             {
-                GoogleId = googleID,
-                IsAdmin = false
+                CreateAccount(googleID);
+            }
+
+            var accountInfo = GetAccountByGoogleID(googleID);
+
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, accountInfo.GoogleId),
+                new Claim("IsAdmin", accountInfo.IsAdmin.ToString())
             };
 
-            var jsonString = JsonSerializer.Serialize(account);
-            var byteArray = System.Text.Encoding.UTF8.GetBytes(jsonString);
+            var claimsIndentity = new ClaimsIdentity(claims, "Cookies");
 
-            HttpContext.Session.Set("AccountInfo", byteArray);
+            await HttpContext.SignInAsync(
+                "Cookies", 
+                new ClaimsPrincipal(claimsIndentity), 
+                new AuthenticationProperties { IsPersistent = false }
+            );
 
-            Console.WriteLine(HttpContext.Session.GetString("AccountInfo"));
+            if (accountInfo.IsAdmin)
+            {
+                return RedirectToAction("Index", "Admin");
+            }
 
             return RedirectToAction("Index", "Restaurantes");
+        }
+
+        private bool AccountExists(string googleID)
+        {
+            return _context.Account.Any(account => account.GoogleId == googleID);
+        }
+
+        private void CreateAccount(string googleID, bool isAdmin = false)
+        {
+            if(!AccountExists(googleID))
+            {
+                var account = new Account
+                {
+                    GoogleId = googleID,
+                    IsAdmin = false
+                };
+
+                _context.Account.Add(account);
+                _context.SaveChanges();
+            }
+        }
+
+        private Account? GetAccountByGoogleID(string googleID)
+        {
+            return _context.Account.FirstOrDefault(account => account.GoogleId == googleID);
         }
 
         private static JsonElement? DecodeJwt(string token)

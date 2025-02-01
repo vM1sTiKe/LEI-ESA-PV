@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AeroBites.Controllers
 {
-    [Authorize]
-    public class RestaurantesController : Controller
+    [Authorize(Policy = "AdminOnly")]
+    public class AdminController : Controller
     {
         public IActionResult Index()
         {

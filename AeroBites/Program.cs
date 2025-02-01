@@ -7,11 +7,15 @@ builder.Services.AddDbContext<AeroBitesContext>(options => options.UseSqlServer(
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSession(options =>
+builder.Services.AddAuthentication("Cookies").AddCookie("Cookies", options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
+    options.LoginPath = "/Account/Index";
+    options.AccessDeniedPath = "/";
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("IsAdmin", "True"));
 });
 
 var app = builder.Build();

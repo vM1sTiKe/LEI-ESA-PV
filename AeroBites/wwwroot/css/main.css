@@ -16,7 +16,6 @@ body > div.app-body > div.app-navbar > div {
   justify-content: space-between;
 }
 body > div.app-body > div.app-navbar > div > img.app-logo {
-  content: url("https://cdn.discordapp.com/attachments/1292923889290317846/1308500528342503496/ABI_sem_fundo.png?ex=67a3af14&is=67a25d94&hm=23c0b70b6cc24fdfe879d32c2f6246432260b19dd8f040af21eccaf893c94794&");
   height: 100%;
 }
 body > div.app-body > div.app-navbar > div > div.app-actions {

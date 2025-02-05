@@ -55,6 +55,7 @@ namespace AeroBites.Controllers
 
             var claims = new List<Claim>()
             {
+                new Claim(ClaimTypes.NameIdentifier, accountInfo.Id.ToString()),
                 new Claim(ClaimTypes.Name, accountInfo.GoogleId),
                 new Claim("IsAdmin", accountInfo.IsAdmin.ToString())
             };
@@ -82,17 +83,14 @@ namespace AeroBites.Controllers
 
         private void CreateAccount(string googleID, bool isAdmin = false)
         {
-            if(!AccountExists(googleID))
+            var account = new Account
             {
-                var account = new Account
-                {
-                    GoogleId = googleID,
-                    IsAdmin = false
-                };
+                GoogleId = googleID,
+                IsAdmin = false
+            };
 
-                _context.Account.Add(account);
-                _context.SaveChanges();
-            }
+            _context.Account.Add(account);
+            _context.SaveChanges();
         }
 
         private Account? GetAccountByGoogleID(string googleID)

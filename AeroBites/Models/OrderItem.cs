@@ -1,7 +1,10 @@
-﻿namespace AeroBites.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AeroBites.Models
 {
     public class OrderItem
     {
+        [Key]
         public int Id { get; set; }
 
         public required string Name { get; set; }
@@ -10,6 +13,8 @@
 
         public required float Price { get; set; }
 
-        public required Order Order { get; set; }
+        public required int OrderId { get; set; }
+
+        public Order? Order { get; set; }
     }
 }

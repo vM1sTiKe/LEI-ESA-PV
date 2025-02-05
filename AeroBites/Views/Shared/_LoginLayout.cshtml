@@ -1,28 +1,28 @@
 ﻿<!DOCTYPE html>
 
 <html>
-<head>
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="/css/login.css" />
-</head>
+    <head>
+        <title>@ViewData["Title"]</title>
+        <link rel="stylesheet" href="/css/main.css" />
+    </head>
 
-<body>
-    <div class="container-left">
-        <div class="container-left-text">
-            <h2>Bem vindo, à</h2>
-            <h1>AeroBites</h1>
-        </div>
+    <body class="app-login">
+        <div class="container-left">
+            <div class="container-left-text">
+                <h2>Bem vindo, à</h2>
+                <h1>AeroBites</h1>
+            </div>
 
-        <div class="container-left-logo">
-            <img src="/images/logo.png" alt="AeroBites" />
-        </div>
+            <div class="container-left-logo">
+                <img src="/images/logo.png" alt="AeroBites" />
+            </div>
         
-    </div>
+        </div>
 
-    <div class="container-right">
-        @RenderBody()
-    </div>
+        <div class="container-right">
+            @RenderBody()
+        </div>
 
-    <script src="https://accounts.google.com/gsi/client" async></script>
-</body>
+        <script src="https://accounts.google.com/gsi/client" async></script>
+    </body>
 </html>

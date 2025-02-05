@@ -1,17 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
-
-* {
-    font-family: "Kanit", serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    z-index: 0;
-}
-
-body {
+body.app-login {
     display: flex;
-    height: 100vh;
-    max-width: 100%;
 }
 
 .container-left, .container-right {

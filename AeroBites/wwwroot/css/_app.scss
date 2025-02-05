@@ -1,0 +1,54 @@
+$navbar-height: 120px;
+
+body > div.app-body {
+    display: grid;
+    grid-template-areas:
+        "header"
+        "main"
+        "main";
+    grid-template-rows: $navbar-height auto;
+}
+
+body > div.app-body > div.app-navbar {
+    grid-area: header;
+    background-color: #77DD77;
+    padding: 16px 32px;
+
+    > div {
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        > img.app-logo {
+            content: url("https://cdn.discordapp.com/attachments/1292923889290317846/1308500528342503496/ABI_sem_fundo.png?ex=67a3af14&is=67a25d94&hm=23c0b70b6cc24fdfe879d32c2f6246432260b19dd8f040af21eccaf893c94794&");
+            height: 100%;
+        }
+
+        > div.app-actions {
+            height: auto;
+            margin: auto 0;
+        }
+    }
+}
+
+/* Redirect active */
+body > div.app-body > div.app-navbar {
+    $pages: "Restaurant";
+
+    @each $page in $pages {
+        &[data-current-page=#{$page}] .app-action[data-page=#{$page}] {
+            background-color: whitesmoke;
+        }
+    }
+}
+/* Redirect active */
+
+body > div.app-body > main.app-content {
+    $margin-top: 25px;
+
+    grid-area: main;
+    height: calc(100vh - $navbar-height - $margin-top);
+    margin: $margin-top 180px;
+    margin-bottom: 0;
+}
+

@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace AeroBites.Models
 {
     public class Order
     {
-        [Key]
         public int Id { get; set; }
 
         [DefaultValue(Enums.OrderStatus.Choosing)]

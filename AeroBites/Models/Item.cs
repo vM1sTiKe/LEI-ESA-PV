@@ -4,7 +4,6 @@ namespace AeroBites.Models
 {
     public class Item
     {
-        [Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "O nome do Item é obrigatório.")]
@@ -15,8 +14,6 @@ namespace AeroBites.Models
         [Display(Name = "Preço do Item")]
         public required float Price { get; set; }
 
-        public required int RestaurantId { get; set; }
-
-        public Restaurant? Restaurant { get; set; }
+        public required Restaurant Restaurant { get; set; }
     }
 }

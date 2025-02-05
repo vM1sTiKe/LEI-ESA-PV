@@ -5,6 +5,7 @@ namespace AeroBites.Models
 {
     public class Restaurant
     {
+        [Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "O nome do Restaurante é obrigatório.")]
@@ -14,8 +15,10 @@ namespace AeroBites.Models
         [DefaultValue(Enums.RestaurantStatus.WaitingAcceptance)]
         public required Enums.RestaurantStatus Status { get; set; }
 
-        public required List<Item> Items { get; set; }
+        public List<Item> Items { get; set; }
 
-        public required Account Owner { get; set; }
+        public required int OwnerId { get; set; }
+
+        public Account Owner { get; set; }
     }
 }

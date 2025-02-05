@@ -10,19 +10,17 @@ namespace AeroBites.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IConfiguration _configuration;
         private readonly AeroBitesContext _context;
 
-        public AccountController(IConfiguration configuration, AeroBitesContext context)
+        public AccountController(AeroBitesContext context)
         {
-            _configuration = configuration;
             _context = context;
         }
 
         public IActionResult Index()
         {
-            ViewBag.ClientId = _configuration["Authentication:Google:ClientId"];
-            ViewBag.LoginUri = _configuration["Authentication:Google:LoginUri"];
+            ViewBag.ClientId = "724687745332-an8kc4k4tpmv15tabt4okv163e4s56mm.apps.googleusercontent.com";
+            ViewBag.LoginUri = "https://localhost:7263/account/signin";
 
             return View();
         }

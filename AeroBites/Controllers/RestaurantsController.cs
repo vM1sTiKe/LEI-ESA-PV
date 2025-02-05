@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AeroBites.Controllers
 {
     [Authorize]
-    public class RestaurantesController : Controller
+    public class RestaurantsController : Controller
     {
         public IActionResult Index()
         {

@@ -2,10 +2,7 @@ $navbar-height: 120px;
 
 body > div.app-body {
     display: grid;
-    grid-template-areas:
-        "header"
-        "main"
-        "main";
+    grid-template-areas: "header" "main" "main";
     grid-template-rows: $navbar-height auto;
 }
 
@@ -26,21 +23,14 @@ body > div.app-body > div.app-navbar {
         > div.app-actions {
             height: auto;
             margin: auto 0;
+
+            > .app-action[data-current-page="True"] {
+                background-color: whitesmoke;
+            }
         }
     }
 }
 
-/* Redirect active */
-body > div.app-body > div.app-navbar {
-    $pages: "Restaurant";
-
-    @each $page in $pages {
-        &[data-current-page=#{$page}] .app-action[data-page=#{$page}] {
-            background-color: whitesmoke;
-        }
-    }
-}
-/* Redirect active */
 
 body > div.app-body > main.app-content {
     $margin-top: 25px;

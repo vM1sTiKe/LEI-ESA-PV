@@ -22,13 +22,10 @@ body > div.app-body > div.app-navbar > div > div.app-actions {
   height: auto;
   margin: auto 0;
 }
-
-/* Redirect active */
-body > div.app-body > div.app-navbar[data-current-page=Restaurant] .app-action[data-page=Restaurant] {
+body > div.app-body > div.app-navbar > div > div.app-actions > .app-action[data-current-page=True] {
   background-color: whitesmoke;
 }
 
-/* Redirect active */
 body > div.app-body > main.app-content {
   grid-area: main;
   height: calc(100vh - 120px - 25px);

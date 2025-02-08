@@ -27,7 +27,8 @@ namespace AeroBites.Controllers
             Console.WriteLine("Restaurant Name: " + name);
             if (RestaurantNameExists(name))
             {
-                return Conflict(new { message = "Nome do resturante já registado!" });
+                TempData["RequestMessage"] = "Nome do resturante em uso!";
+                return RedirectToAction(nameof(MyRestaurant));
             }
 
             var newRestaurant = new Restaurant
@@ -40,7 +41,9 @@ namespace AeroBites.Controllers
             _context.Restaurant.Add(newRestaurant);
             _context.SaveChanges();
 
-            return Ok(new { message = "Pedido de criação submetdio e à espera de aprovação." });
+            TempData["RequestMessage"] = "Pedido de criação submetdio e à espera de aprovação.";
+
+            return RedirectToAction(nameof(MyRestaurant));
         }
 
         private bool RestaurantNameExists(string name)

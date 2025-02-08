@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace AeroBites.Models
 {
@@ -17,6 +18,7 @@ namespace AeroBites.Models
 
         public required int RestaurantId { get; set; }
 
-        public required Restaurant Restaurant { get; set; }
+        [JsonIgnore]
+        public Restaurant? Restaurant { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace AeroBites.Models
 {
@@ -15,10 +16,11 @@ namespace AeroBites.Models
         [DefaultValue(Enums.RestaurantStatus.WaitingAcceptance)]
         public required Enums.RestaurantStatus Status { get; set; }
 
-        public List<Item> Items { get; set; }
+        [JsonIgnore]
+        public List<Item>? Items { get; set; }
 
         public required int OwnerId { get; set; }
 
-        public Account Owner { get; set; }
+        public Account? Owner { get; set; }
     }
 }

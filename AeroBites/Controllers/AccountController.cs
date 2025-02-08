@@ -2,6 +2,7 @@
 using AeroBites.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -53,8 +54,9 @@ namespace AeroBites.Controllers
 
             var claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, accountInfo.GoogleId),
-                new Claim("IsAdmin", accountInfo.IsAdmin.ToString())
+                new Claim(ClaimTypes.NameIdentifier, accountInfo.Id.ToString()),
+                new Claim("GoogleId", accountInfo.GoogleId),
+                new Claim("IsAdmin", accountInfo.IsAdmin.ToString().ToLower())
             };
 
             var claimsIndentity = new ClaimsIdentity(claims, "Cookies");
@@ -67,10 +69,10 @@ namespace AeroBites.Controllers
 
             if (accountInfo.IsAdmin)
             {
-                return RedirectToAction("Index", "Admin");
+                return RedirectToAction(nameof(Index), "Admin");
             }
 
-            return RedirectToAction("Index", "Restaurantes");
+            return RedirectToAction(nameof(Index), "Restaurantes");
         }
 
         private bool AccountExists(string googleID)

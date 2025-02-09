@@ -2,7 +2,6 @@
 using AeroBites.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -30,7 +29,7 @@ namespace AeroBites.Controllers
         public async Task<IActionResult> SignIn()
         {
             var credential = HttpContext.Request.Form["credential"].FirstOrDefault();
-
+            Console.WriteLine(credential);
             if(string.IsNullOrEmpty(credential))
             {
                 return BadRequest("Google ID Token not found.");
@@ -56,7 +55,7 @@ namespace AeroBites.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, accountInfo.Id.ToString()),
                 new Claim("GoogleId", accountInfo.GoogleId),
-                new Claim("IsAdmin", accountInfo.IsAdmin.ToString().ToLower())
+                new Claim("IsAdmin", accountInfo.IsAdmin.ToString())
             };
 
             var claimsIndentity = new ClaimsIdentity(claims, "Cookies");
@@ -67,12 +66,12 @@ namespace AeroBites.Controllers
                 new AuthenticationProperties { IsPersistent = false }
             );
 
-            if (accountInfo.IsAdmin)
+            /*if (accountInfo.IsAdmin)
             {
                 return RedirectToAction(nameof(Index), "Admin");
-            }
+            }*/
 
-            return RedirectToAction(nameof(Index), "Restaurantes");
+            return RedirectToAction(nameof(UserController.MyRestaurant), "User");
         }
 
         private bool AccountExists(string googleID)

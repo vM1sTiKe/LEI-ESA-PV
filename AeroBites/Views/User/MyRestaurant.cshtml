@@ -1,7 +1,52 @@
-﻿﻿@{
+﻿@model AeroBites.Models.Restaurant
+
+﻿@{
     ViewData["Title"] = "Restaurantes";
+    var requestMessage = TempData["RequestMessage"] as string;
 }
 
 <div>
     <h1>My Restaurant Page</h1>
+
+    @if (Model == null)
+    {
+        <form asp-action="CreateRestaurant">
+            <label for="name">Nome do restaurante</label>
+            <input type="text" name="name"/>
+            <input type="submit" value="Criar restaurante" />
+        </form>
+    }
+    else if (Model.Status == Enums.RestaurantStatus.WaitingAcceptance)
+    {
+        <h1>À espera de aprovação</h1>
+    }
+    else
+    {
+        <form asp-action="AddItem">
+            <label for="name">Nome do item</label>
+            <input type="text" name="name" />
+            <br />
+            <label for="name">Preço do item</label>
+            <input type="number" name="price" />
+            <input type="submit" value="Criar restaurante" />
+        </form>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nome do Item</th>
+                    <th>Preço</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr data-item-id="@item.Id">
+                        <td>@item.Name</td>
+                        <td>@item.Price.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 </div>

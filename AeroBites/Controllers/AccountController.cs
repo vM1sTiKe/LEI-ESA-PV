@@ -29,7 +29,7 @@ namespace AeroBites.Controllers
         public async Task<IActionResult> SignIn()
         {
             var credential = HttpContext.Request.Form["credential"].FirstOrDefault();
-
+            Console.WriteLine(credential);
             if(string.IsNullOrEmpty(credential))
             {
                 return BadRequest("Google ID Token not found.");
@@ -53,7 +53,8 @@ namespace AeroBites.Controllers
 
             var claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, accountInfo.GoogleId),
+                new Claim(ClaimTypes.NameIdentifier, accountInfo.Id.ToString()),
+                new Claim("GoogleId", accountInfo.GoogleId),
                 new Claim("IsAdmin", accountInfo.IsAdmin.ToString())
             };
 
@@ -62,15 +63,21 @@ namespace AeroBites.Controllers
             await HttpContext.SignInAsync(
                 "Cookies", 
                 new ClaimsPrincipal(claimsIndentity), 
-                new AuthenticationProperties { IsPersistent = false }
+                new AuthenticationProperties { IsPersistent = true }
             );
 
-            if (accountInfo.IsAdmin)
+            /*if (accountInfo.IsAdmin)
             {
-                return RedirectToAction("Index", "Admin");
-            }
+                return RedirectToAction(nameof(Index), "Admin");
+            }*/
 
-            return RedirectToAction("Index", "Restaurantes");
+            return RedirectToAction(nameof(UserController.MyRestaurant), "User");
+        }
+
+        public async Task<IActionResult> SignOut()
+        {
+            await HttpContext.SignOutAsync("Cookies");
+            return RedirectToAction(nameof(Index));
         }
 
         private bool AccountExists(string googleID)

@@ -1,4 +1,5 @@
 ﻿using AeroBites.Data;
+using AeroBites.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,7 @@ namespace AeroBites.Controllers
             return View();
         }
 
-        [HttpPut("approve/{id}")]
+        [HttpPost]
         public IActionResult ApproveRestaurant(int id)
         {
             var restaurant = _context.Restaurant.Find(id);
@@ -32,10 +33,12 @@ namespace AeroBites.Controllers
             restaurant.Status = Enums.RestaurantStatus.Valid;
             _context.SaveChanges();
 
-            return Ok(new { message = "Restaurante aprovado!" });
+            TempData["RequestMessage"] = "Restaurante aprovado!";
+
+            return RedirectToAction(nameof(Index));
         }
 
-        [HttpDelete("deny/{id}")]
+        [HttpPost, ActionName("Delete")]
         public IActionResult DenyeRestaurant(int id)
         {
             var restaurant = _context.Restaurant.Find(id);
@@ -43,7 +46,16 @@ namespace AeroBites.Controllers
             _context.Restaurant.Remove(restaurant);
             _context.SaveChanges();
 
-            return Ok(new { message = "Restaurante aprovado!" });
+            TempData["RequestMessage"] = "Restaurante negado!";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public List<Restaurant> GetAllRestaurants()
+        {
+            var validRestaurantes = _context.Restaurant.ToList();
+            return validRestaurantes;
         }
     }
 }

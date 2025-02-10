@@ -13,7 +13,7 @@ namespace AeroBites.Models
         public required string Name { get; set; }
 
         [DefaultValue(Enums.RestaurantStatus.WaitingAcceptance)]
-        public required Enums.RestaurantStatus Status { get; set; }
+        public Enums.RestaurantStatus Status { get; set; }
 
         public List<Item> Items { get; set; }
 

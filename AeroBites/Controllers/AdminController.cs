@@ -14,7 +14,12 @@ namespace AeroBites.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Restaurants()
+        {
+            return View();
+        }
+
+        public IActionResult Collections()
         {
             return View();
         }

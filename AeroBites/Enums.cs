@@ -5,6 +5,7 @@
 
         public enum CurrentPage
         {
+            Admin,
             Restaurant,
             RestaurantMenu
         }

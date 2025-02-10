@@ -75,6 +75,12 @@ namespace AeroBites.Controllers
             return RedirectToAction(nameof(Index), "Restaurantes");
         }
 
+        public async Task<IActionResult> SignOut()
+        {
+            await HttpContext.SignOutAsync("Cookies");
+            return RedirectToAction(nameof(Index));
+        }
+
         private bool AccountExists(string googleID)
         {
             return _context.Account.Any(account => account.GoogleId == googleID);

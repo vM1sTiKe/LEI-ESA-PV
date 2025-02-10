@@ -45,5 +45,12 @@ namespace AeroBites.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public List<Restaurant> GetAllRestaurants()
+        {
+            var validRestaurantes = _context.Restaurant.ToList();
+            return validRestaurantes;
+        }
     }
 }

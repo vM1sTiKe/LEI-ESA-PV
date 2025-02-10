@@ -91,6 +91,24 @@ namespace AeroBites.Controllers
             return RedirectToAction(nameof(MyRestaurant));
         }
 
+        public IActionResult RemoveItem(int id)
+        {
+            var item = _context.Item.FirstOrDefault(item => item.Id == id);
+
+            if (item!=null)
+            {
+                TempData["RequestMessage"] = "Item não existe";
+                return RedirectToAction(nameof(MyRestaurant));
+            }
+
+            _context.Remove(item);
+            _context.SaveChanges();
+
+            TempData["RequestMessage"] = "Item eliminado com sucesso.";
+
+            return RedirectToAction(nameof(MyRestaurant));
+        }
+
         private Restaurant? GetRestaurant()
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));

@@ -64,7 +64,7 @@ namespace AeroBites.Controllers
             await HttpContext.SignInAsync(
                 "Cookies", 
                 new ClaimsPrincipal(claimsIndentity), 
-                new AuthenticationProperties { IsPersistent = false }
+                new AuthenticationProperties { IsPersistent = true }
             );
 
             if (accountInfo.IsAdmin)

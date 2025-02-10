@@ -20,7 +20,7 @@ namespace AeroBites.Controllers
             return View();
         }
 
-        [HttpPut("approve/{id}")]
+        [HttpPost]
         public IActionResult ApproveRestaurant(int id)
         {
             var restaurant = _context.Restaurant.Find(id);
@@ -33,7 +33,7 @@ namespace AeroBites.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpDelete("deny/{id}")]
+        [HttpPost, ActionName("Delete")]
         public IActionResult DenyeRestaurant(int id)
         {
             var restaurant = _context.Restaurant.Find(id);

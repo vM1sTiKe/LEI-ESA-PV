@@ -2,6 +2,14 @@
 {
     public static class Enums
     {
+
+        public enum CurrentPage
+        {
+            Admin,
+            Restaurant,
+            RestaurantMenu
+        }
+
         public enum RestaurantStatus
         {
             WaitingAcceptance,

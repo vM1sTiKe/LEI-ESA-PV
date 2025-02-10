@@ -398,3 +398,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Custom
+# Css
+/AeroBites/wwwroot/css/main.css
+/AeroBites/wwwroot/css/main.min.css

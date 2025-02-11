@@ -38,8 +38,8 @@ namespace AeroBites.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DenyeRestaurant(int id)
+        [HttpDelete]
+        public IActionResult DenyRestaurant(int id)
         {
             var restaurant = _context.Restaurant.Find(id);
 
@@ -47,6 +47,19 @@ namespace AeroBites.Controllers
             _context.SaveChanges();
 
             TempData["RequestMessage"] = "Restaurante negado!";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteRestaurant(int id)
+        {
+            var restaurant = _context.Restaurant.FirstOrDefault(restaurant => restaurant.Id == id);
+            System.Diagnostics.Debug.WriteLine(restaurant);
+            _context.Restaurant.Remove(restaurant);
+            _context.SaveChanges();
+
+            TempData["RequestMessage"] = "Restaurante eliminado!";
 
             return RedirectToAction(nameof(Index));
         }

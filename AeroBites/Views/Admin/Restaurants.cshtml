@@ -23,12 +23,10 @@
             </thead>
 
             <tbody>
-                @foreach (var r in Model ?? [])
-                {
+                @foreach (var restaurant in Model ?? []) {
                     <tr class="big-row">
-                        <td colspan="2">@r.Name</td>
-                        @if (r.Status.Equals(Enums.RestaurantStatus.WaitingAcceptance))
-                        {
+                        <td colspan="2">@restaurant.Name</td>
+                        @if (restaurant.Status.Equals(Enums.RestaurantStatus.WaitingAcceptance)) {
                             <td>
                                 <div class="center-align">
                                     <a class="icon small-icon clickable">

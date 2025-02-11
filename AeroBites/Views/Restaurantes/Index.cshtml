@@ -1,9 +1,29 @@
-﻿@{
+﻿@model IEnumerable<AeroBites.Models.Restaurant>;
+
+@{
     ViewData["Title"] = "Restaurantes";
     ViewData["CurrentPage"] = Enums.CurrentPage.Restaurant;
 }
 
-<div>
-    <h1>Restaurantes Page</h1>
-    <a href="/Login">Login</a>
+<div class="content-restaurant">
+    <h1>Apetece-lhe algo? Faça um pedido</h1>
+
+    @* Endpoint will send only available restaurants, meaning close to the loc, if no localization then send all valid (active) restaurants *@
+    
+    @if((Model ?? []).Count() == 0) {
+        <p>Não existem restaurantes disponiveis. Tente mais tarde ou experimente alterar a sua morada de entrega.</p>
+    }
+    else {
+        <div class="restaurants-list app-grid grid-columns5">
+            @* Iterate on all restaurants and print them on the grid, action will need to redirect them to the correct view and with correct id *@
+            @foreach (var restaurant in Model ?? []) {
+                <a asp-action="" class="restaurant-grid-item"> @* Missing here controller and id if needed *@
+                    @* <img class="restaurant-img" /> *@
+                    <div class="restaurant-img">Img will be here</div>
+                    <div class="restaurant-name">@restaurant.Name</div>
+                </a>
+            }
+        </div>
+    }
+    
 </div>

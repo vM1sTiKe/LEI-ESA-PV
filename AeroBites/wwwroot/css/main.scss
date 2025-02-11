@@ -1,44 +1,10 @@
-﻿@import "_app.scss";
+﻿@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+
+@import "_layout.scss";
+
 @import "_login.scss";
 @import "_admin.scss";
-
-@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
-
-body {
-    $icon-width: 64px;
-    $icon-height: 64px;
-    $icon-padding: 8px;
-
-    font-family: "Kanit", serif;
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
-
-    a.icon {
-        display: block;
-        width: calc($icon-width - $icon-padding * 3);
-        height: calc($icon-height - $icon-padding * 3);
-        background: none;
-        border: 0;
-        padding: $icon-padding;
-        border-radius: 26px;
-
-        &.small-icon {
-            width: calc($icon-width * .75 - $icon-padding * 3);
-            height: calc($icon-height * .75 - $icon-padding * 3);
-        }
-
-        > svg {
-            width: 100%;
-            height: 100%;
-        }
-    }
-
-    .clickable {
-        cursor: pointer;
-    }
-}
+@import "_restaurant.scss";
 
 table.app-table {
     width: 100%;
@@ -78,6 +44,20 @@ table.app-table {
     }
 }
 
+div.app-grid {
+    display: grid;
+    height: 100%;
+    gap: 50px;
+
+    $grid-columns: 3, 4, 5, 6, 7;
+
+    @each $columns in $grid-columns {
+        &.grid-columns#{$columns} {
+            grid-template-columns: repeat($columns, 1fr);
+        }
+    }
+}
+
 nav.app-tab {
     width: 100%;
     height: auto;
@@ -106,4 +86,32 @@ nav.app-tab {
             font-weight: bold;
         }
     }
+}
+
+a.icon {
+    $icon-width: 64px;
+    $icon-height: 64px;
+    $icon-padding: 8px;
+
+    display: block;
+    width: calc($icon-width - $icon-padding * 3);
+    height: calc($icon-height - $icon-padding * 3);
+    background: none;
+    border: 0;
+    padding: $icon-padding;
+    border-radius: 26px;
+
+    &.small-icon {
+        width: calc($icon-width * .75 - $icon-padding * 3);
+        height: calc($icon-height * .75 - $icon-padding * 3);
+    }
+
+    > svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.clickable {
+    cursor: pointer;
 }

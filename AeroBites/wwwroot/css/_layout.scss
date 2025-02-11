@@ -1,0 +1,63 @@
+body {
+    $navbar-height: 120px;
+
+    font-family: "Kanit", serif;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+    > div.app-body {
+        display: grid;
+        grid-template-areas: "header" "main" "main";
+        grid-template-rows: $navbar-height auto;
+
+        > main.app-content {
+            $margin-top: 25px;
+
+            grid-area: main;
+            height: calc(100vh - $navbar-height - $margin-top);
+            padding: $margin-top 180px;
+            padding-bottom: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            > div {
+                margin-bottom: 33px;
+            }
+        }
+
+        > div.app-navbar {
+            grid-area: header;
+            background-color: #77DD77;
+            padding: 16px 32px;
+
+            > div {
+                height: 100%;
+                display: flex;
+                justify-content: space-between;
+
+                > img.app-logo {
+                    height: 100%;
+                }
+
+                > div.app-actions {
+                    display: flex;
+                    gap: 10px;
+                    height: auto;
+                    margin: auto 0;
+
+                    > div.app-action-admin {
+                        border-right: 2px solid greenyellow;
+                        padding-right: 10px;
+                    }
+
+                    .app-action[data-current-page="True"] {
+                        background-color: whitesmoke;
+                    }
+                }
+            }
+        }
+    }
+}

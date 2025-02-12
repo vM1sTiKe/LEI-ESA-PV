@@ -1,0 +1,70 @@
+﻿@model AeroBites.Models.Restaurant; 
+       
+
+
+
+
+@{
+    ViewData["Title"] = "Restaurantes";
+}
+
+<div class="content-restaurant">
+    <div class="restaurant-menu-container">
+        <div class="header-content">
+            <header>
+                <img class="banner" src="~/images/dummy-banner.jpg" alt="banner restaurant">
+                <h1 class="name-restaurant">Restaurant Name</h1>
+                <div class="info">
+                    <span>Avaliação 0.0 (0)</span>
+                    <span>Tempo de entrega 00 min</span>
+                    <span>Taxa de entrega 00,00€</span>
+                </div>
+            </header>
+        </div>
+        <div class="main-content">
+            <main>
+                <div class="categories">
+                    <span class="category active">Entradas</span>
+                    <span class="category">Pratos</span>
+                    <span class="category">Sobremesas</span>
+                    <span class="category">Bebidas</span>
+                </div>
+                <div class="products">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <div class="product">
+                            <img src="~/images/dummy-food-option.jpeg" alt="entradas" /><br />
+                            <span>entradas name</span>
+                            <span>12,50€</span>
+                        </div>
+                    }
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <div class="product">
+                            <img src="~/images/dummy-food-option.jpeg" alt="pratos" /><br />
+                            <span>pratos name</span>
+                            <span>12,50€</span>
+                        </div>
+                    }
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <div class="product">
+                            <img src="~/images/dummy-food-option.jpeg" alt="sobremesas" /><br />
+                            <span>sobremesas name</span>
+                            <span>12,50€</span>
+                        </div>
+                    }
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <div class="product">
+                            <img src="~/images/dummy-food-option.jpeg" alt="bebidas" /><br />
+                            <span>bebidas name</span>
+                            <span>12,50€</span>
+                        </div>
+                    }
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+

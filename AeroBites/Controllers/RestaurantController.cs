@@ -8,16 +8,21 @@ using AeroBites.Data;
 namespace AeroBites.Controllers
 {
     [Authorize]
-    public class RestaurantesController : Controller
+    public class RestaurantController : Controller
     {
         private readonly AeroBitesContext _context;
 
-        public RestaurantesController(AeroBitesContext context)
+        public RestaurantController(AeroBitesContext context)
         {
             _context = context;
         }
 
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult Menu()
         {
             return View();
         }

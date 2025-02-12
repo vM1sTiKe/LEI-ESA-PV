@@ -71,7 +71,7 @@ namespace AeroBites.Controllers
                 return RedirectToAction(nameof(Index), "Admin");
             }*/
 
-            return RedirectToAction(nameof(Index), "Restaurantes");
+            return RedirectToAction(nameof(Index), "Restaurant");
         }
 
         public async Task<IActionResult> SignOut()

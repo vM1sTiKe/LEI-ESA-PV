@@ -38,8 +38,14 @@ body {
                 display: flex;
                 justify-content: space-between;
 
-                > img.app-logo {
+                > .navbar-logo {
                     height: 100%;
+                    border-radius: 50px;
+
+                    > img {
+                        height: inherit;
+                        border-radius: inherit;
+                    }
                 }
 
                 > div.app-actions {

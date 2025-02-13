@@ -1,0 +1,17 @@
+﻿@model AeroBites.Models.Restaurant;
+
+@{
+    ViewData["Title"] = "Meu Restaurante";
+    ViewData["CurrentPage"] = Enums.CurrentPage.MyRestaurant;
+}
+
+<div class="content-restaurant">
+    <h1>.</h1>
+
+    <nav class="app-tab">
+        <a asp-action="" class="app-tab-action">Geral</a>
+        <a asp-action="" class="app-tab-action">Produtos</a>
+        <a asp-action="" class="app-tab-action">Geral</a>
+        <a class="app-tab-action active-tab">Pontos de Recolha</a>
+    </nav>
+</div>

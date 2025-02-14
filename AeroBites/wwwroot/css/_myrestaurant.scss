@@ -1,0 +1,18 @@
+﻿main.app-content > div.content-myrestaurant {
+
+    > div.actions {
+        display: flex;
+
+        > .save {
+            margin: auto;
+        }
+    }
+
+    > form {
+        margin-top: 25px;
+
+        > input {
+            display: none;
+        }
+    }
+}

@@ -5,6 +5,7 @@
 @import "_login.scss";
 @import "_admin.scss";
 @import "_restaurant.scss";
+@import "_myrestaurant.scss";
 
 table.app-table {
     width: 100%;
@@ -84,6 +85,7 @@ nav.app-tab {
             background-color: green;
             color: whitesmoke;
             font-weight: bold;
+            cursor: default;
         }
     }
 }

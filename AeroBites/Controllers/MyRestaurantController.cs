@@ -13,7 +13,7 @@ namespace AeroBites.Controllers
         public IActionResult Index() {
             if (MyRestaurant is null) return RedirectToAction(nameof(Create));
             if (MyRestaurant.Status == Enums.RestaurantStatus.WaitingAcceptance) return RedirectToAction(nameof(Reviewing));
-            return View();
+            return View(MyRestaurant);
         }
 
         public IActionResult Create() {
@@ -32,6 +32,16 @@ namespace AeroBites.Controllers
             if (MyRestaurant is null) return RedirectToAction(nameof(Create));
             if (MyRestaurant.Status != Enums.RestaurantStatus.WaitingAcceptance) return RedirectToAction(nameof(Index));
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit([Bind("Name")] Restaurant restaurant) {
+            if( MyRestaurant is null ) return RedirectToAction(nameof(Index));
+
+            MyRestaurant.Name = restaurant.Name;
+            context.Update(MyRestaurant);
+            await context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }

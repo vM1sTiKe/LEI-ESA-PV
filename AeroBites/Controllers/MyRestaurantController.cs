@@ -43,5 +43,13 @@ namespace AeroBites.Controllers
             await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Items() {
+            return View();
+        }
+
+        public IActionResult Orders() {
+            return View();
+        }
     }
 }

@@ -19,6 +19,9 @@ namespace AeroBites.Models
         [JsonIgnore]
         public List<Item>? Items { get; set; }
 
+        [JsonIgnore]
+        public List<Category>? Categories { get; set; }
+
         public required int OwnerId { get; set; }
 
         public Account? Owner { get; set; }

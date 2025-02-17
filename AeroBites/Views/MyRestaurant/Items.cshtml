@@ -6,12 +6,90 @@
 }
 
 <div class="content-myrestaurant myrestaurant-items">
-    <nav class="app-tab">
-        <a asp-action="" class="app-tab-action">Geral</a>
-        <a class="app-tab-action active-tab">Produtos</a>
-        <a asp-action="Orders" class="app-tab-action">Pedidos</a>
-    </nav>
+    <div class="actions">
+        <nav class="app-tab">
+            <a asp-action="" class="app-tab-action">Geral</a>
+            <a class="app-tab-action active-tab">Produtos</a>
+            <a asp-action="Orders" class="app-tab-action">Pedidos</a>
+        </nav>
+        <nav class="app-tab">
+            <a class="app-tab-action active-tab">Itens</a>
+            <a asp-action="Categories" class="app-tab-action">Categorias</a>
+        </nav>
+    </div>
+
+    <div class="menu-list">
+        <div class="menu-category" draggable="true" dropzone="true" ondragstart="grab(event)" ondrop="drop(event)" ondragover="event.preventDefault()">
+            <svg viewBox="0 0 320 512"><path d="M40 352l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zm192 0l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 320c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 192l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 160c-22.1 0-40-17.9-40-40L0 72C0 49.9 17.9 32 40 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40z" /></svg>
+            <div class="name">Category 1</div>
+            <i class="arrow" data-expanded="true" onclick="expand(this)"></i>
+            <div class="items">
+                <button class="app-button app-color-green clickable new-item">+</button>
+                <table class ="items-list app-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 35%;" class="left-align">Nome</th>
+                            <th style="width: 150px;">Preço</th>
+                            <th style="width: auto;"></th>
+                            <th style="width: 150px;"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td><div class="center-align">Item1</div></td>
+                            <td><div class="center-align">25€</div></td>
+                            <td />
+                            <td><div class="center-align">Açoes</div></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div></div>
+                <p>item1</p>
+                <p>item2</p>
+                <p>item3</p>
+            </div>
+        </div>
+        <div class="menu-category" draggable="true" dropzone="true" ondragstart="grab(event)" ondrop="drop(event)" ondragover="event.preventDefault()">
+            <svg viewBox="0 0 320 512"><path d="M40 352l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zm192 0l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 320c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 192l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 160c-22.1 0-40-17.9-40-40L0 72C0 49.9 17.9 32 40 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40z" /></svg>
+            <div class="name">Category 2</div>
+        </div>
+        <div class="menu-category" draggable="true" dropzone="true" ondragstart="grab(event)" ondrop="drop(event)" ondragover="event.preventDefault()">
+            <svg viewBox="0 0 320 512"><path d="M40 352l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zm192 0l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 320c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 192l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 160c-22.1 0-40-17.9-40-40L0 72C0 49.9 17.9 32 40 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40z" /></svg>
+            <div class="name">Category 3</div>
+        </div>
+    </div>
 </div>
+
+<script>
+    function expand(element) {
+        const expandValue = element.getAttribute("data-expanded") == "true";
+        element.setAttribute("data-expanded", !expandValue);
+    }
+
+    function grab(event) {
+        const item = event.currentTarget;
+        item.classList.add("dragging");
+        item.setAttribute("id", "drag-"+new Date().getTime());
+
+        event.dataTransfer.setData("source", item.id);
+    }
+
+    function drop(event) {
+        const dropzone = event.currentTarget;
+
+        const item = dropzone.parentElement.querySelector("div#" + event.dataTransfer.getData("source"));
+        item.classList.remove("dragging");
+        
+        const middlePoint = dropzone.getBoundingClientRect().top + (dropzone.getBoundingClientRect().height / 2);
+        const itemDropPoint = event.clientY;
+
+        if( itemDropPoint <= middlePoint ) return dropzone.parentElement.insertBefore(item, dropzone);
+        if( !dropzone.nextElementSibling ) return dropzone.parentElement.appendChild(item);
+        else return dropzone.parentElement.insertBefore(item, dropzone.nextElementSibling);
+    }
+
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

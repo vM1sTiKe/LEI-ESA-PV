@@ -1,12 +1,11 @@
-﻿@model AeroBites.Models.Restaurant
+﻿@model AeroBites.Models.Category
 
 @{
-    ViewData["Title"] = "Criar Restaurante";
+    ViewData["Title"] = "Meu Restaurant";
     ViewData["CurrentPage"] = Enums.CurrentPage.MyRestaurant;
 }
 
 <div class="content-myrestaurant">
-    <h1>Parece que não tem um restaurante seu, quer pedir para criar um?</h1>
     <form asp-action="Create" class="app-form">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="app-form-group">
@@ -21,5 +20,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

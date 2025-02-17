@@ -4,6 +4,7 @@ using AeroBites.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AeroBites.Migrations
 {
     [DbContext(typeof(AeroBitesContext))]
-    partial class AeroBitesContextModelSnapshot : ModelSnapshot
+    [Migration("20250216201440_AddCategory_To_Context")]
+    partial class AddCategory_To_Context
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,7 +42,7 @@ namespace AeroBites.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Account", (string)null);
+                    b.ToTable("Account");
                 });
 
             modelBuilder.Entity("AeroBites.Models.Address", b =>
@@ -63,7 +66,7 @@ namespace AeroBites.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("Address", (string)null);
+                    b.ToTable("Address");
                 });
 
             modelBuilder.Entity("AeroBites.Models.Category", b =>
@@ -85,7 +88,7 @@ namespace AeroBites.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Category", (string)null);
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("AeroBites.Models.DropPoint", b =>
@@ -104,7 +107,7 @@ namespace AeroBites.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DropPoint", (string)null);
+                    b.ToTable("DropPoint");
                 });
 
             modelBuilder.Entity("AeroBites.Models.DropPointFavourite", b =>
@@ -127,7 +130,7 @@ namespace AeroBites.Migrations
 
                     b.HasIndex("DropPointId");
 
-                    b.ToTable("DropPointFavourite", (string)null);
+                    b.ToTable("DropPointFavourite");
                 });
 
             modelBuilder.Entity("AeroBites.Models.Item", b =>
@@ -152,7 +155,7 @@ namespace AeroBites.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Item", (string)null);
+                    b.ToTable("Item");
                 });
 
             modelBuilder.Entity("AeroBites.Models.Order", b =>
@@ -179,7 +182,7 @@ namespace AeroBites.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Order", (string)null);
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("AeroBites.Models.OrderItem", b =>
@@ -210,7 +213,7 @@ namespace AeroBites.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItem", (string)null);
+                    b.ToTable("OrderItem");
                 });
 
             modelBuilder.Entity("AeroBites.Models.Payment", b =>
@@ -232,7 +235,7 @@ namespace AeroBites.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("Payment", (string)null);
+                    b.ToTable("Payment");
                 });
 
             modelBuilder.Entity("AeroBites.Models.Restaurant", b =>
@@ -257,7 +260,7 @@ namespace AeroBites.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Restaurant", (string)null);
+                    b.ToTable("Restaurant");
                 });
 
             modelBuilder.Entity("AeroBites.Models.Address", b =>

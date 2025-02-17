@@ -1,8 +1,6 @@
 ﻿using AeroBites.Models;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using AeroBites.Data;
 
 namespace AeroBites.Controllers
@@ -17,10 +15,9 @@ namespace AeroBites.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
-        {
+        public IActionResult Index() {
             return View();
-        }
+        }       
 
         public IActionResult Menu()
         {
@@ -33,5 +30,6 @@ namespace AeroBites.Controllers
             var validRestaurantes = _context.Restaurant.Where(restaurant => restaurant.Status == Enums.RestaurantStatus.Valid).ToList();
             return validRestaurantes;
         }
+
     }
 }

@@ -17,7 +17,7 @@ namespace AeroBites.Models
         public Enums.RestaurantStatus Status { get; set; }
 
         [JsonIgnore]
-        public List<Item>? Items { get; set; }
+        public List<Category>? Categories { get; set; }
 
         public required int OwnerId { get; set; }
 

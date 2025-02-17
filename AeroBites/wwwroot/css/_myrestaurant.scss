@@ -1,0 +1,33 @@
+﻿main.app-content > div.content-myrestaurant {
+
+    &.myrestaurant-geral {
+        > div.actions {
+            display: flex;
+
+            > .save {
+                margin: auto;
+            }
+        }
+
+        > form {
+            margin-top: 25px;
+
+            > input {
+                display: none;
+            }
+        }
+    }
+
+    &.myrestaurant-items, &.myrestaurant-categories {
+        > div.actions {
+            display: flex;
+            justify-content: space-between;
+
+            > div {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+        }
+    }
+}

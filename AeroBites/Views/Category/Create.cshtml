@@ -1,0 +1,26 @@
+﻿@model AeroBites.Models.Category
+
+@{
+    ViewData["Title"] = "Meu Restaurant";
+    ViewData["CurrentPage"] = Enums.CurrentPage.MyRestaurant;
+}
+
+<div class="content-myrestaurant">
+    <form asp-action="Create" class="app-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="app-form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" autocomplete="off" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="app-form-group">
+            <input type="submit" value="Create" class="app-button app-color-green clickable" />
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

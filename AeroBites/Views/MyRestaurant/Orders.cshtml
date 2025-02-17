@@ -1,0 +1,18 @@
+﻿@model AeroBites.Models.Restaurant;
+
+@{
+    ViewData["Title"] = "Meu Restaurante";
+    ViewData["CurrentPage"] = Enums.CurrentPage.MyRestaurant;
+}
+
+<div class="content-myrestaurant myrestaurant-items">
+    <nav class="app-tab">
+        <a asp-action="" class="app-tab-action">Geral</a>
+        <a asp-action="Items" class="app-tab-action">Produtos</a>
+        <a class="app-tab-action active-tab">Pedidos</a>
+    </nav>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

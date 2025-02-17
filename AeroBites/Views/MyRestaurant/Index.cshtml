@@ -1,0 +1,31 @@
+﻿@model AeroBites.Models.Restaurant;
+
+@{
+    ViewData["Title"] = "Meu Restaurante";
+    ViewData["CurrentPage"] = Enums.CurrentPage.MyRestaurant;
+}
+
+<div class="content-myrestaurant myrestaurant-geral">
+    <div class="actions">
+        <nav class="app-tab">
+            <a class="app-tab-action active-tab">Geral</a>
+            <a asp-action="Items" class="app-tab-action">Produtos</a>
+            <a asp-action="Orders" class="app-tab-action">Pedidos</a>
+        </nav>
+        <button class="app-button app-color-green save clickable" onclick='document.querySelector("div.myrestaurant-geral > form > input").click()'>Guardar</button>
+    </div>
+    
+    <form asp-action="Edit" class="app-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="app-form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" autocomplete="off" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <input type="submit"/>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

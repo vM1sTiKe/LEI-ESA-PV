@@ -4,6 +4,7 @@ using AeroBites.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AeroBites.Migrations
 {
     [DbContext(typeof(AeroBitesContext))]
-    partial class AeroBitesContextModelSnapshot : ModelSnapshot
+    [Migration("20250216201440_AddCategory_To_Context")]
+    partial class AddCategory_To_Context
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,9 +141,6 @@ namespace AeroBites.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -148,9 +148,12 @@ namespace AeroBites.Migrations
                     b.Property<float>("Price")
                         .HasColumnType("real");
 
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("RestaurantId");
 
                     b.ToTable("Item");
                 });
@@ -273,11 +276,13 @@ namespace AeroBites.Migrations
 
             modelBuilder.Entity("AeroBites.Models.Category", b =>
                 {
-                    b.HasOne("AeroBites.Models.Restaurant", null)
-                        .WithMany("Categories")
+                    b.HasOne("AeroBites.Models.Restaurant", "Restaurant")
+                        .WithMany()
                         .HasForeignKey("RestaurantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Restaurant");
                 });
 
             modelBuilder.Entity("AeroBites.Models.DropPointFavourite", b =>
@@ -301,13 +306,13 @@ namespace AeroBites.Migrations
 
             modelBuilder.Entity("AeroBites.Models.Item", b =>
                 {
-                    b.HasOne("AeroBites.Models.Category", "Category")
+                    b.HasOne("AeroBites.Models.Restaurant", "Restaurant")
                         .WithMany("Items")
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("RestaurantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("Restaurant");
                 });
 
             modelBuilder.Entity("AeroBites.Models.OrderItem", b =>
@@ -343,11 +348,6 @@ namespace AeroBites.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("AeroBites.Models.Category", b =>
-                {
-                    b.Navigation("Items");
-                });
-
             modelBuilder.Entity("AeroBites.Models.Order", b =>
                 {
                     b.Navigation("Items");
@@ -355,7 +355,7 @@ namespace AeroBites.Migrations
 
             modelBuilder.Entity("AeroBites.Models.Restaurant", b =>
                 {
-                    b.Navigation("Categories");
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

@@ -19,8 +19,7 @@ namespace AeroBites.Controllers
 
         public IActionResult MyRestaurant()
         {
-            Restaurant restaurant = GetRestaurant();
-            return View(restaurant);
+            return View();
         }
 
         [HttpPost]
@@ -56,14 +55,14 @@ namespace AeroBites.Controllers
                 return RedirectToAction(nameof(MyRestaurant));
             }
 
-            Item item = new Item
-            {
-                Name = char.ToUpper(name[0]) + name.Substring(1),
-                Price = price,
-                RestaurantId = GetRestaurant().Id
-            };
+            //Item item = new Item
+            //{
+            //    Name = char.ToUpper(name[0]) + name.Substring(1),
+            //    Price = price,
+            //    RestaurantId = GetRestaurant().Id
+            //};
 
-            _context.Add(item);
+            //_context.Add(item);
             _context.SaveChanges();
 
             TempData["RequestMessage"] = "Item criado com sucesso.";
@@ -108,12 +107,6 @@ namespace AeroBites.Controllers
             TempData["RequestMessage"] = "Item eliminado com sucesso.";
 
             return RedirectToAction(nameof(MyRestaurant));
-        }
-
-        private Restaurant? GetRestaurant()
-        {
-            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return _context.Restaurant.Include(r => r.Items).FirstOrDefault(r => r.OwnerId == userId);
         }
 
         private bool ItemExists(string name)

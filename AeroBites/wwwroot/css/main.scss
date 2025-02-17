@@ -5,6 +5,7 @@
 @import "_login.scss";
 @import "_admin.scss";
 @import "_restaurant.scss";
+@import "_myrestaurant.scss";
 
 table.app-table {
     width: 100%;
@@ -12,6 +13,10 @@ table.app-table {
 
     > thead {
         height: 55px;
+
+        th.actions {
+            width: 97px;
+        }
     }
 
     > tbody {
@@ -84,6 +89,7 @@ nav.app-tab {
             background-color: green;
             color: whitesmoke;
             font-weight: bold;
+            cursor: default;
         }
     }
 }
@@ -114,4 +120,36 @@ a.app-icon {
 
 .clickable {
     cursor: pointer;
+}
+
+.app-button {
+    border: 1px solid black;
+    height: 33px;
+    font-size: 17px;
+    padding: 0 13px;
+    width: fit-content;
+    text-decoration: none;
+    color: black;
+}
+
+.app-color-green {
+    background-color: #77DD77;
+}
+
+form.app-form {
+    width: 100%;
+
+    > div.app-form-group {
+        display: flex;
+        flex-direction: column;
+
+        & + div.app-form-group {
+            margin-top: 13px;
+        }
+
+        > .text-danger {
+            color: red;
+            font-size: 12px;
+        }
+    }
 }

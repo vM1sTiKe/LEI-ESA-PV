@@ -7,7 +7,8 @@
         {
             Admin,
             Restaurant,
-            RestaurantMenu
+            RestaurantMenu,
+            MyRestaurant,
         }
 
         public enum RestaurantStatus

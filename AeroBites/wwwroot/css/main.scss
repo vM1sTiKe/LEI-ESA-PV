@@ -13,6 +13,10 @@ table.app-table {
 
     > thead {
         height: 55px;
+
+        th.actions {
+            width: 97px;
+        }
     }
 
     > tbody {

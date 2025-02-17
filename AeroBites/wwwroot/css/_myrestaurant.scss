@@ -18,24 +18,6 @@
         }
     }
 
-    &.myrestaurant-categories {
-        table.app-table > thead {
-            th {
-                width: auto;
-            }
-
-            th:first-child {
-                width: 25%;
-            }
-
-            th:last-child {
-                width: 97px;
-            }
-        }
-    }
-
-
-
     &.myrestaurant-items, &.myrestaurant-categories {
         > div.actions {
             display: flex;

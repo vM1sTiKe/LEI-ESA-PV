@@ -39,13 +39,6 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.Items)
-                {
-                    <tr data-item-id="@item.Id">
-                        <td>@item.Name</td>
-                        <td>@item.Price.ToString("C")</td>
-                    </tr>
-                }
             </tbody>
         </table>
     }

@@ -90,7 +90,7 @@ namespace AeroBites.Controllers
             return RedirectToAction(nameof(MyRestaurant));
         }
 
-        [HttpDelete]
+        [HttpPost]
         public IActionResult RemoveItem(int id)
         {
             var item = _context.Item.FirstOrDefault(item => item.Id == id);

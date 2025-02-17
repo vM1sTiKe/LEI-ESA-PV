@@ -6,11 +6,11 @@ using AeroBites.Data;
 namespace AeroBites.Controllers
 {
     [Authorize]
-    public class RestaurantesController : Controller
+    public class RestaurantController : Controller
     {
         private readonly AeroBitesContext _context;
 
-        public RestaurantesController(AeroBitesContext context)
+        public RestaurantController(AeroBitesContext context)
         {
             _context = context;
         }
@@ -18,6 +18,11 @@ namespace AeroBites.Controllers
         public IActionResult Index() {
             return View();
         }       
+
+        public IActionResult Menu()
+        {
+            return View();
+        }
 
         [HttpGet]
         public List<Restaurant> GetValidRestaurants()

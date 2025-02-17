@@ -19,6 +19,11 @@ namespace AeroBites.Controllers
 
         public IActionResult Index()
         {
+            if(User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction(nameof(Index), "Restaurant");
+            }
+
             ViewBag.ClientId = "724687745332-an8kc4k4tpmv15tabt4okv163e4s56mm.apps.googleusercontent.com";
             ViewBag.LoginUri = "https://localhost:7263/account/signin";
 
@@ -29,7 +34,7 @@ namespace AeroBites.Controllers
         public async Task<IActionResult> SignIn()
         {
             var credential = HttpContext.Request.Form["credential"].FirstOrDefault();
-            Console.WriteLine(credential);
+            
             if(string.IsNullOrEmpty(credential))
             {
                 return BadRequest("Google ID Token not found.");
@@ -71,7 +76,7 @@ namespace AeroBites.Controllers
                 return RedirectToAction(nameof(Index), "Admin");
             }*/
 
-            return RedirectToAction(nameof(Index), "Restaurantes");
+            return RedirectToAction(nameof(Index), "Restaurant");
         }
 
         public async Task<IActionResult> SignOut()

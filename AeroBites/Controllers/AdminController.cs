@@ -17,7 +17,8 @@ namespace AeroBites.Controllers
 
         public IActionResult Restaurants()
         {
-            return View();
+            var restaurant = GetAllRestaurants();
+            return View(restaurant);
         }
 
         public IActionResult Collections()
@@ -25,7 +26,7 @@ namespace AeroBites.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult ApproveRestaurant(int id)
         {
             var restaurant = _context.Restaurant.Find(id);
@@ -38,7 +39,7 @@ namespace AeroBites.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpDelete]
+        [HttpGet]
         public IActionResult DenyRestaurant(int id)
         {
             var restaurant = _context.Restaurant.Find(id);
@@ -51,11 +52,11 @@ namespace AeroBites.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpDelete]
+        [HttpGet]
         public IActionResult DeleteRestaurant(int id)
         {
             var restaurant = _context.Restaurant.FirstOrDefault(restaurant => restaurant.Id == id);
-            System.Diagnostics.Debug.WriteLine(restaurant);
+
             _context.Restaurant.Remove(restaurant);
             _context.SaveChanges();
 

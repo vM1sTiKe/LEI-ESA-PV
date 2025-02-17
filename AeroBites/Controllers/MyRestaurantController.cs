@@ -9,7 +9,7 @@ namespace AeroBites.Controllers
     [Authorize]
     public class MyRestaurantController(AeroBitesContext context) : Controller
     {
-        private Restaurant? MyRestaurant => context.Restaurant.Include(r => r.Categories).FirstOrDefault(r => r.OwnerId == User.GetId());
+        private Restaurant? MyRestaurant => context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.OwnerId == User.GetId());
 
         public IActionResult Index() {
             if (MyRestaurant is null) return RedirectToAction(nameof(Create));
@@ -48,7 +48,11 @@ namespace AeroBites.Controllers
         public IActionResult Items() {
             if (MyRestaurant is null) return RedirectToAction(nameof(Index));
 
-            return View();
+            List<Item> items = [];
+            foreach (Category category in MyRestaurant.Categories ?? []) {
+                items.AddRange(category.Items ?? []);
+            }
+            return View(items);
         }
 
         public IActionResult Categories() {

@@ -15,6 +15,6 @@ namespace AeroBites.Models
         public required int RestaurantId { get; set; }
 
         [JsonIgnore]
-        public Restaurant? Restaurant { get; set; }
+        public List<Item>? Items { get; set; }
     }
 }

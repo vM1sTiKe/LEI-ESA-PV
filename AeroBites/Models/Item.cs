@@ -16,9 +16,10 @@ namespace AeroBites.Models
         [Display(Name = "Preço do Item")]
         public required float Price { get; set; }
 
-        public required int RestaurantId { get; set; }
+        [Display(Name = "Categoria do Item")]
+        public required int CategoryId { get; set; }
 
         [JsonIgnore]
-        public Restaurant? Restaurant { get; set; }
+        public Category? Category { get; set; }
     }
 }

@@ -1,8 +1,4 @@
 ﻿@model AeroBites.Models.Restaurant; 
-       
-
-
-
 
 @{
     ViewData["Title"] = "Restaurantes";
@@ -13,7 +9,7 @@
         <div class="header-content">
             <header>
                 <img class="banner" src="~/images/dummy-banner.jpg" alt="banner restaurant">
-                <h1 class="name-restaurant">Restaurant Name</h1>
+                <h1 class="name-restaurant">@Model.Name</h1>
                 <div class="info">
                     <span>Avaliação 0.0 (0)</span>
                     <span>Tempo de entrega 00 min</span>
@@ -24,43 +20,22 @@
         <div class="main-content">
             <main>
                 <div class="categories">
-                    <span class="category active">Entradas</span>
-                    <span class="category">Pratos</span>
-                    <span class="category">Sobremesas</span>
-                    <span class="category">Bebidas</span>
+                    @foreach(var category in Model.Categories)
+                    {
+                        <span>@category.Name</span>
+                    }
                 </div>
                 <div class="products">
-                    @for (int i = 0; i < 5; i++)
+                    @foreach (var category in Model.Categories)
                     {
-                        <div class="product">
-                            <img src="~/images/dummy-food-option.jpeg" alt="entradas" /><br />
-                            <span>entradas name</span>
-                            <span>12,50€</span>
-                        </div>
-                    }
-                    @for (int i = 0; i < 5; i++)
-                    {
-                        <div class="product">
-                            <img src="~/images/dummy-food-option.jpeg" alt="pratos" /><br />
-                            <span>pratos name</span>
-                            <span>12,50€</span>
-                        </div>
-                    }
-                    @for (int i = 0; i < 5; i++)
-                    {
-                        <div class="product">
-                            <img src="~/images/dummy-food-option.jpeg" alt="sobremesas" /><br />
-                            <span>sobremesas name</span>
-                            <span>12,50€</span>
-                        </div>
-                    }
-                    @for (int i = 0; i < 5; i++)
-                    {
-                        <div class="product">
-                            <img src="~/images/dummy-food-option.jpeg" alt="bebidas" /><br />
-                            <span>bebidas name</span>
-                            <span>12,50€</span>
-                        </div>
+                        @foreach(var item in category.Items)
+                        {
+                            <div class="product">
+                                <img src="~/images/dummy-food-option.jpeg" alt="bebidas" /><br />
+                                <span>@item.Name</span>
+                                <span>@item.Price</span>
+                            </div>
+                        }
                     }
                 </div>
             </main>

@@ -17,8 +17,7 @@ namespace AeroBites.Controllers
 
         public IActionResult Restaurants()
         {
-            var restaurant = GetAllRestaurants();
-            return View(restaurant);
+            return View(_context.Restaurant.ToList());
         }
 
         public IActionResult Collections()
@@ -63,13 +62,6 @@ namespace AeroBites.Controllers
             TempData["RequestMessage"] = "Restaurante eliminado!";
 
             return RedirectToAction(nameof(Index));
-        }
-
-        [HttpGet]
-        public List<Restaurant> GetAllRestaurants()
-        {
-            var validRestaurantes = _context.Restaurant.ToList();
-            return validRestaurantes;
         }
     }
 }

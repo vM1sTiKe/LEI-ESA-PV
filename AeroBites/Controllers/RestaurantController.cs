@@ -17,7 +17,7 @@ namespace AeroBites.Controllers
         }
 
         public IActionResult Index() {
-            var restaurants = GetValidRestaurants();
+            var restaurants = _context.Restaurant.Where(restaurant => restaurant.Status == Enums.RestaurantStatus.Valid).ToList();
             return View(restaurants);
         }       
 
@@ -26,13 +26,5 @@ namespace AeroBites.Controllers
             var restaurant = _context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.Id == id);
             return View(restaurant);
         }
-
-        [HttpGet]
-        public List<Restaurant> GetValidRestaurants()
-        {
-            var validRestaurantes = _context.Restaurant.Where(restaurant => restaurant.Status == Enums.RestaurantStatus.Valid).ToList();
-            return validRestaurantes;
-        }
-
     }
 }

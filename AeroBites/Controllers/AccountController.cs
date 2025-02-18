@@ -25,7 +25,8 @@ namespace AeroBites.Controllers
             }
 
             ViewBag.ClientId = "724687745332-an8kc4k4tpmv15tabt4okv163e4s56mm.apps.googleusercontent.com";
-            ViewBag.LoginUri = "http://localhost:7263/account/signin";
+            //ViewBag.LoginUri = "http://localhost:7263/account/signin";
+            ViewBag.LoginUri = "https://aerobites.eckle.io/account/signin";
 
             return View();
         }

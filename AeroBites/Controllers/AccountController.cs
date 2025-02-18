@@ -71,15 +71,10 @@ namespace AeroBites.Controllers
                 new AuthenticationProperties { IsPersistent = true }
             );
 
-            /*if (accountInfo.IsAdmin)
-            {
-                return RedirectToAction(nameof(Index), "Admin");
-            }*/
-
             return RedirectToAction(nameof(Index), "Restaurant");
         }
 
-        public async Task<IActionResult> SignOut()
+        public async Task<IActionResult> SignOff()
         {
             await HttpContext.SignOutAsync("Cookies");
             return RedirectToAction(nameof(Index));

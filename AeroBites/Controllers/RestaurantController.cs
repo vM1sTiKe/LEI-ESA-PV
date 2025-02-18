@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AeroBites.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace AeroBites.Controllers
 {
@@ -16,12 +17,14 @@ namespace AeroBites.Controllers
         }
 
         public IActionResult Index() {
-            return View();
+            var restaurants = GetValidRestaurants();
+            return View(restaurants);
         }       
 
-        public IActionResult Menu()
+        public IActionResult Menu(int id)
         {
-            return View();
+            var restaurant = _context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.Id == id);
+            return View(restaurant);
         }
 
         [HttpGet]

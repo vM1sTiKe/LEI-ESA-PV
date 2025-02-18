@@ -17,7 +17,7 @@
         <div class="restaurants-list app-grid grid-columns5">
             @* Iterate on all restaurants and print them on the grid, action will need to redirect them to the correct view and with correct id *@
             @foreach (var restaurant in Model ?? []) {
-                <a asp-action="" class="restaurant-grid-item"> @* Missing here controller and id if needed *@
+                <a asp-action="Menu" class="restaurant-grid-item" asp-route-id="@restaurant.Id"> @* Missing here controller and id if needed *@
                     @* <img class="restaurant-img" /> *@
                     <div class="restaurant-img">Img will be here</div>
                     <div class="restaurant-name">@restaurant.Name</div>

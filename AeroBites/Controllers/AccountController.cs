@@ -12,11 +12,21 @@ namespace AeroBites.Controllers
     {
         private readonly AeroBitesContext _context;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController"/> class.
+        /// </summary>
+        /// <param name="context">The context to interact with the database. This is injected by the dependency injection container.</param>
         public AccountController(AeroBitesContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Displays the sign-in page.
+        /// </summary>
+        /// <returns>
+        /// A ViewResult that renders the "Index" view.
+        /// </returns>
         public IActionResult Index()
         {
             if(User.Identity.IsAuthenticated)
@@ -30,6 +40,13 @@ namespace AeroBites.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Handles the Google Sign-In process.
+        /// </summary>
+        /// <returns>
+        /// A redirect to the "Index" action of the "Restaurant" controller if authentication succeeds.<br/>
+        /// Returns a <see cref="BadRequestResult"/> if the Google ID token is missing or invalid.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> SignIn()
         {
@@ -74,17 +91,37 @@ namespace AeroBites.Controllers
             return RedirectToAction(nameof(Index), "Restaurant");
         }
 
+        /// <summary>
+        /// Handles the user sign-out by clearing authentication cookies.
+        /// </summary>
+        /// <returns>
+        /// A redirect to the "Index" action after sucessful sign-out.
+        /// </returns>
         public async Task<IActionResult> SignOff()
         {
             await HttpContext.SignOutAsync("Cookies");
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Check if the account exists for a given Google ID.
+        /// </summary>
+        /// <param name="googleID">The Google ID associated with the user.</param>
+        /// <returns>
+        /// <c>true</c> if the account exists; otherwise, <c>false</c>.
+        /// </returns>
         private bool AccountExists(string googleID)
         {
             return _context.Account.Any(account => account.GoogleId == googleID);
         }
 
+        /// <summary>
+        /// Creates a new account for a given Google ID if it does not already exist.
+        /// </summary>
+        /// <param name="googleID">The Google ID of the new user.</param>
+        /// <param name="isAdmin">Indicates wether the new user is an admin.<br/>
+        /// Default is <c>false</c>.
+        /// </param>
         private void CreateAccount(string googleID, bool isAdmin = false)
         {
             if(!AccountExists(googleID))
@@ -100,11 +137,25 @@ namespace AeroBites.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves an account based on the Google ID.
+        /// </summary>
+        /// <param name="googleID">The Google ID of the user.</param>
+        /// <returns>
+        /// The account associated with the Google ID if found; otherwise, <c>null</c>.
+        /// </returns>
         private Account? GetAccountByGoogleID(string googleID)
         {
             return _context.Account.FirstOrDefault(account => account.GoogleId == googleID);
         }
 
+        /// <summary>
+        /// Decodes a JWT token and extracts the payload as a JSON object.
+        /// </summary>
+        /// <param name="token">The JWT token to decode.</param>
+        /// <returns>
+        /// A <see cref="JsonElement"/> containing the decoded payload, or <c>null</c> if decoding fails.
+        /// </returns>
         private static JsonElement? DecodeJwt(string token)
         {
             try
@@ -126,6 +177,13 @@ namespace AeroBites.Controllers
             }
         }
 
+        /// <summary>
+        /// Ensures that a Base64 string has the correct padding required for decoding.
+        /// </summary>
+        /// <param name="input">The Base64 string to pad.</param>
+        /// <returns>
+        /// A correctly padded Base64 string.
+        /// </returns>
         private static string PadBase64(string input)
         {
             var count = 3 - ((input.Length + 3) % 4);

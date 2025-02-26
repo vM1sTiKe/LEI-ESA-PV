@@ -1,8 +1,9 @@
 ﻿main.app-content > div.content-restaurant {
 
     > div.restaurant-menu-container {
-        display: inline-grid;
-        grid-template-columns: auto auto auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 40vh 1fr;
         gap: 10px;
 
         div.header-content {
@@ -15,7 +16,7 @@
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            gap: 10px 0;
+            gap: 10px;
         }
 
         img.banner {
@@ -62,9 +63,10 @@
         div.products {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
+            justify-content: flex-start;
+            align-content: center;
+            margin-left: 50px;
+            gap: 20px;
         }
 
         div.product {

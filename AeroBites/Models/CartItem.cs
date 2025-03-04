@@ -2,7 +2,7 @@
 
 namespace AeroBites.Models
 {
-    public class OrderItem
+    public class CartItem
     {
         [Key]
         public int Id { get; set; }
@@ -13,10 +13,8 @@ namespace AeroBites.Models
 
         public required float Price { get; set; }
 
-        public required int OderId { get; set; }
+        public required int CartId { get; set; }
 
-        public required int OrderId { get; set; }
-
-        public required Order Order { get; set; }
+        public required Cart Cart { get; set; }
     }
 }

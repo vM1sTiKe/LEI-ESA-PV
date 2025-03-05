@@ -9,8 +9,6 @@ namespace AeroBites.Models
 
         public required string Name { get; set; }
 
-        public required int Quantity { get; set; }
-
         public required float Price { get; set; }
 
         public required int CartId { get; set; }

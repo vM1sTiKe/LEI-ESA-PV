@@ -15,7 +15,7 @@ namespace AeroBites.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddItem([Bind("Name", "Quantity", "Price")] CartItem cartItem, [Bind("Name")] Restaurant restaurant)
+        public async Task<IActionResult> AddItem([Bind("Name", "Price")] CartItem cartItem, [Bind("Name")] Restaurant restaurant)
         {
             if (string.IsNullOrEmpty(restaurant?.Name))
             {
@@ -58,7 +58,7 @@ namespace AeroBites.Controllers
             {
                 Status = Enums.OrderStatus.Choosing,
                 Restaurant = restaurantName,
-                Address = "Something",
+                Address = "Something", //To be changed
                 Items = new List<CartItem>(),
                 AccountId = User.GetId()
             };

@@ -6,11 +6,16 @@
 @import "_admin.scss";
 @import "_restaurant.scss";
 @import "_myrestaurant.scss";
+@import "_payment.scss";
 
 table.app-table {
     width: 100%;
     border-collapse: collapse;
     text-align: center;
+
+    &.table-left {
+        text-align: left;
+    }
 
     > thead {
         height: 55px;

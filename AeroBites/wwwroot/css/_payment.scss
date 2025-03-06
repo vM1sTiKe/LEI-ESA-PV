@@ -1,0 +1,10 @@
+main.app-content > div.content-payment {
+
+    &.payment-listing {
+        > div.header {
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+
+}

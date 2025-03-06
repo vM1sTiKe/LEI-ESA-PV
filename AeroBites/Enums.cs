@@ -11,6 +11,7 @@
             Restaurant,
             RestaurantMenu,
             MyRestaurant,
+            MyPayments,
         }
 
         /// <summary>

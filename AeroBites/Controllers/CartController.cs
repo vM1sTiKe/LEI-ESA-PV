@@ -14,8 +14,15 @@ namespace AeroBites.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Adiciona um item ao carrinho do utilizador. 
+        /// Se o carrinho não existir ou se o restaurante for diferente do atual, um novo é criado.
+        /// </summary>
+        /// <param name="cartItem">O item que será adicionado ao carrinho.</param>
+        /// <param name="restaurant">O restaurante ao qual o item pertence.</param>
+        /// <returns>Retorna um status HTTP Ok em caso de sucesso ou BadRequest se o nome do restaurante for inválido.</returns>
         [HttpPost]
-        public async Task<IActionResult> AddItem([Bind("Name", "Quantity", "Price")] CartItem cartItem, [Bind("Name")] Restaurant restaurant)
+        public async Task<IActionResult> AddItem([Bind("Name", "Price")] CartItem cartItem, [Bind("Name")] Restaurant restaurant)
         {
             if (string.IsNullOrEmpty(restaurant?.Name))
             {
@@ -48,17 +55,22 @@ namespace AeroBites.Controllers
             await _context.SaveChangesAsync();
 
             TempData["RequestMessage"] = "Item adicionado.";
-            System.Diagnostics.Debug.WriteLine(cart);
+            
             return Ok();
         }
 
+        /// <summary>
+        /// Cria um novo carrinho para o utilizador, associando-o a um restaurante específico.
+        /// </summary>
+        /// <param name="restaurantName">O nome do restaurante que será associado ao novo carrinho.</param>
+        /// <returns>Retorna o objeto `Cart` criado, pronto para ser salvo no banco de dados.</returns>
         private Cart CreateNewCart(string restaurantName )
         {
             var cart = new Cart
             {
                 Status = Enums.OrderStatus.Choosing,
                 Restaurant = restaurantName,
-                Address = "Something",
+                Address = "Something", //To be changed
                 Items = new List<CartItem>(),
                 AccountId = User.GetId()
             };

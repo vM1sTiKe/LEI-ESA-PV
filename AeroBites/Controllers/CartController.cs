@@ -48,7 +48,7 @@ namespace AeroBites.Controllers
             await _context.SaveChangesAsync();
 
             TempData["RequestMessage"] = "Item adicionado.";
-            System.Diagnostics.Debug.WriteLine(cart);
+            
             return Ok();
         }
 

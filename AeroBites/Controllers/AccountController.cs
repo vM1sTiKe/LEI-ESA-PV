@@ -31,6 +31,7 @@ namespace AeroBites.Controllers
         {
             if(User.Identity.IsAuthenticated)
             {
+                WriteSignInLog(User.GetId());
                 return RedirectToAction(nameof(Index), "Restaurant");
             }
 
@@ -39,6 +40,18 @@ namespace AeroBites.Controllers
             //ViewBag.LoginUri = "https://aerobites.eckle.io/account/signin";
 
             return View();
+        }
+
+        private void WriteSignInLog(int userId)
+        {
+            var newLog = new AccountLog
+            {
+                signInDateTime = DateTime.Now,
+                AccountId = userId
+            };
+
+            _context.AccountLog.Add(newLog);
+            _context.SaveChanges();
         }
 
         /// <summary>
@@ -88,6 +101,8 @@ namespace AeroBites.Controllers
                 new ClaimsPrincipal(claimsIndentity), 
                 new AuthenticationProperties { IsPersistent = true }
             );
+
+            WriteSignInLog(accountInfo.Id);
 
             return RedirectToAction(nameof(Index), "Restaurant");
         }

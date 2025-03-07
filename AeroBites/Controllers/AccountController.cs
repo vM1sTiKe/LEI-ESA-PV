@@ -42,18 +42,6 @@ namespace AeroBites.Controllers
             return View();
         }
 
-        private void WriteSignInLog(int userId)
-        {
-            var newLog = new AccountLog
-            {
-                signInDateTime = DateTime.Now,
-                AccountId = userId
-            };
-
-            _context.AccountLog.Add(newLog);
-            _context.SaveChanges();
-        }
-
         /// <summary>
         /// Handles the Google Sign-In process.
         /// </summary>
@@ -151,6 +139,22 @@ namespace AeroBites.Controllers
                 _context.Account.Add(account);
                 _context.SaveChanges();
             }
+        }
+
+        /// <summary>
+        /// Registra o log de login do utilizador, salvando a data, hora e o ID do utilizador na base dados.
+        /// </summary>
+        /// <param name="userId">ID do usuário que está a fazer o login.</param>
+        private void WriteSignInLog(int userId)
+        {
+            var newLog = new AccountLog
+            {
+                signInDateTime = DateTime.Now,
+                AccountId = userId
+            };
+
+            _context.AccountLog.Add(newLog);
+            _context.SaveChanges();
         }
 
         /// <summary>

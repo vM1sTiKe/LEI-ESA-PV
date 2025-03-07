@@ -68,7 +68,7 @@
             margin-left: 50px;
             gap: 20px;
         }
-
+        /*
         div.product {
             max-width: 500px;
             border: 2px solid black;
@@ -82,6 +82,52 @@
             width: 99%;
             padding-top: 5px;
             border-radius: 10px;
+        }*/
+
+        div.product {
+            display: grid;
+            grid-template-columns: 1fr 50px 50px;
+            grid-template-rows: 1fr 35px;
+            text-align: center;
+            max-width: 500px;
+            border: 2px solid black;
+            border-radius: 10px;
+        }
+
+        div.product > img {
+            grid-row-start: 1;
+            grid-column-start: 1;
+            grid-row-end: 2;
+            grid-column-end: 4;
+            width: 99%;
+            padding-top: 5px;
+            border-radius: 10px;
+        }
+
+        .IN {
+            grid-row-start: 2;
+            grid-column-start: 1;
+            grid-row-end: 3;
+            grid-column-end: 2;
+        }
+
+        .IP {
+            grid-row-start: 2;
+            grid-column-start: 2;
+            grid-row-end: 3;
+            grid-column-end: 3;
+        }
+
+        .Add-item-to-cart {
+            grid-row-start: 2;
+            grid-column-start: 3;
+            grid-row-end: 3;
+            grid-column-end: 4;
+            margin-top: 5%;
+        }
+
+        .Add-item-to-cart>svg {
+            color: black;
         }
 
         div.checkout {
@@ -136,16 +182,16 @@
             grid-row-start: 2;
             grid-row-end: 3;
         }
+
         .cart-total-label {
             grid-column-start: 1;
             grid-column-end: 2;
-
         }
 
         .cart-total-price {
             grid-column-start: 2;
             grid-column-end: 3;
-            }
+        }
 
 
         .cart-icon:hover .checkout-items-container {

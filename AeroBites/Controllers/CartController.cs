@@ -60,6 +60,23 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
+        /// Apaga o carrinho.
+        /// </summary>
+        /// <returns>Retorna um status HTTP Ok em caso de sucesso.</returns>
+        public async Task<IActionResult> DeleteCart()
+        {
+            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(cart => cart.AccountId == User.GetId());
+            if (cart != null)
+            {
+                _context.Cart.Remove(cart);
+                await _context.SaveChangesAsync();
+                TempData["RequestMessage"] = "Carrinho eliminado.";
+            }
+            
+            return Ok();
+        }
+
+        /// <summary>
         /// Cria um novo carrinho para o utilizador, associando-o a um restaurante específico.
         /// </summary>
         /// <param name="restaurantName">O nome do restaurante que será associado ao novo carrinho.</param>

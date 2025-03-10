@@ -8,19 +8,8 @@ using System.Text.Json;
 
 namespace AeroBites.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController(AeroBitesContext _context, IConfiguration config) : Controller
     {
-        private readonly AeroBitesContext _context;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AccountController"/> class.
-        /// </summary>
-        /// <param name="context">The context to interact with the database. This is injected by the dependency injection container.</param>
-        public AccountController(AeroBitesContext context)
-        {
-            _context = context;
-        }
-
         /// <summary>
         /// Displays the sign-in page.
         /// </summary>
@@ -29,14 +18,17 @@ namespace AeroBites.Controllers
         /// </returns>
         public IActionResult Index()
         {
-            if(User.Identity.IsAuthenticated)
+            ViewBag.ClientId = config["GoogleSettings:ClientId"];
+            ViewBag.LoginUri = config["GoogleSettings:LoginUri"];
+
+            if (User.Identity.IsAuthenticated)
             {
+                try {
+                    WriteSignInLog(User.GetId());
+                }
+                catch (Exception) { return View(); }
                 return RedirectToAction(nameof(Index), "Restaurant");
             }
-
-            ViewBag.ClientId = "724687745332-an8kc4k4tpmv15tabt4okv163e4s56mm.apps.googleusercontent.com";
-            //ViewBag.LoginUri = "http://localhost:7263/account/signin";
-            ViewBag.LoginUri = "https://aerobites.eckle.io/account/signin";
 
             return View();
         }
@@ -89,6 +81,8 @@ namespace AeroBites.Controllers
                 new AuthenticationProperties { IsPersistent = true }
             );
 
+            WriteSignInLog(accountInfo.Id);
+
             return RedirectToAction(nameof(Index), "Restaurant");
         }
 
@@ -136,6 +130,22 @@ namespace AeroBites.Controllers
                 _context.Account.Add(account);
                 _context.SaveChanges();
             }
+        }
+
+        /// <summary>
+        /// Registra o log de login do utilizador, salvando a data, hora e o ID do utilizador na base dados.
+        /// </summary>
+        /// <param name="userId">ID do usuário que está a fazer o login.</param>
+        private void WriteSignInLog(int userId)
+        {
+            var newLog = new AccountLog
+            {
+                signInDateTime = DateTime.Now,
+                AccountId = userId
+            };
+
+            _context.AccountLog.Add(newLog);
+            _context.SaveChanges();
         }
 
         /// <summary>

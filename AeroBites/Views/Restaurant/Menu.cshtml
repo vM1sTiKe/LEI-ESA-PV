@@ -33,14 +33,75 @@
                         {
                             <div class="product">
                                 <img src="~/images/dummy-food-option.jpeg" alt="bebidas" /><br />
-                                <span>@item.Name</span>
-                                <span>@item.Price €</span>
+                                <span class="IN">@item.Name</span>
+                                <span class="IP">@item.Price €</span>
+
+                                <form asp-action="AddItem" asp-controller="Cart" asp-route-restaurant="@Model.Id" asp-route-item="@item.Id" style="display: none"> 
+                                    <input type="submit" />
+                                </form>
+
+                                <div class="Add-item-to-cart" onclick='callSiblingSubmit(event)'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="32" width="28" viewBox="0 0 448 512"><path fill="#77dd77" d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM200 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z" /></svg>
+                                </div>
                             </div>
                         }
                     }
+                </div>
+                <div class="checkout">
+                    <input type="checkbox" id="toggle-checkout" class="toggle-checkout" hidden />
+                    <div class="cart-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                            <path d="M0 24C0 10.7 10.7 0 24 0L69.5 0c22 0 41.5 12.8 50.6 32l411 0c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3l-288.5 0 5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5L488 336c13.3 0 24 10.7 24 24s-10.7 24-24 24l-288.3 0c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5L24 48C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z" />
+                        </svg>
+                        <div class ="checkout-items">
+                            <h1 class="cart-title">Meu Carrinho</h1>
+                            <div class="checkout-container">
+                                <span class="lbl-item">Item</span>
+                                <span class="lbl-remover-item">Remover</span>
+
+                                <div class="items-inside-popup">
+                                @{
+                                    var total = 0.0;
+                                    if(ViewBag.Cart is not null) {
+                                        @foreach (CartItem item in ViewBag.Cart.Items)
+                                        {
+                                            <div class="containerrr">
+                                                <div class="itemssss-name">
+                                                    <span class="item-name-label">@item.Name</span>
+                                                </div>
+                                                <div class="itemssss-dlt">
+                                                    <form asp-action="RemoveItem" asp-controller="Cart" asp-route-restaurant="@Model.Id" asp-route-item="@item.Id" style="display: none">
+                                                        <input type="submit" />
+                                                    </form>
+                                                    <div class="icon-delete" onclick='callSiblingSubmit(event)'>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" width="21" viewBox="0 0 448 512">
+                                                            <path d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            total += item.Price;
+                                        }
+                                    }
+                                }
+                                </div>
+
+                                <span class="cart-total-label">Total:</span>
+                                <span class="cart-total-price">@total €</span>
+                                <button class="lbl-payment">Check-Out</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>
     </div>
 </div>
+<script>
+    function callSiblingSubmit(event){
+        event.currentTarget.parentElement.querySelector("form > input").click();
+    }
+</script>
+
+
 

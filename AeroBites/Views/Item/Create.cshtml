@@ -6,6 +6,9 @@
 }
 
 <div class="content-myrestaurant">
+
+    <a asp-action="Items" asp-controller="MyRestaurant" class="go-back">Voltar</a>
+
     <form asp-action="Create" class="app-form">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="app-form-group">
@@ -24,7 +27,7 @@
             <span asp-validation-for="CategoryId" class="text-danger"></span>
         </div>
         <div class="app-form-group">
-            <input type="submit" value="Create" class="app-button app-color-green clickable" />
+            <input type="submit" value="Criar" class="app-button app-color-green clickable" />
         </div>
     </form>
 </div>

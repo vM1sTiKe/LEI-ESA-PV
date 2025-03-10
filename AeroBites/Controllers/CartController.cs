@@ -62,7 +62,7 @@ namespace AeroBites.Controllers
         /// <summary>
         /// Apaga o carrinho.
         /// </summary>
-        /// <returns>Retorna um status HTTP Ok em caso de sucesso.</returns>
+        /// <returns>Retorna a view de listagem dos restaurantes.</returns>
         public async Task<IActionResult> DeleteCart()
         {
             var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(cart => cart.AccountId == User.GetId());
@@ -73,7 +73,7 @@ namespace AeroBites.Controllers
                 TempData["RequestMessage"] = "Carrinho eliminado.";
             }
             
-            return Ok();
+            return RedirectToAction("Index", "Restaurant");
         }
 
         /// <summary>

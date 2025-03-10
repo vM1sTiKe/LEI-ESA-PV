@@ -13,6 +13,6 @@ namespace AeroBites.Models
 
         public required int CartId { get; set; }
 
-        public required Cart Cart { get; set; }
+        public Cart Cart { get; set; }
     }
 }

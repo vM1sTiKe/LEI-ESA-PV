@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AeroBites.Data;
 using Microsoft.EntityFrameworkCore;
+using AeroBites.Migrations;
 
 namespace AeroBites.Controllers
 {
@@ -42,6 +43,7 @@ namespace AeroBites.Controllers
         public IActionResult Menu(int id)
         {
             var restaurant = _context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.Id == id);
+            ViewBag.Cart = _context.Cart.Include(c => c.Items).FirstOrDefault(cart => cart.AccountId == User.GetId());
             return View(restaurant);
         }
     }

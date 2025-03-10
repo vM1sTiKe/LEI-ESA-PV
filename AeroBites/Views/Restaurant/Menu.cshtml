@@ -55,52 +55,46 @@
                         </svg>
                         <div class ="checkout-items">
                             <h1 class="cart-title">Meu Carrinho</h1>
-                                <div class="checkout-container">
-                                    <span class="lbl-item">Item</span>
-                                    <span class="lbl-remover-item">Remover</span>
+                            <div class="checkout-container">
+                                <span class="lbl-item">Item</span>
+                                <span class="lbl-remover-item">Remover</span>
 
-                                    
-
-                                    <div class="items-inside-popup">
-                                    @{
-                                        var total = 0.0;
+                                <div class="items-inside-popup">
+                                @{
+                                    var total = 0.0;
+                                    if(ViewBag.Cart is not null) {
                                         @foreach (CartItem item in ViewBag.Cart.Items)
                                         {
-                                                <div class="containerrr">
-                                                    <div class="itemssss-name">
-                                                        <span class="item-name-label">@item.Name</span>
-                                                    </div>
-                                                    <div class="itemssss-dlt">
-                                                        <form asp-action="RemoveItem" asp-controller="Cart" asp-route-restaurant="@Model.Id" asp-route-item="@item.Id" style="display: none">
-                                                            <input type="submit" />
-                                                        </form>
-                                                        <div class="icon-delete" onclick='callSiblingSubmit(event)'>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" height="24" width="21" viewBox="0 0 448 512">
-                                                                <path d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z" />
-                                                            </svg>
-                                                        </div>
+                                            <div class="containerrr">
+                                                <div class="itemssss-name">
+                                                    <span class="item-name-label">@item.Name</span>
+                                                </div>
+                                                <div class="itemssss-dlt">
+                                                    <form asp-action="RemoveItem" asp-controller="Cart" asp-route-restaurant="@Model.Id" asp-route-item="@item.Id" style="display: none">
+                                                        <input type="submit" />
+                                                    </form>
+                                                    <div class="icon-delete" onclick='callSiblingSubmit(event)'>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" width="21" viewBox="0 0 448 512">
+                                                            <path d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z" />
+                                                        </svg>
                                                     </div>
                                                 </div>
-                                                total += item.Price;
+                                            </div>
+                                            total += item.Price;
                                         }
                                     }
-                                    </div>
-
-                                    
-
-                                    <span class="cart-total-label">Total:</span>
-                                    <span class="cart-total-price">@total €</span>
-                                    <button class="lbl-payment">Check-Out</button>
-
-                                    
+                                }
                                 </div>
+
+                                <span class="cart-total-label">Total:</span>
+                                <span class="cart-total-price">@total €</span>
+                                <button class="lbl-payment">Check-Out</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </main>
         </div>
-
     </div>
 </div>
 <script>

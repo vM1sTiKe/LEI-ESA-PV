@@ -35,7 +35,12 @@
                                 <img src="~/images/dummy-food-option.jpeg" alt="bebidas" /><br />
                                 <span class="IN">@item.Name</span>
                                 <span class="IP">@item.Price €</span>
-                                <div class="Add-item-to-cart">
+
+                                <form asp-action="AddItem" asp-controller="Cart" asp-route-restaurant="@Model.Id" asp-route-item="@item.Id" style="display: none"> 
+                                    <input type="submit" />
+                                </form>
+
+                                <div class="Add-item-to-cart" onclick='callSiblingSubmit(event)'>
                                     <svg xmlns="http://www.w3.org/2000/svg" height="32" width="28" viewBox="0 0 448 512"><path fill="#77dd77" d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM200 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z" /></svg>
                                 </div>
                             </div>
@@ -52,7 +57,6 @@
                             <h1 class="cart-title">Meu Carrinho</h1>
                                 <div class="checkout-container">
                                     <span class="lbl-item">Item</span>
-                                    <span class="lbl-quantidade">Quantidade</span>
                                     <span class="lbl-remover-item">Remover</span>
 
                                     
@@ -60,19 +64,17 @@
                                     <div class="items-inside-popup">
                                     @{
                                         var total = 0.0;
-                                        @foreach (var category in Model.Categories)
+                                        @foreach (CartItem item in ViewBag.Cart.Items)
                                         {
-                                            foreach (var item in category.Items)
-                                            {
                                                 <div class="containerrr">
                                                     <div class="itemssss-name">
                                                         <span class="item-name-label">@item.Name</span>
                                                     </div>
-                                                    <div class="itemssss-qntt">
-                                                        <span>- 2 +</span>
-                                                    </div>
                                                     <div class="itemssss-dlt">
-                                                        <div class="icon-delete">
+                                                        <form asp-action="RemoveItem" asp-controller="Cart" asp-route-restaurant="@Model.Id" asp-route-item="@item.Id" style="display: none">
+                                                            <input type="submit" />
+                                                        </form>
+                                                        <div class="icon-delete" onclick='callSiblingSubmit(event)'>
                                                             <svg xmlns="http://www.w3.org/2000/svg" height="24" width="21" viewBox="0 0 448 512">
                                                                 <path d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z" />
                                                             </svg>
@@ -80,7 +82,6 @@
                                                     </div>
                                                 </div>
                                                 total += item.Price;
-                                            }
                                         }
                                     }
                                     </div>
@@ -102,6 +103,11 @@
 
     </div>
 </div>
+<script>
+    function callSiblingSubmit(event){
+        event.currentTarget.parentElement.querySelector("form > input").click();
+    }
+</script>
 
 
 

@@ -29,15 +29,18 @@ namespace AeroBites.Controllers
         /// </returns>
         public IActionResult Index()
         {
-            if(User.Identity.IsAuthenticated)
-            {
-                WriteSignInLog(User.GetId());
-                return RedirectToAction(nameof(Index), "Restaurant");
-            }
-
             ViewBag.ClientId = "724687745332-an8kc4k4tpmv15tabt4okv163e4s56mm.apps.googleusercontent.com";
             ViewBag.LoginUri = "http://localhost:7263/account/signin";
             //ViewBag.LoginUri = "https://aerobites.eckle.io/account/signin";
+
+            if (User.Identity.IsAuthenticated)
+            {
+                try {
+                    WriteSignInLog(User.GetId());
+                }
+                catch (Exception) { return View(); }
+                return RedirectToAction(nameof(Index), "Restaurant");
+            }
 
             return View();
         }

@@ -56,8 +56,6 @@ namespace AeroBites.Controllers
             restaurant.Status = Enums.RestaurantStatus.Valid;
             _context.SaveChanges();
 
-            TempData["RequestMessage"] = "Restaurante aprovado!";
-
             return RedirectToAction(nameof(Index));
         }
 

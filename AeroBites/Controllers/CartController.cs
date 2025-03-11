@@ -37,7 +37,7 @@ namespace AeroBites.Controllers
             Item i = this.GetItemsFromRestaurante(restaurant).Find(i => i.Id == item);
             if (i is null) return RedirectToAction("Menu", "Restaurant", new { id = restaurant });
 
-            _context.CartItem.Add(new CartItem { Name = i.Name, Price = i.Price, CartId = MyCart.Id };);
+            _context.CartItem.Add(new CartItem { Name = i.Name, Price = i.Price, CartId = MyCart.Id });
             await _context.SaveChangesAsync();
             
             return RedirectToAction("Menu", "Restaurant", new { id= restaurant });

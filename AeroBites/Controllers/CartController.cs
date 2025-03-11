@@ -2,18 +2,12 @@
 using AeroBites.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.IO;
 
 namespace AeroBites.Controllers
 {
-    public class CartController : Controller
+    public class CartController(AeroBitesContext _context) : Controller
     {
-        private readonly AeroBitesContext _context;
-
-        public CartController(AeroBitesContext context)
-        {
-            _context = context;
-        }
+        private Cart? MyCart => _context.Cart.Include(c => c.Items).FirstOrDefault(cart => cart.AccountId == User.GetId() && cart.Status == Enums.OrderStatus.Choosing);
 
         /// <summary>
         /// Adiciona um item ao carrinho do utilizador. 
@@ -25,61 +19,28 @@ namespace AeroBites.Controllers
         [HttpPost]
         public async Task<IActionResult> AddItem(int item, int restaurant)
         {
-            var restaurante = await _context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefaultAsync(r => r.Id == restaurant);
+            if (this.GetRestaurant(restaurant) is null) return RedirectToAction("Menu", "Restaurant", new { id = restaurant });
 
-            if (restaurante is null)
-            {
-                return RedirectToAction("Menu", "Restaurant", new { id = restaurant });
-            }
-
-            
-
-            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(cart => cart.AccountId == User.GetId());
-            System.Diagnostics.Debug.WriteLine("A");
-            if (cart == null)
-            {
-                System.Diagnostics.Debug.WriteLine("B");
-                cart = CreateNewCart(restaurante.Name);
-                _context.Cart.Add(cart);
+            // No current cart create new
+            if (MyCart == null) {
+                _context.Cart.Add(CreateNewCart(restaurant));
                 await _context.SaveChangesAsync();
             }
-            else if (cart != null && cart.Restaurant != restaurante.Name)
-            {
-                System.Diagnostics.Debug.WriteLine("C");
-                _context.Cart.Remove(cart);
-
-                cart = CreateNewCart(restaurante.Name);
-                _context.Cart.Add(cart);
-
+            // There is a cart but its not from the current restaurant
+            else if (MyCart != null && MyCart.RestaurantId != restaurant) {
+                _context.Cart.Remove(MyCart); // Remove old
+                _context.Cart.Add(CreateNewCart(restaurant)); //Create new on this restaurant
                 await _context.SaveChangesAsync();
             }
 
-            System.Diagnostics.Debug.WriteLine("D");
+            // Get from the items list the item we want to add
+            Item i = this.GetItemsFromRestaurante(restaurant).Find(i => i.Id == item);
+            if (i is null) return RedirectToAction("Menu", "Restaurant", new { id = restaurant });
 
-            CartItem cartItem = null;
-
-            foreach (var category in restaurante.Categories ?? [])
-            {
-                foreach (var catItem in category.Items ?? [])
-                {
-                    if (catItem.Id == item)
-                    {
-                        cartItem = new CartItem { Name = catItem.Name, Price = catItem.Price, CartId = cart.Id };
-                    }
-                }
-            }
-
-            if (cartItem is null)
-            {
-                return RedirectToAction("Menu", "Restaurant", new { id = restaurant });
-            }
-
-            cart.Items.Add(cartItem);
+            _context.CartItem.Add(new CartItem { Name = i.Name, Price = i.Price, CartId = MyCart.Id };);
             await _context.SaveChangesAsync();
-
-            TempData["RequestMessage"] = "Item adicionado.";
             
-            return RedirectToAction("Menu", "Restaurant", new { id=restaurant});
+            return RedirectToAction("Menu", "Restaurant", new { id= restaurant });
         }
 
 
@@ -92,11 +53,9 @@ namespace AeroBites.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveItem (int item, int restaurant)
         {
-            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(cart => cart.AccountId == User.GetId());
             var cartItem = await _context.CartItem.FirstOrDefaultAsync(i => i.Id == item);
 
-            if (cart != null && cartItem != null)
-            {
+            if (MyCart != null && cartItem != null) {
                 _context.CartItem.Remove(cartItem);
                 await _context.SaveChangesAsync();
             }
@@ -110,12 +69,9 @@ namespace AeroBites.Controllers
         /// <returns>Retorna a view de listagem dos restaurantes.</returns>
         public async Task<IActionResult> DeleteCart()
         {
-            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(cart => cart.AccountId == User.GetId());
-            if (cart != null)
-            {
-                _context.Cart.Remove(cart);
+            if (MyCart != null) {
+                _context.Cart.Remove(MyCart);
                 await _context.SaveChangesAsync();
-                TempData["RequestMessage"] = "Carrinho eliminado.";
             }
             
             return RedirectToAction("Index", "Restaurant");
@@ -123,21 +79,40 @@ namespace AeroBites.Controllers
 
         /// <summary>
         /// Cria um novo carrinho para o utilizador, associando-o a um restaurante específico.
+        /// Este método apenas pode ser chamado quando existe a garantia que o restaurante existe.
         /// </summary>
-        /// <param name="restaurantName">O nome do restaurante que será associado ao novo carrinho.</param>
+        /// <param name="restaurantId">O nome do restaurante que será associado ao novo carrinho.</param>
         /// <returns>Retorna o objeto `Cart` criado, pronto para ser salvo no banco de dados.</returns>
-        private Cart CreateNewCart(string restaurantName )
+        private Cart CreateNewCart(int restaurantId)
         {
-            var cart = new Cart
-            {
-                Status = Enums.OrderStatus.Choosing,
-                Restaurant = restaurantName,
-                Address = "Something", //To be changed
-                Items = new List<CartItem>(),
+            var r = this.GetRestaurant(restaurantId) ?? throw new Exception("Invalid cart creation");
+
+            return new Cart {
+                Restaurant = r.Name,
+                RestaurantId = r.Id,
                 AccountId = User.GetId()
             };
+        }
 
-            return cart;
+        /// <summary>
+        /// Retorna o Restaurante que possui o id enviado
+        /// </summary>
+        private Restaurant? GetRestaurant(int restaurantId) {
+            return _context.Restaurant.FirstOrDefault(r => r.Id == restaurantId) ?? null;
+        }
+
+        /// <summary>
+        /// Retorna todos os items do restaurante
+        /// </summary>
+        private List<Item> GetItemsFromRestaurante(int restaurantId) {
+            var r = _context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.Id == restaurantId) ?? null;
+            if (r == null) return [];
+
+            List<Item> items = [];
+            foreach (Category c in r.Categories ?? []) {
+                foreach (Item i in c.Items ?? []) items.Add(i);
+            }
+            return items;
         }
     }
 }

@@ -18,8 +18,5 @@ namespace AeroBites.Models
 
         [Display(Name = "Categoria do Item")]
         public required int CategoryId { get; set; }
-
-        [JsonIgnore]
-        public Category? Category { get; set; }
     }
 }

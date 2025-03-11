@@ -10,17 +10,14 @@ namespace AeroBites.Models
         public int Id { get; set; }
 
         [DefaultValue(Enums.OrderStatus.Choosing)]
-        public required Enums.OrderStatus Status { get; set; }
+        public Enums.OrderStatus Status { get; set; }
 
         public required string Restaurant { get; set; }
 
-        public required string Address { get; set; }
-
-        public DateTime? Delivered { get; set; }
-
         [JsonIgnore]
-        public required List<CartItem> Items { get; set; }
+        public List<CartItem>? Items { get; set; }
 
+        public required int RestaurantId { get; set; }
         public required int AccountId { get; set; }
     }
 }

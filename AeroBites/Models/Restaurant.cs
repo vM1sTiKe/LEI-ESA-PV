@@ -20,7 +20,5 @@ namespace AeroBites.Models
         public List<Category>? Categories { get; set; }
 
         public required int OwnerId { get; set; }
-
-        public Account? Owner { get; set; }
     }
 }

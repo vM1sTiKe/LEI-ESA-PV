@@ -140,7 +140,7 @@ namespace AeroBites.Controllers
         {
             var newLog = new AccountLog
             {
-                signInDateTime = DateTime.Now,
+                SignInDateTime = DateTime.Now,
                 AccountId = userId
             };
 

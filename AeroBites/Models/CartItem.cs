@@ -12,7 +12,5 @@ namespace AeroBites.Models
         public required float Price { get; set; }
 
         public required int CartId { get; set; }
-
-        public Cart Cart { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace AeroBitesTest
         {
             // Configuração inicial
             var options = new DbContextOptionsBuilder<AeroBitesContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .UseInMemoryDatabase(databaseName: "TestDB")
                 .Options;
 
             _context = new AeroBitesContext(options);
@@ -36,8 +36,6 @@ namespace AeroBitesTest
 
             _ownerId = int.Parse(claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
         }
-
-        
 
         [Fact]
         public async Task Create_ShouldCreateRestaurant_WhenValidNameIsProvided()
@@ -63,6 +61,7 @@ namespace AeroBitesTest
         // Limpa a bd após cada teste
         public void Dispose()
         {
+            _context.Database.EnsureDeleted();
             _context.Dispose();
         }
     }

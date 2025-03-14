@@ -204,7 +204,7 @@
             grid-row-end: 3;
             grid-column-end: 4;
         }
-        /* ! Este container está dentro do container checkout-container ! */
+
         .containerrr {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -237,7 +237,7 @@
             justify-content: center;
             white-space: nowrap;
         }
-        /* ! Este container está dentro do container checkout-container ! */
+
         .icon-delete {
             grid-row-start: 2;
             grid-column-start: 1;
@@ -267,12 +267,16 @@
             text-align: center;
         }
 
-        .lbl-payment {
+        .frm-to-payment {
             grid-row-start: 3;
             grid-column-start: 3;
             grid-row-end: 4;
             grid-column-end: 4;
+        }
+
+        .btn-payment {
             width: 70%;
+            height: 80%;
             margin-left: 15%;
             background-color: #77dd77;
             border-radius: 15%;

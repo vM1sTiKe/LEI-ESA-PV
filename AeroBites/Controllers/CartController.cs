@@ -63,6 +63,22 @@ namespace AeroBites.Controllers
             return RedirectToAction("Menu", "Restaurant", new { id = restaurant });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Checkout(int cartId, int restaurantId)
+        {
+            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == cartId && c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing);
+
+            if(cart == null)
+            {
+                return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });
+            }
+
+            cart.Status = Enums.OrderStatus.Placed;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });
+        }
+
         /// <summary>
         /// Apaga o carrinho.
         /// </summary>

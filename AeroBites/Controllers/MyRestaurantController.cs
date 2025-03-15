@@ -117,6 +117,14 @@ namespace AeroBites.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Obtém a lista de carrinhos com o estado "Placed".
+        /// Retorna os carrinhos que foram finalizados, incluindo os respetivos itens.
+        /// </summary>
+        /// <returns>
+        /// Retorna um HTTP 200 (OK) com a lista de carrinhos, 
+        /// ou um HTTP 404 (NotFound) caso não existam carrinhos com este estado.
+        /// </returns>
         public async Task<IActionResult> GetClientOrders()
         {
             var clientOrders = await context.Cart.Include(c => c.Items).Where(c => c.Status == Enums.OrderStatus.Placed).ToListAsync();

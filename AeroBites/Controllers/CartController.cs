@@ -64,13 +64,13 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-    /// Método responsável por realizar o checkout de um carrinho de compras.
-    /// Altera o estado do carrinho de "Choosing" para "Placed" quando o utilizador confirma a escolha.
-    /// Caso o carrinho não seja encontrado ou não esteja no estado "Choosing", redireciona para o menu do restaurante.
-    /// </summary>
-    /// <param name="cartId">ID do carrinho de compras que será alterado.</param>
-    /// <param name="restaurantId">ID do restaurante para o qual o pedido será feito.</param>
-    /// <returns>Redireciona para o menu do restaurante após o checkout ser realizado.</returns>
+        /// Método responsável por realizar o checkout de um carrinho de compras.
+        /// Altera o estado do carrinho de "Choosing" para "Placed" quando o utilizador confirma a escolha.
+        /// Caso o carrinho não seja encontrado ou não esteja no estado "Choosing", redireciona para o menu do restaurante.
+        /// </summary>
+        /// <param name="cartId">ID do carrinho de compras que será alterado.</param>
+        /// <param name="restaurantId">ID do restaurante para o qual o pedido será feito.</param>
+        /// <returns>Redireciona para o menu do restaurante após o checkout ser realizado.</returns>
         [HttpPost]
         public async Task<IActionResult> Checkout(int cartId, int restaurantId)
         {

@@ -127,7 +127,11 @@ namespace AeroBites.Controllers
         /// </returns>
         public async Task<IActionResult> GetClientOrders()
         {
-            var clientOrders = await context.Cart.Include(c => c.Items).Where(c => c.Status == Enums.OrderStatus.Placed).ToListAsync();
+            var clientOrders = await context.Cart
+                .Include(c => c.Items)
+                .Where(c => c.Status == Enums.OrderStatus.Placed || c.Status == Enums.OrderStatus.Preparing)
+                .OrderByDescending(c => c.Status == Enums.OrderStatus.Placed)
+                .ToListAsync();
 
             if (!clientOrders.Any())
             {

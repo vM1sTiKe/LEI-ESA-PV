@@ -116,5 +116,17 @@ namespace AeroBites.Controllers
         public IActionResult Orders() {
             return View();
         }
+
+        public async Task<IActionResult> GetClientOrders()
+        {
+            var clientOrders = await context.Cart.Include(c => c.Items).Where(c => c.Status == Enums.OrderStatus.Placed).ToListAsync();
+
+            if (!clientOrders.Any())
+            {
+                return NotFound(new { message = "Nenhum pedido com status 'Placed' encontrado." });
+            }
+
+            return Ok(clientOrders);
+        }
     }
 }

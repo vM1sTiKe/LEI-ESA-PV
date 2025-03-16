@@ -20,5 +20,7 @@ namespace AeroBites.Models
         public List<Category>? Categories { get; set; }
 
         public required int OwnerId { get; set; }
+
+        public List<Cart>? Orders { get; }
     }
 }

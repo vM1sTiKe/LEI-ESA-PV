@@ -1,4 +1,6 @@
-﻿using AeroBites.Data;
+﻿using System.Collections.Immutable;
+using System.Diagnostics;
+using AeroBites.Data;
 using AeroBites.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +12,7 @@ namespace AeroBites.Controllers
     public class MyRestaurantController(AeroBitesContext context) : Controller
     {
         private Restaurant? MyRestaurant => context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.OwnerId == User.GetId());
+        private IQueryable<Cart>? MyOrders => context.Cart.Where(c => MyRestaurant != null && c.RestaurantId == MyRestaurant.Id);
 
         /// <summary>
         /// Displays the restaurant's home page or redirects to the create page if no restaurant exists.
@@ -118,6 +121,16 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
+        /// Displays the orders history of the restaurant
+        /// </summary>
+        public IActionResult OrdersHistory() {
+            if( MyRestaurant is null ) return RedirectToAction(nameof(Index));
+
+            var any = MyOrders?.Where(o => o.Status > Enums.OrderStatus.Preparing).ToImmutableList() ?? [];
+            Debug.Write(any);
+            return View();
+        }
+        
         /// Obtém a lista de carrinhos com o estado "Placed".
         /// Retorna os carrinhos que foram finalizados, incluindo os respetivos itens.
         /// </summary>

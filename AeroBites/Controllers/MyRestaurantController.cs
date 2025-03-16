@@ -140,5 +140,23 @@ namespace AeroBites.Controllers
 
             return Ok(clientOrders);
         }
+
+        /// <summary>
+        /// Obtém a lista de pedidos que já sairam da loja, ou seja, no estado "OnTheWay" e "Recieved".
+        /// </summary>
+        /// <returns>
+        /// Retorna um status OK com a lista de pedidos ou um status NotFound caso não existam pedidos nessas condições.
+        /// </returns>
+        public async Task<IActionResult> GetOrdersSent()
+        {
+            var orders = await context.Cart.Include(c => c.Items).Where(c => c.Status == Enums.OrderStatus.OnTheWay || c.Status == Enums.OrderStatus.Recieved).OrderBy(c => c.Status == Enums.OrderStatus.OnTheWay).ToListAsync();
+
+            if (!orders.Any())
+            {
+                return NotFound(new { message = "Nenhum pedido com status 'OnTheWay' ou 'Recieved' encontrado." });
+            }
+
+            return Ok(orders);
+        }
     }
 }

@@ -1,0 +1,59 @@
+﻿@model IEnumerable<AeroBites.Models.Cart>;
+
+@{
+    ViewData["Title"] = "Meus pedidos";
+    ViewData["CurrentPage"] = Enums.CurrentPage.MyOrders;
+}
+
+<div class="content-myorders">
+    <nav class="app-tab">
+        <a class="app-tab-action active-tab">Pedidos Atuais</a>
+        <a asp-action="History" class="app-tab-action">Historico</a>
+    </nav>
+
+    <div class="orders">
+        @foreach (var order in new List<int> { 1,33 }) {
+            @* O "data-ready-to-accept" é para ser true quando o pedido está pronto a ser recolhido pelo cliente *@
+            <div class="order" data-ready-to-accept="true" data-expanded="false">
+                <div class="info" onclick="expander_handler(this)">
+                    <span>RestauranteNome&nbsp;&nbsp;&nbsp;&nbsp;<b>Data</b>: @order&nbsp;&nbsp;&nbsp;&nbsp;<b>Total</b>: @order€</span>
+                    @* Se o pedido estiver pronto a recolher vai entrar no if *@
+                    @if(true) {
+                        <button class="app-button save clickable" onclick="submit_form(this)">Recolher</button>
+                        <form asp-action="AAAAAAA" asp-controller="AAA" asp-route-restaurant="" asp-route-item="" style="display: none"><input type="submit" /></form>
+                    }
+                    <i class="arrow"></i>
+                </div>
+                <div class="details">
+                    <div class="products">
+                        <b>Produtos</b>
+                        <ul>
+                            @foreach (var item in new List<int> { 1, 2, 3 }) {
+                                <li>@item&nbsp;&nbsp;&nbsp;&nbsp;@item€</li>
+                            }
+                        </ul>
+                    </div>
+                    <div>
+                        Other details to be here (delivery address)
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function submit_form(element) {
+        element.parentElement.querySelector("form > input").click()
+    }
+
+    function expander_handler(element) {
+        const div = element.parentElement
+        const is_expanded = div.getAttribute("data-expanded") == "true"
+        div.setAttribute("data-expanded", !is_expanded)
+    }
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

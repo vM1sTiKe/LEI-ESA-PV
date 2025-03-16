@@ -64,6 +64,73 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
+        /// Método responsável por realizar o checkout de um carrinho de compras.
+        /// Altera o estado do carrinho de "Choosing" para "Placed" quando o utilizador confirma a escolha.
+        /// Caso o carrinho não seja encontrado ou não esteja no estado "Choosing", redireciona para o menu do restaurante.
+        /// </summary>
+        /// <param name="cartId">ID do carrinho de compras que será alterado.</param>
+        /// <param name="restaurantId">ID do restaurante para o qual o pedido será feito.</param>
+        /// <returns>Redireciona para o menu do restaurante após o checkout ser realizado.</returns>
+        [HttpPost]
+        public async Task<IActionResult> Checkout(int cartId, int restaurantId)
+        {
+            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == cartId && c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing);
+
+            if(cart == null)
+            {
+                return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });
+            }
+
+            cart.Status = Enums.OrderStatus.Placed;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });
+        }
+
+        /// <summary>
+        /// Método responsável por alterar o estado do pedido passando de "Placed" para "Preparing".
+        /// </summary>
+        /// <param name="cartId">Id do carrinho.</param>
+        /// <returns>Retorna um status OK se o estado for alterado com sucesso ou erro em caso contrário.</returns>
+        [HttpPost]
+        public async Task<IActionResult> PrepareOrder(int cartId)
+        {
+            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == cartId && c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Placed);
+
+            if (cart == null)
+            {
+                return BadRequest();
+            }
+
+            cart.Status = Enums.OrderStatus.Preparing;
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Método responsável por enviar o pedido de um carrinho de compras, alterando o estado de "Preparing" para "OnTheWay".
+        /// Se o carrinho não for encontrado ou não estiver no estado "Preparing", o método retorna um erro.
+        /// </summary>
+        /// <param name="cartId">ID do carrinho de compras que será enviado.</param>
+        /// <returns>Retorna um status OK se o pedido for enviado com sucesso ou um erro caso contrário.</returns>
+        [HttpPost]
+        public async Task<IActionResult> SendOrder(int cartId)
+        {
+            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == cartId && c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Preparing);
+
+            if (cart == null)
+            {
+                return BadRequest();
+            }
+
+            cart.Status = Enums.OrderStatus.OnTheWay;
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        /// <summary>
         /// Apaga o carrinho.
         /// </summary>
         /// <returns>Retorna a view de listagem dos restaurantes.</returns>

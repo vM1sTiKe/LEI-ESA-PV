@@ -1,6 +1,6 @@
 ﻿main.app-content > div.content-myorders {
 
-    > div.orders > div.order[data-ready-to-accept="true"] > div.info {
+    > div.orders > div.order[data-ready-to-accept="True"] > div.info {
         background: #7d7;
     }
 
@@ -34,6 +34,10 @@
                 justify-content: space-between;
                 cursor: pointer;
                 user-select: none;
+
+                > button {
+                    height: 23px;
+                }
 
                 > i.arrow {
                     border: solid #000;

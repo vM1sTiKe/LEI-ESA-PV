@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Diagnostics;
-using AeroBites.Data;
+﻿using AeroBites.Data;
 using AeroBites.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -111,21 +109,16 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Displays the orders page for the restaurant.
+        /// Retorna a view com a listagem dos pedidos atuais que o meu restaurante recebeu.
         /// </summary>
-        /// <returns>
-        /// The orders view for the restaurant.
-        /// </returns>
-        public async Task<IActionResult> Orders() {
+        public IActionResult Orders() {
             if (MyRestaurant is null) return RedirectToAction(nameof(Index));
 
-            var orders = await context.Cart
-                .Include(c => c.Items)
-                .Where(c => c.RestaurantId == MyRestaurant.Id && (c.Status == Enums.OrderStatus.Placed || c.Status == Enums.OrderStatus.Preparing))
-                .OrderBy(c => c.Status)
-                .ToListAsync();
+            var current_orders = MyOrders?.Include(c => c.Items)
+                .Where(c => c.Status >= Enums.OrderStatus.Placed && c.Status <= Enums.OrderStatus.Preparing)
+                .OrderByDescending(c => c.Status).ToList() ?? [];
 
-            return View(orders);
+            return View(current_orders);
         }
 
         /// <summary>
@@ -134,52 +127,14 @@ namespace AeroBites.Controllers
         public IActionResult OrdersHistory() {
             if( MyRestaurant is null ) return RedirectToAction(nameof(Index));
 
-            var any = MyOrders?.Where(o => o.Status > Enums.OrderStatus.Preparing).ToImmutableList() ?? [];
-            Debug.Write(any);
+            var any = MyOrders?.Where(o => o.Status > Enums.OrderStatus.Preparing).ToList() ?? [];
             return View();
-        }
-        
-        /// Obtém a lista de carrinhos com o estado "Placed".
-        /// Retorna os carrinhos que foram finalizados, incluindo os respetivos itens.
-        /// </summary>
-        /// <returns>
-        /// Retorna um HTTP 200 (OK) com a lista de carrinhos, 
-        /// ou um HTTP 404 (NotFound) caso não existam carrinhos com este estado.
-        /// </returns>
-        public async Task<IActionResult> GetClientOrders()
-        {
-            var clientOrders = await context.Cart
-                .Include(c => c.Items)
-                .Where(c => c.Status == Enums.OrderStatus.Placed || c.Status == Enums.OrderStatus.Preparing)
-                .OrderByDescending(c => c.Status == Enums.OrderStatus.Placed)
-                .ToListAsync();
-
-            if (!clientOrders.Any())
-            {
-                return NotFound(new { message = "Nenhum pedido com status 'Placed' encontrado." });
-            }
-
-            return Ok(clientOrders);
         }
 
         /// <summary>
-        /// Obtém a lista de pedidos que já sairam da loja, ou seja, no estado "OnTheWay" e "Recieved".
+        /// Coloca o pedido recebido com o estado de "Preparando"
         /// </summary>
-        /// <returns>
-        /// Retorna um status OK com a lista de pedidos ou um status NotFound caso não existam pedidos nessas condições.
-        /// </returns>
-        public async Task<IActionResult> GetOrdersSent()
-        {
-            var orders = await context.Cart.Include(c => c.Items).Where(c => c.Status == Enums.OrderStatus.OnTheWay || c.Status == Enums.OrderStatus.Recieved).OrderBy(c => c.Status == Enums.OrderStatus.OnTheWay).ToListAsync();
-
-            if (!orders.Any())
-            {
-                return NotFound(new { message = "Nenhum pedido com status 'OnTheWay' ou 'Recieved' encontrado." });
-            }
-
-            return Ok(orders);
-        }
-
+        [HttpPost]
         public async Task<IActionResult> StartPreparing(int orderId)
         {
             var order = await context.Cart.FindAsync(orderId);
@@ -191,6 +146,10 @@ namespace AeroBites.Controllers
             return RedirectToAction(nameof(Orders));
         }
 
+        /// <summary>
+        /// Coloca o pedido recebido com o estado de "Enviado"
+        /// </summary>
+        [HttpPost]
         public async Task<IActionResult> SendOrder(int orderId)
         {
             var order = await context.Cart.FindAsync(orderId);

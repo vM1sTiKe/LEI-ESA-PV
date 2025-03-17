@@ -7,7 +7,7 @@ namespace AeroBites.Controllers
 {
     public class CartController(AeroBitesContext _context) : Controller
     {
-        private Cart? MyCart => _context.Cart.Include(c => c.Items).FirstOrDefault(cart => cart.AccountId == User.GetId() && cart.Status == Enums.OrderStatus.Choosing);
+        private Cart? MyCart => _context.Cart.Where(c => c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing).First();
 
         /// <summary>
         /// Adiciona um item ao carrinho do utilizador. 
@@ -22,12 +22,12 @@ namespace AeroBites.Controllers
             if (this.GetRestaurant(restaurant) is null) return RedirectToAction("Menu", "Restaurant", new { id = restaurant });
 
             // No current cart create new
-            if (MyCart == null) {
+            if (MyCart is null) {
                 _context.Cart.Add(CreateNewCart(restaurant));
                 await _context.SaveChangesAsync();
             }
             // There is a cart but its not from the current restaurant
-            else if (MyCart != null && MyCart.RestaurantId != restaurant) {
+            else if (MyCart.RestaurantId != restaurant) {
                 _context.Cart.Remove(MyCart); // Remove old
                 _context.Cart.Add(CreateNewCart(restaurant)); //Create new on this restaurant
                 await _context.SaveChangesAsync();

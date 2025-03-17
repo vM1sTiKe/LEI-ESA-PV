@@ -64,11 +64,11 @@
                 <span class="lbl-total-price">Total do Pedido</span>
                 <div class="price-info-container">
                     <span class="lbl-subtotal">Subtotal</span>
-                    <span class="subtotal-euros">@Model.Items?.Sum(i => i.Price)€</span>
+                    <span class="subtotal-euros">@Model.Items?.Sum(i => i.Price).ToString("N2")€</span>
                     <span class="lbl-entrega">Entrega</span>
                     <span class="entrega-euros">00.00€</span>
                     <span class="lbl-total">Total</span>
-                    <span class="total-euros">@((Model.Items?.Sum(i => i.Price) ?? 0) + 00.00)€</span>
+                    <span class="total-euros">@Model.Items?.Sum(i => i.Price).ToString("N2")€</span>
                 </div>
                     
                 <form asp-action="Preparing" asp-route-cartId="@Model.Id" asp-route-restaurantId="@ViewBag.RestaurantId" class="confirm-payment">

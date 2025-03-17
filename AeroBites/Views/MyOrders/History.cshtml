@@ -15,7 +15,7 @@
         @foreach (var order in Model) {
             <div class="order" data-expanded="false">
                 <div class="info" onclick="expander_handler(this)">
-                    <span>@order.Restaurant&nbsp;&nbsp;&nbsp;&nbsp;<b>Data</b>: @order.PlacedDate&nbsp;&nbsp;&nbsp;&nbsp;<b>Total</b>: @order.TotalPrice€</span>
+                    <span>@order.Restaurant&nbsp;&nbsp;&nbsp;&nbsp;<b>Data</b>: @order.PlacedDate&nbsp;&nbsp;&nbsp;&nbsp;<b>Total</b>: @order.TotalPrice.ToString("N2")€</span>
                     <i class="arrow"></i>
                 </div>
                 <div class="details">
@@ -23,7 +23,7 @@
                         <b>Produtos</b>
                         <ul>
                             @foreach (var item in order.Items ?? []) {
-                                <li>@item.Name&nbsp;&nbsp;&nbsp;&nbsp;@item.Price€</li>
+                                <li>@item.Name&nbsp;&nbsp;&nbsp;&nbsp;@item.Price.ToString("N2")€</li>
                             }
                         </ul>
                     </div>

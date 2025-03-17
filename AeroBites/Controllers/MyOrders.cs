@@ -39,7 +39,7 @@ namespace AeroBites.Controllers
         /// </summary>
         /// <param name="orderId">Id do pedido</param>
         [HttpPost]
-        public async Task<IActionResult> AcceptOrder(int orderId) {
+        public async Task<IActionResult> RecieveOrder(int orderId) {
             if (Orders == null) { return RedirectToAction(nameof(Index)); }
 
             var orders = await Orders.ToListAsync();
@@ -49,7 +49,7 @@ namespace AeroBites.Controllers
             if( thisOrder.Status != Enums.OrderStatus.Waiting ) return RedirectToAction(nameof(Index));
 
             thisOrder.Status = Enums.OrderStatus.Recieved;
-            context.Update(thisOrder);
+            context.Cart.Update(thisOrder);
             await context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));

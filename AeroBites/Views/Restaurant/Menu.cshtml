@@ -88,10 +88,7 @@
 
                                 <span class="cart-total-label">Total:</span>
                                 <span class="cart-total-price">@total €</span>
-                                <form class="frm-to-payment" asp-controller="Payment" asp-action="Checkout" method="get">
-                                    <button type="submit" class="btn-payment">Check-Out</button>
-                                </form>
-                                
+                                <a asp-controller="Checkout" asp-action="" class="btn-payment frm-to-payment">Check-Out</a>
                             </div>
                         </div>
                     </div>

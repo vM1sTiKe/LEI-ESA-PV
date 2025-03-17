@@ -7,7 +7,7 @@ namespace AeroBites.Controllers
 {
     public class CartController(AeroBitesContext _context) : Controller
     {
-        private Cart? MyCart => _context.Cart.Where(c => c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing).First();
+        private Cart? MyCart => _context.Cart.Where(c => c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing).FirstOrDefault();
 
         /// <summary>
         /// Adiciona um item ao carrinho do utilizador. 
@@ -61,31 +61,6 @@ namespace AeroBites.Controllers
             }
 
             return RedirectToAction("Menu", "Restaurant", new { id = restaurant });
-        }
-
-        /// <summary>
-        /// Método responsável por realizar o checkout de um carrinho de compras.
-        /// Altera o estado do carrinho de "Choosing" para "Placed" quando o utilizador confirma a escolha.
-        /// Caso o carrinho não seja encontrado ou não esteja no estado "Choosing", redireciona para o menu do restaurante.
-        /// </summary>
-        /// <param name="cartId">ID do carrinho de compras que será alterado.</param>
-        /// <param name="restaurantId">ID do restaurante para o qual o pedido será feito.</param>
-        /// <returns>Redireciona para o menu do restaurante após o checkout ser realizado.</returns>
-        [HttpPost]
-        public async Task<IActionResult> Checkout(int cartId, int restaurantId)
-        {
-            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == cartId && c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing);
-
-            if(cart == null)
-            {
-                return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });
-            }
-
-            cart.Status = Enums.OrderStatus.Placed;
-            cart.PlacedDate = new DateOnly();
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });
         }
 
         /// <summary>

@@ -21,5 +21,7 @@ namespace AeroBites.Models
         public required int AccountId { get; set; }
 
         public DateOnly PlacedDate { get; set; }
+        public float TotalPrice { get; set; }
+
     }
 }

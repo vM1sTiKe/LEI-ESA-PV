@@ -42,7 +42,14 @@ namespace AeroBites.Controllers
                 return RedirectToAction("Index", "Restaurant");
             }
 
+            float total_price = 0f;
+            // For everyitem go calculate the total price of the order
+            foreach(var item in cart.Items ?? []){
+                total_price += item.Price;
+            }
+
             cart.Status = Enums.OrderStatus.Placed;
+            cart.TotalPrice = total_price;
             cart.PlacedDate = DateOnly.FromDateTime(DateTime.Now);
             context.Cart.Update(cart);
             await context.SaveChangesAsync();

@@ -19,5 +19,7 @@ namespace AeroBites.Models
 
         public required int RestaurantId { get; set; }
         public required int AccountId { get; set; }
+
+        public DateOnly PlacedDate { get; set; }
     }
 }

@@ -82,6 +82,7 @@ namespace AeroBites.Controllers
             }
 
             cart.Status = Enums.OrderStatus.Placed;
+            cart.PlacedDate = new DateOnly();
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });

@@ -116,8 +116,16 @@ namespace AeroBites.Controllers
         /// <returns>
         /// The orders view for the restaurant.
         /// </returns>
-        public IActionResult Orders() {
-            return View();
+        public async Task<IActionResult> Orders() {
+            if (MyRestaurant is null) return RedirectToAction(nameof(Index));
+
+            var orders = await context.Cart
+                .Include(c => c.Items)
+                .Where(c => c.RestaurantId == MyRestaurant.Id && (c.Status == Enums.OrderStatus.Placed || c.Status == Enums.OrderStatus.Preparing))
+                .OrderBy(c => c.Status)
+                .ToListAsync();
+
+            return View(orders);
         }
 
         /// <summary>
@@ -170,6 +178,28 @@ namespace AeroBites.Controllers
             }
 
             return Ok(orders);
+        }
+
+        public async Task<IActionResult> StartPreparing(int orderId)
+        {
+            var order = await context.Cart.FindAsync(orderId);
+            if (order == null) return NotFound();
+
+            order.Status = Enums.OrderStatus.Preparing;
+            await context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Orders));
+        }
+
+        public async Task<IActionResult> SendOrder(int orderId)
+        {
+            var order = await context.Cart.FindAsync(orderId);
+            if (order == null) return NotFound();
+
+            order.Status = Enums.OrderStatus.OnTheWay;
+            await context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Orders));
         }
     }
 }

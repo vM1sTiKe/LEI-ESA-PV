@@ -8,7 +8,7 @@
     <!--Left Side-->
     <div class="checkout-grid-container">
         <span class="lbl-checkout">Checkout</span>
-        <form asp-controller="Restaurant" asp-action="Menu" method="get">
+        <form class="go-back" asp-controller="Restaurant" asp-action="Menu" method="get">
             <input type="hidden" name="id" value="@ViewBag.RestaurantId" />
             <button class="btn-back">Voltar</button>
         </form>
@@ -44,6 +44,26 @@
         <!--Right Side-->
         <div class="client-order">
             <div class="client-order-container">
+                <span class="lbl-order-info">Resumo do Pedido</span>
+                @{
+                    if (Model.Items != null && Model.Items.Any())
+                    {
+                        <div class="form-items-resume">
+                            @foreach (var item in Model.Items)
+                            {
+
+                                <span>@item.Name</span>
+
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p>O carrinho está vazio.</p>
+                    }
+
+                }
+
                 <span class="lbl-total-price">Total do Pedido</span>
                 <div class="price-info-container">
                     <span class="lbl-subtotal">Subtotal</span>
@@ -53,26 +73,8 @@
                     <span class="lbl-total">Total</span>
                     <span class="total-euros">@((Model.Items?.Sum(i => i.Price) ?? 0) + 00.00)€</span>
                 </div>
-                <span class="lbl-order-info">Resumo do Pedido</span>
-                @{
-                    if(Model.Items != null && Model.Items.Any()) 
-                    {
-                        <div class="form-items-resume">
-                        @foreach (var item in Model.Items) 
-                        {
-                            
-                                <span>@item.Name</span>
-                            
-                        }
-                        </div>
-                    }
-                    else {
-                        <p>O carrinho está vazio.</p>
-                    }
                     
-                }    
-
-                <form class="confirm-payment">
+                <form asp-controller="Payment" asp-action="PrepareOrder" class="confirm-payment">
                     <button class="btn-confirm-payment">PAGAMENTO</button>
                 </form>
             </div>

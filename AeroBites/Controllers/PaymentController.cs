@@ -31,5 +31,10 @@ namespace AeroBites.Controllers
 
             return View(cart);
         }
+
+        public IActionResult PrepareOrder()
+        {
+            return View();
+        }
     }
 }

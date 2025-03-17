@@ -1,4 +1,4 @@
-﻿@model AeroBites.Models.Restaurant;
+﻿@model List<AeroBites.Models.Cart>;
 
 @{
     ViewData["Title"] = "Meu Restaurante";
@@ -19,18 +19,18 @@
     </div>
 
     <div class="history">
-        @foreach(var order in new List<int>{1}) {
+        @foreach(var order in Model) {
             <div class="order" data-expanded="false">
                 <div class="info" onclick="expander_handler(this)">
-                    <span><b>Data</b>: @order&nbsp;&nbsp;&nbsp;&nbsp;<b>Total</b>: @order€</span>
+                    <span><b>Data</b>: @order.PlacedDate&nbsp;&nbsp;&nbsp;&nbsp;<b>Total</b>: @order.TotalPrice€</span>
                     <i class="arrow"></i>
                 </div>
                 <div class="details">
                     <div class="products">
                         <b>Produtos</b>
                         <ul>
-                            @foreach(var item in new List<int>{1,2 ,3}) {
-                                <li>@item&nbsp;&nbsp;&nbsp;&nbsp;@item€</li>
+                            @foreach(var item in order.Items ?? []) {
+                                <li>@item.Name&nbsp;&nbsp;&nbsp;&nbsp;@item.Price€</li>
                             }
                         </ul>
                     </div>

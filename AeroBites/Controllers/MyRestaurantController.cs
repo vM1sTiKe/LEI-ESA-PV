@@ -122,13 +122,15 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Displays the orders history of the restaurant
+        /// Retorna a view com a listagem dos pedidos historico que o meu restaurante recebeu
         /// </summary>
         public IActionResult OrdersHistory() {
             if( MyRestaurant is null ) return RedirectToAction(nameof(Index));
 
-            var any = MyOrders?.Where(o => o.Status > Enums.OrderStatus.Preparing).ToList() ?? [];
-            return View();
+            var history = MyOrders?.Include(c => c.Items)
+                .Where(o => o.Status >= Enums.OrderStatus.OnTheWay).ToList() ?? [];
+
+            return View(history);
         }
 
         /// <summary>

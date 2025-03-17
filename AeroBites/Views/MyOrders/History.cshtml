@@ -12,30 +12,26 @@
     </nav>
 
     <div class="orders">
-        @{
-            var total_price = 0.0;
-            @foreach (var order in Model) {
-                <div class="order" data-expanded="false">
-                    <div class="info" onclick="expander_handler(this)">
-                        <span>@order.Restaurant&nbsp;&nbsp;&nbsp;&nbsp;<b>Data</b>: @order.PlacedDate&nbsp;&nbsp;&nbsp;&nbsp;<b>Total</b>: @total_price€</span>
-                        <i class="arrow"></i>
+        @foreach (var order in Model) {
+            <div class="order" data-expanded="false">
+                <div class="info" onclick="expander_handler(this)">
+                    <span>@order.Restaurant&nbsp;&nbsp;&nbsp;&nbsp;<b>Data</b>: @order.PlacedDate&nbsp;&nbsp;&nbsp;&nbsp;<b>Total</b>: @order.TotalPrice€</span>
+                    <i class="arrow"></i>
+                </div>
+                <div class="details">
+                    <div class="products">
+                        <b>Produtos</b>
+                        <ul>
+                            @foreach (var item in order.Items ?? []) {
+                                <li>@item.Name&nbsp;&nbsp;&nbsp;&nbsp;@item.Price€</li>
+                            }
+                        </ul>
                     </div>
-                    <div class="details">
-                        <div class="products">
-                            <b>Produtos</b>
-                            <ul>
-                                @foreach (var item in order.Items ?? []) {
-                                    total_price += item.Price;
-                                    <li>@item.Name&nbsp;&nbsp;&nbsp;&nbsp;@item.Price€</li>
-                                }
-                            </ul>
-                        </div>
-                        <div>
-                            Other details to be here (delivery address)
-                        </div>
+                    <div>
+                        Other details to be here (delivery address)
                     </div>
                 </div>
-            }
+            </div>
         }
     </div>
 </div>

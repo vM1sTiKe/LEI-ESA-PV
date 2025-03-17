@@ -8,10 +8,7 @@
     <!--Left Side-->
     <div class="checkout-grid-container">
         <span class="lbl-checkout">Checkout</span>
-        <form class="go-back" asp-controller="Restaurant" asp-action="Menu" method="get">
-            <input type="hidden" name="id" value="@ViewBag.RestaurantId" />
-            <button class="btn-back">Voltar</button>
-        </form>
+        <a asp-controller="Restaurant" asp-action="Menu" asp-route-id="@ViewBag.RestaurantId" class="go-back btn-back">Voltar</a>
         <div class="personal-info">
             <div class="personal-info-container">
                 <div class="address-info">
@@ -74,8 +71,8 @@
                     <span class="total-euros">@((Model.Items?.Sum(i => i.Price) ?? 0) + 00.00)€</span>
                 </div>
                     
-                <form asp-controller="Payment" asp-action="PrepareOrder" class="confirm-payment">
-                    <button class="btn-confirm-payment">PAGAMENTO</button>
+                <form asp-action="Preparing" asp-route-cartId="@Model.Id" asp-route-restaurantId="@ViewBag.RestaurantId" class="confirm-payment">
+                    <button class="btn-confirm-payment">Pagar</button>
                 </form>
             </div>
         </div>

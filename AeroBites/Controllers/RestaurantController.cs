@@ -1,26 +1,13 @@
-﻿using AeroBites.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AeroBites.Data;
 using Microsoft.EntityFrameworkCore;
-using AeroBites.Migrations;
 
 namespace AeroBites.Controllers
 {
     [Authorize]
-    public class RestaurantController : Controller
+    public class RestaurantController(AeroBitesContext context) : Controller
     {
-        private readonly AeroBitesContext _context;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RestaurantController"/> class.
-        /// </summary>
-        /// <param name="context">The database context used to access restaurant-related data.</param>
-        public RestaurantController(AeroBitesContext context)
-        {
-            _context = context;
-        }
-
         /// <summary>
         /// Displays a list of valid restaurants that are currently available.
         /// Filters out restaurants that are not validated yet.
@@ -29,7 +16,7 @@ namespace AeroBites.Controllers
         /// A view with a list of valid restaurants.
         /// </returns>
         public IActionResult Index() {
-            var restaurants = _context.Restaurant.Where(restaurant => restaurant.Status == Enums.RestaurantStatus.Valid).ToList();
+            var restaurants = context.Restaurant.Where(restaurant => restaurant.Status == Enums.RestaurantStatus.Valid).ToList();
             return View(restaurants);
         }
 
@@ -42,8 +29,8 @@ namespace AeroBites.Controllers
         /// </returns>
         public IActionResult Menu(int id)
         {
-            var restaurant = _context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.Id == id);
-            ViewBag.Cart = _context.Cart.Include(c => c.Items).FirstOrDefault(cart => cart.AccountId == User.GetId());
+            var restaurant = context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.Id == id);
+            ViewBag.Cart = context.Cart.Include(c => c.Items).Where(c => c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing).FirstOrDefault();
             return View(restaurant);
         }
     }

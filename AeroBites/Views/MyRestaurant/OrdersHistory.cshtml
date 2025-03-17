@@ -1,0 +1,57 @@
+﻿@model AeroBites.Models.Restaurant;
+
+@{
+    ViewData["Title"] = "Meu Restaurante";
+    ViewData["CurrentPage"] = Enums.CurrentPage.MyRestaurant;
+}
+
+<div class="content-myrestaurant myrestaurant-history-orders">
+    <div class="actions">
+        <nav class="app-tab">
+            <a asp-action="" class="app-tab-action">Geral</a>
+            <a asp-action="Items" class="app-tab-action">Produtos</a>
+            <a class="app-tab-action active-tab">Pedidos</a>
+        </nav>
+        <nav class="app-tab">
+            <a asp-action="Orders" class="app-tab-action">Pedidos</a>
+            <a class="app-tab-action active-tab">Histórico</a>
+        </nav>
+    </div>
+
+    <div class="history">
+        @foreach(var order in new List<int>{1}) {
+            <div class="order" data-expanded="false">
+                <div class="info" onclick="expander_handler(this)">
+                    <span><b>Data</b>: @order&nbsp;&nbsp;&nbsp;&nbsp;<b>Total</b>: @order€</span>
+                    <i class="arrow"></i>
+                </div>
+                <div class="details">
+                    <div class="products">
+                        <b>Produtos</b>
+                        <ul>
+                            @foreach(var item in new List<int>{1,2 ,3}) {
+                                <li>@item&nbsp;&nbsp;&nbsp;&nbsp;@item€</li>
+                            }
+                        </ul>
+                    </div>
+                    <div>
+                        Other details to be here (delivery address)
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    
+</div>
+
+<script>
+    function expander_handler(element) {
+        const div = element.parentElement
+        const is_expanded = div.getAttribute("data-expanded") == "true"
+        div.setAttribute("data-expanded", !is_expanded)
+    }
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

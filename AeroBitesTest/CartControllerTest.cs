@@ -124,6 +124,10 @@ namespace AeroBitesTest
             Assert.Equal("Choosing", cart.Status.ToString());
             var result = await _controllerCheck.SendOrder(cart.Id, cart.RestaurantId);
             Assert.Equal("Placed", cart.Status.ToString());
+
+            var redirectResult = result as RedirectToActionResult;
+            Assert.NotNull(redirectResult);
+            Assert.Equal("Preparing", redirectResult.ActionName);
         }
 
         [Fact]
@@ -136,6 +140,10 @@ namespace AeroBitesTest
             Assert.Equal("Placed", cart.Status.ToString());
             var result = await _controllerRest.StartPreparing(cart.Id);
             Assert.Equal("Preparing", cart.Status.ToString());
+
+            var redirectResult = result as RedirectToActionResult;
+            Assert.NotNull(redirectResult);
+            Assert.Equal("Orders", redirectResult.ActionName);
         }
 
         [Fact]
@@ -148,6 +156,10 @@ namespace AeroBitesTest
             Assert.Equal("Preparing", cart.Status.ToString());
             var result = await _controllerRest.SendOrder(cart.Id);
             Assert.Equal("OnTheWay", cart.Status.ToString());
+
+            var redirectResult = result as RedirectToActionResult;
+            Assert.NotNull(redirectResult);
+            Assert.Equal("Orders", redirectResult.ActionName);
         }
 
         public void Dispose()

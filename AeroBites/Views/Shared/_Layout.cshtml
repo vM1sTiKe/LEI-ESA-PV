@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>@ViewData["Title"]</title>
         <link rel="stylesheet" href="~/css/main.min.css" asp-append-version="true" />
+        <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
         @* Icons - https://fontawesome.com/icons *@
     </head>
     <body>
@@ -54,6 +55,46 @@
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
-        @await RenderSectionAsync("Scripts", required: false)
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+        <script type="text/javascript">
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "0",
+                "hideDuration": "0",
+                "timeOut": "5000",
+                "extendedTimeOut": "5000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+
+            var successMessage = '@TempData["successMessage"]';
+            var errorMessage = '@TempData["errorMessage"]';
+            var infoMessage = '@TempData["infoMessage"]';
+            var warningMessage = '@TempData["warningMessage"]';
+
+            if (successMessage) {
+                toastr.success(successMessage, "Sucesso");
+            }
+            if (errorMessage) {
+                toastr.error(errorMessage, "Erro");
+            }
+            if (infoMessage) {
+                toastr.info(infoMessage, "Informação");
+            }
+            if (warningMessage) {
+                toastr.warning(warningMessage, "Aviso");
+            }
+        </script>
+
+        @await RenderSectionAsync("Scripts", required: false)       
     </body>    
 </html>

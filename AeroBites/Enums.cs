@@ -37,5 +37,16 @@
             Waiting,
             Recieved
         }
+
+        /// <summary>
+        /// Represents the different messages types.
+        /// </summary>
+        public enum MessageType
+        {
+            successMessage,
+            errorMessage,
+            infoMessage,
+            warningMessage
+        }
     }
 }

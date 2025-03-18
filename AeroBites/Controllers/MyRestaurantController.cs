@@ -48,6 +48,7 @@ namespace AeroBites.Controllers
             restaurant.OwnerId = User.GetId();
             context.Add(restaurant);
             await context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Reviewing));
         }
 

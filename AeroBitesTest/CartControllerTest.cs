@@ -12,6 +12,7 @@ namespace AeroBitesTest
     {
         private readonly AeroBitesContext _context;
         private readonly CartController _controller;
+        private readonly CheckoutController _controllerCheck;
         private readonly int _userId;
         private readonly int _restaurantId;
         private readonly Item _item;
@@ -24,12 +25,18 @@ namespace AeroBitesTest
 
             _context = new AeroBitesContext(options);
             _controller = new CartController(_context);
+            _controllerCheck = new CheckoutController(_context);
 
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "1") };
             var identity = new ClaimsIdentity(claims, "Cookies");
             var principal = new ClaimsPrincipal(identity);
 
             _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = principal }
+            };
+
+            _controllerCheck.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext { User = principal }
             };
@@ -99,6 +106,42 @@ namespace AeroBitesTest
             Assert.NotNull(redirectResult);
             Assert.Equal("Menu", redirectResult.ActionName);
             Assert.Equal("Restaurant", redirectResult.ControllerName);
+        }
+
+        [Fact]
+        public async Task PlaceOrder()
+        {
+            await this.AddItem_ShouldAddItemToCart_WhenValidIdsAreProvided();
+
+            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.AccountId == _userId && c.RestaurantId == _restaurantId && c.Status.ToString() == "Choosing");
+            
+            Assert.Equal("Choosing", cart.Status.ToString());
+            var result = await _controllerCheck.Preparing(cart.Id, cart.RestaurantId);
+            Assert.Equal("Placed", cart.Status.ToString());
+        }
+
+        [Fact]
+        public async Task PrepareOrder()
+        {
+            await this.PlaceOrder();
+
+            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.AccountId == _userId && c.RestaurantId == _restaurantId && c.Status.ToString() == "Placed");
+            
+            Assert.Equal("Placed", cart.Status.ToString());
+            var result = await _controller.PrepareOrder(cart.Id);
+            Assert.Equal("Preparing", cart.Status.ToString());
+        }
+
+        [Fact]
+        public async Task SendOrder()
+        {
+            await this.PrepareOrder();
+
+            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.AccountId == _userId && c.RestaurantId == _restaurantId && c.Status.ToString() == "Preparing");
+
+            Assert.Equal("Preparing", cart.Status.ToString());
+            var result = await _controller.SendOrder(cart.Id);
+            Assert.Equal("OnTheWay", cart.Status.ToString());
         }
 
         public void Dispose()

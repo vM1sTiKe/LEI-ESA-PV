@@ -10,7 +10,9 @@ namespace AeroBites.Controllers
         private IQueryable<Cart>? Orders => context.Cart.Include(c => c.Items).Where(c => c.AccountId == User.GetId());
 
         /// <summary>
-        /// Obtem a lista de pedidos que o cliente realizou. Os pedidos retornados são todos que o cliente pagou por até aos que estão à espera de serem recolhidos
+        /// Obtem a lista de pedidos que o cliente realizou. 
+        /// Os pedidos retornados são todos que o cliente pagou por até aos que 
+        /// estão à espera de serem recolhidos
         /// </summary>
         public async Task<IActionResult> Index() {
             if (Orders == null) { return View(new List<Cart>());}

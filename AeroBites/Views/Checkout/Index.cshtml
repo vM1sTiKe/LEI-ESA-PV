@@ -71,7 +71,7 @@
                     <span class="total-euros">@Model.Items?.Sum(i => i.Price).ToString("N2")€</span>
                 </div>
                     
-                <form asp-action="Preparing" asp-route-cartId="@Model.Id" asp-route-restaurantId="@ViewBag.RestaurantId" class="confirm-payment">
+                <form asp-action="SendOrder" asp-route-cartId="@Model.Id" asp-route-restaurantId="@ViewBag.RestaurantId" class="confirm-payment">
                     <button class="btn-confirm-payment">Pagar</button>
                 </form>
             </div>

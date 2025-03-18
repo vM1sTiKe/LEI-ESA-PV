@@ -64,49 +64,6 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Método responsável por alterar o estado do pedido passando de "Placed" para "Preparing".
-        /// </summary>
-        /// <param name="cartId">Id do carrinho.</param>
-        /// <returns>Retorna um status OK se o estado for alterado com sucesso ou erro em caso contrário.</returns>
-        [HttpPost]
-        public async Task<IActionResult> PrepareOrder(int cartId)
-        {
-            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == cartId && c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Placed);
-
-            if (cart == null)
-            {
-                return BadRequest();
-            }
-
-            cart.Status = Enums.OrderStatus.Preparing;
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        /// <summary>
-        /// Método responsável por enviar o pedido de um carrinho de compras, alterando o estado de "Preparing" para "OnTheWay".
-        /// Se o carrinho não for encontrado ou não estiver no estado "Preparing", o método retorna um erro.
-        /// </summary>
-        /// <param name="cartId">ID do carrinho de compras que será enviado.</param>
-        /// <returns>Retorna um status OK se o pedido for enviado com sucesso ou um erro caso contrário.</returns>
-        [HttpPost]
-        public async Task<IActionResult> SendOrder(int cartId)
-        {
-            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == cartId && c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Preparing);
-
-            if (cart == null)
-            {
-                return BadRequest();
-            }
-
-            cart.Status = Enums.OrderStatus.OnTheWay;
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        /// <summary>
         /// Apaga o carrinho.
         /// </summary>
         /// <returns>Retorna a view de listagem dos restaurantes.</returns>

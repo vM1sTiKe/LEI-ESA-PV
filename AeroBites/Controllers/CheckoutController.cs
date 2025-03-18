@@ -34,7 +34,7 @@ namespace AeroBites.Controllers
         /// Caso o carrinho não seja encontrado ou não esteja no estado "Choosing", redireciona para a pagina dos restaurantes.
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> Preparing(int cartId, int restaurantId)
+        public async Task<IActionResult> SendOrder(int cartId, int restaurantId)
         {
             var cart = await context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == cartId && c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing);
 

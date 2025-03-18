@@ -34,6 +34,9 @@ namespace AeroBites.Controllers
 
             context.Item.Add(item);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Item criado.";
+
             return RedirectToAction("Items", "MyRestaurant");
         }
 
@@ -54,6 +57,9 @@ namespace AeroBites.Controllers
 
             context.Item.Remove(item);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Item eliminado.";
+
             return RedirectToAction("Items", "MyRestaurant");
         }
 
@@ -95,6 +101,9 @@ namespace AeroBites.Controllers
 
             context.Item.Update(item);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Item editado.";
+
             return RedirectToAction("Items", "MyRestaurant");
         }
 

@@ -39,7 +39,9 @@ namespace AeroBites.Controllers
 
             _context.CartItem.Add(new CartItem { Name = i.Name, Price = i.Price, CartId = MyCart.Id });
             await _context.SaveChangesAsync();
-            
+
+            TempData[Enums.MessageType.infoMessage.ToString()] = "Item adicionado.";
+
             return RedirectToAction("Menu", "Restaurant", new { id= restaurant });
         }
 

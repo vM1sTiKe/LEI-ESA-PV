@@ -4,8 +4,10 @@ using AeroBites.Data;
 using AeroBites.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Moq;
 using System.Security.Claims;
 
 namespace AeroBitesTest
@@ -23,6 +25,11 @@ namespace AeroBitesTest
 
             _context = new AeroBitesContext(options);
             _controller = new AdminController(_context);
+
+            var httpContext = new DefaultHttpContext();
+
+            var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
+            _controller.TempData = tempData;
         }
 
 

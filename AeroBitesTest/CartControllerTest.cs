@@ -3,7 +3,9 @@ using AeroBites.Data;
 using AeroBites.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using System.Security.Claims;
 
 namespace AeroBitesTest
@@ -33,6 +35,9 @@ namespace AeroBitesTest
             var identity = new ClaimsIdentity(claims, "Cookies");
             var principal = new ClaimsPrincipal(identity);
 
+            var httpContext = new DefaultHttpContext();
+
+
             _controllerCart.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext { User = principal }
@@ -46,6 +51,10 @@ namespace AeroBitesTest
             {
                 HttpContext = new DefaultHttpContext { User = principal }
             };
+
+            var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
+            _controllerCart.TempData = tempData;
+
 
             _userId = int.Parse(claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
 

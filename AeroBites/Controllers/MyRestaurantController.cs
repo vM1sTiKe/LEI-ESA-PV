@@ -129,7 +129,8 @@ namespace AeroBites.Controllers
             if( MyRestaurant is null ) return RedirectToAction(nameof(Index));
 
             var history = MyOrders?.Include(c => c.Items)
-                .Where(o => o.Status >= Enums.OrderStatus.OnTheWay).ToList() ?? [];
+                .Where(o => o.Status >= Enums.OrderStatus.OnTheWay)
+                .OrderByDescending(o => o.Id).ToList() ?? [];
 
             return View(history);
         }
@@ -140,10 +141,11 @@ namespace AeroBites.Controllers
         [HttpPost]
         public async Task<IActionResult> StartPreparing(int orderId)
         {
-            var order = await context.Cart.FindAsync(orderId);
-            if (order == null) return NotFound();
+            var order = (MyOrders?.Where(o => o.Id == orderId && o.Status == Enums.OrderStatus.Placed).ToList() ?? []).First();
+            if (order == null) return RedirectToAction(nameof(Orders));
 
             order.Status = Enums.OrderStatus.Preparing;
+            context.Cart.Update(order);
             await context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Orders));
@@ -155,10 +157,11 @@ namespace AeroBites.Controllers
         [HttpPost]
         public async Task<IActionResult> SendOrder(int orderId)
         {
-            var order = await context.Cart.FindAsync(orderId);
-            if (order == null) return NotFound();
+            var order = (MyOrders?.Where(o => o.Id == orderId && o.Status == Enums.OrderStatus.Preparing).ToList() ?? []).First();
+            if (order == null) return RedirectToAction(nameof(Orders));
 
             order.Status = Enums.OrderStatus.OnTheWay;
+            context.Cart.Update(order);
             await context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Orders));

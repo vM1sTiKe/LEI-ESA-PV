@@ -12,7 +12,7 @@ namespace AeroBitesTest
     public class MyOrdersControllerTest : IDisposable
     {
         private readonly AeroBitesContext _context;
-        private readonly MyOrders _controller;
+        private readonly MyOrdersController _controller;
         private readonly int _userId;
 
         public MyOrdersControllerTest()
@@ -22,7 +22,7 @@ namespace AeroBitesTest
                 .Options;
 
             _context = new AeroBitesContext(options);
-            _controller = new MyOrders(_context);
+            _controller = new MyOrdersController(_context);
 
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "1") };
             var identity = new ClaimsIdentity(claims, "Cookies");

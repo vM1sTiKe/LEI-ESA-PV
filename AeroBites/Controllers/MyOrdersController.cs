@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AeroBites.Controllers
 {
-    public class MyOrders(AeroBitesContext context) : Controller
+    public class MyOrdersController(AeroBitesContext context) : Controller
     {
         private IQueryable<Cart>? Orders => context.Cart.Include(c => c.Items).Where(c => c.AccountId == User.GetId());
 

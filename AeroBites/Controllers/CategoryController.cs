@@ -36,6 +36,9 @@ namespace AeroBites.Controllers
             category.RestaurantId = MyRestaurant.Id;
             context.Category.Add(category);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Categoria criada.";
+
             return RedirectToAction("Categories", "MyRestaurant");
         }
 
@@ -56,6 +59,9 @@ namespace AeroBites.Controllers
 
             context.Category.Remove(category);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Categoria eliminada.";
+
             return RedirectToAction("Categories", "MyRestaurant");
         }
 
@@ -94,6 +100,9 @@ namespace AeroBites.Controllers
 
             context.Category.Update(category);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Categoria editada.";
+
             return RedirectToAction("Categories", "MyRestaurant");
         }
     }

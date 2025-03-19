@@ -10,6 +10,7 @@ namespace AeroBites.Controllers
     public class MyRestaurantController(AeroBitesContext context) : Controller
     {
         private Restaurant? MyRestaurant => context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.OwnerId == User.GetId());
+        private IQueryable<Cart>? MyOrders => context.Cart.Where(c => MyRestaurant != null && c.RestaurantId == MyRestaurant.Id);
 
         /// <summary>
         /// Displays the restaurant's home page or redirects to the create page if no restaurant exists.
@@ -47,6 +48,7 @@ namespace AeroBites.Controllers
             restaurant.OwnerId = User.GetId();
             context.Add(restaurant);
             await context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Reviewing));
         }
 
@@ -108,13 +110,61 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Displays the orders page for the restaurant.
+        /// Retorna a view com a listagem dos pedidos atuais que o meu restaurante recebeu.
         /// </summary>
-        /// <returns>
-        /// The orders view for the restaurant.
-        /// </returns>
         public IActionResult Orders() {
-            return View();
+            if (MyRestaurant is null) return RedirectToAction(nameof(Index));
+
+            var current_orders = MyOrders?.Include(c => c.Items)
+                .Where(c => c.Status >= Enums.OrderStatus.Placed && c.Status <= Enums.OrderStatus.Preparing)
+                .OrderByDescending(c => c.Status).ToList() ?? [];
+
+            return View(current_orders);
+        }
+
+        /// <summary>
+        /// Retorna a view com a listagem dos pedidos historico que o meu restaurante recebeu
+        /// </summary>
+        public IActionResult OrdersHistory() {
+            if( MyRestaurant is null ) return RedirectToAction(nameof(Index));
+
+            var history = MyOrders?.Include(c => c.Items)
+                .Where(o => o.Status >= Enums.OrderStatus.OnTheWay)
+                .OrderByDescending(o => o.Id).ToList() ?? [];
+
+            return View(history);
+        }
+
+        /// <summary>
+        /// Coloca o pedido recebido com o estado de "Preparando"
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> StartPreparing(int orderId)
+        {
+            var order = (MyOrders?.Where(o => o.Id == orderId && o.Status == Enums.OrderStatus.Placed).ToList() ?? []).First();
+            if (order == null) return RedirectToAction(nameof(Orders));
+
+            order.Status = Enums.OrderStatus.Preparing;
+            context.Cart.Update(order);
+            await context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Orders));
+        }
+
+        /// <summary>
+        /// Coloca o pedido recebido com o estado de "Enviado"
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> SendOrder(int orderId)
+        {
+            var order = (MyOrders?.Where(o => o.Id == orderId && o.Status == Enums.OrderStatus.Preparing).ToList() ?? []).First();
+            if (order == null) return RedirectToAction(nameof(Orders));
+
+            order.Status = Enums.OrderStatus.OnTheWay;
+            context.Cart.Update(order);
+            await context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Orders));
         }
     }
 }

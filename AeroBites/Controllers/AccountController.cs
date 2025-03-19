@@ -27,6 +27,9 @@ namespace AeroBites.Controllers
                     WriteSignInLog(User.GetId());
                 }
                 catch (Exception) { return View(); }
+
+                TempData[Enums.MessageType.infoMessage.ToString()] = "Bem-vindo de volta.";
+
                 return RedirectToAction(nameof(Index), "Restaurant");
             }
 
@@ -82,6 +85,8 @@ namespace AeroBites.Controllers
             );
 
             WriteSignInLog(accountInfo.Id);
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Conta iniciada com sucesso!";
 
             return RedirectToAction(nameof(Index), "Restaurant");
         }

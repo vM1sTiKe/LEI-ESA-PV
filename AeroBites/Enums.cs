@@ -11,6 +11,7 @@
             Restaurant,
             RestaurantMenu,
             MyRestaurant,
+            MyOrders,
             MyPayments,
         }
 
@@ -35,6 +36,17 @@
             OnTheWay,
             Waiting,
             Recieved
+        }
+
+        /// <summary>
+        /// Represents the different messages types.
+        /// </summary>
+        public enum MessageType
+        {
+            successMessage,
+            errorMessage,
+            infoMessage,
+            warningMessage
         }
     }
 }

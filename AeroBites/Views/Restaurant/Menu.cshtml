@@ -34,7 +34,7 @@
                             <div class="product">
                                 <img src="~/images/dummy-food-option.jpeg" alt="bebidas" /><br />
                                 <span class="IN">@item.Name</span>
-                                <span class="IP">@item.Price €</span>
+                                <span class="IP">@item.Price.ToString("N2")€</span>
 
                                 <form asp-action="AddItem" asp-controller="Cart" asp-route-restaurant="@Model.Id" asp-route-item="@item.Id" style="display: none"> 
                                     <input type="submit" />
@@ -86,9 +86,8 @@
                                 }
                                 </div>
 
-                                <span class="cart-total-label">Total:</span>
-                                <span class="cart-total-price">@total €</span>
-                                <button class="lbl-payment">Check-Out</button>
+                                <span class="cart-total-label">Total: @total.ToString("N2")€</span>
+                                <a asp-controller="Checkout" asp-action="" class="btn-payment frm-to-payment">Check-Out</a>
                             </div>
                         </div>
                     </div>

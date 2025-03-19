@@ -12,6 +12,8 @@ namespace AeroBites.Models
         [Display(Name = "Nome do Item")]
         public required string Name { get; set; }
 
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "O preço do Item é inválido")]
+        [Range(0, 9999.99, ErrorMessage = "O preço do Item é muito grande")]
         [Required(ErrorMessage = "O preço do Item é obrigatório.")]
         [Display(Name = "Preço do Item")]
         public required float Price { get; set; }

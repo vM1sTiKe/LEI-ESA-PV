@@ -56,7 +56,7 @@ namespace AeroBites.Controllers
             restaurant.Status = Enums.RestaurantStatus.Valid;
             _context.SaveChanges();
 
-            TempData["RequestMessage"] = "Restaurante aprovado!";
+            TempData[Enums.MessageType.successMessage.ToString()] = "Restaurante aprovado.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -76,7 +76,7 @@ namespace AeroBites.Controllers
             _context.Restaurant.Remove(restaurant);
             _context.SaveChanges();
 
-            TempData["RequestMessage"] = "Restaurante negado!";
+            TempData[Enums.MessageType.successMessage.ToString()] = "Restaurante negado.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -96,7 +96,7 @@ namespace AeroBites.Controllers
             _context.Restaurant.Remove(restaurant);
             _context.SaveChanges();
 
-            TempData["RequestMessage"] = "Restaurante eliminado!";
+            TempData[Enums.MessageType.successMessage.ToString()] = "Restaurante eliminado.";
 
             return RedirectToAction(nameof(Index));
         }

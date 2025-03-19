@@ -35,6 +35,12 @@
                 cursor: pointer;
                 user-select: none;
 
+                b.order-state {
+                    margin-right: 10px;
+                    border-right: 1px solid black;
+                    padding-right: 10px;
+                }
+
                 > button {
                     height: 23px;
                 }

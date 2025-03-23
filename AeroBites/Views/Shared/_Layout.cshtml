@@ -57,6 +57,12 @@
         <script src="~/js/site.js" asp-append-version="true"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
+        <script>
+            function call_hidden_form(element){
+                element.parentElement.querySelector("form > input").click();
+            }
+        </script>
+
         <script type="text/javascript">
             toastr.options = {
                 "closeButton": true,

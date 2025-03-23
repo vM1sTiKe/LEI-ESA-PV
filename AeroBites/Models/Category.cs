@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace AeroBites.Models
@@ -16,5 +17,8 @@ namespace AeroBites.Models
 
         [JsonIgnore]
         public List<Item>? Items { get; set; }
+
+        [DefaultValue(false)]
+        public bool IsDefault { get; set; }
     }
 }

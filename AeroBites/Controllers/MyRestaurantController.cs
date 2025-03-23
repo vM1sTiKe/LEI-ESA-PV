@@ -49,6 +49,10 @@ namespace AeroBites.Controllers
             context.Add(restaurant);
             await context.SaveChangesAsync();
 
+            // Criar categoria default do nosso restaurante
+            context.Category.Add(new Category { Name = "Sem Categoria", IsDefault = true, RestaurantId = restaurant.Id });
+            await context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Reviewing));
         }
 
@@ -165,6 +169,21 @@ namespace AeroBites.Controllers
             await context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Orders));
+        }
+
+        /// <summary>
+        /// Elimina restaurante e dados associados
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> Remove(int id) {
+            // Id inválido
+            if (MyRestaurant?.Id != id) return RedirectToAction(nameof(Index));
+
+            context.Restaurant.Remove(MyRestaurant);
+            await context.SaveChangesAsync();
+
+            // Restaurante removido, redirect para a página de criar novo
+            return RedirectToAction(nameof(Create));
         }
     }
 }

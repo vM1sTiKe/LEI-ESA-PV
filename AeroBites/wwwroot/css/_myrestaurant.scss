@@ -4,8 +4,22 @@
         > div.actions {
             display: flex;
 
-            > .save {
-                margin: auto;
+            > div.save-div {
+                display: flex;
+                align-items: center;
+            }
+
+            > div > .remove {
+                background: red;
+                color: white;
+                margin: 0;
+                height: 47px;
+                display: flex;
+                margin-left: 26px;
+
+                > svg {
+                    fill: white;
+                }
             }
         }
 

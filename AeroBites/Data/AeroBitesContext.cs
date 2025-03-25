@@ -13,6 +13,7 @@ namespace AeroBites.Data
 
         public DbSet<AeroBites.Models.Account> Account { set; get; } = default!;
         public DbSet<AeroBites.Models.AccountLog> AccountLog { set; get; } = default!;
+        public DbSet<AeroBites.Models.Address> Address { set; get; } = default!;
         public DbSet<AeroBites.Models.Restaurant> Restaurant { set; get; } = default!;
         public DbSet<AeroBites.Models.Category> Category { set; get; } = default!;
         public DbSet<AeroBites.Models.Item> Item { set; get; } = default!;

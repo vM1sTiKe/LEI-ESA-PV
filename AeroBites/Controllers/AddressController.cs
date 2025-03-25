@@ -1,6 +1,7 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AeroBites.Controllers
 {
@@ -26,7 +27,8 @@ namespace AeroBites.Controllers
                 Latitude = lat,
                 Longitude = lng,
                 FullAddress = fullAddress,
-                AccountId = User.GetId()
+                AccountId = User.GetId(),
+                isActive = await _context.Address.AnyAsync(address => address.AccountId == User.GetId()) ? false : true,
             };
 
             _context.Add(address);
@@ -40,6 +42,20 @@ namespace AeroBites.Controllers
         {
             var address = await _context.Address.FindAsync(id);
             _context.Address.Remove(address);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SelectAddress(int id)
+        {
+            var oldAddress = await _context.Address.FirstOrDefaultAsync(address => address.isActive == true && address.AccountId == User.GetId());
+            oldAddress.isActive = false;
+
+            var newAddress = await _context.Address.FindAsync(id);
+            newAddress.isActive = true;
+
             await _context.SaveChangesAsync();
 
             return Ok();

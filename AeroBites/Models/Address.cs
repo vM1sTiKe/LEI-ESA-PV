@@ -20,5 +20,8 @@ namespace AeroBites.Models
         public string FullAddress { get; set; }
 
         public required int AccountId { get; set; }
+
+        [Required]
+        public bool isActive { get; set; }
     }
 }

@@ -34,5 +34,15 @@ namespace AeroBites.Controllers
 
             return Ok();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveAddress(int id)
+        {
+            var address = await _context.Address.FindAsync(id);
+            _context.Address.Remove(address);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }

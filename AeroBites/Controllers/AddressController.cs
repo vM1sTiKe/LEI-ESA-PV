@@ -31,8 +31,14 @@ namespace AeroBites.Controllers
                 isActive = await _context.Address.AnyAsync(address => address.AccountId == User.GetId()) ? false : true,
             };
 
-            _context.Add(address);
+            for(int i = 0; i <= 10; i++)
+            {
+                _context.Add(address);
+                
+            }
+
             await _context.SaveChangesAsync();
+
 
             return Ok();
         }
@@ -59,6 +65,17 @@ namespace AeroBites.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        public async Task<IActionResult> GetAllAddresses()
+        {
+            var addressList = await _context.Address
+                .Where(address => address.AccountId == User.GetId())
+                .OrderByDescending(address => address.isActive == true)
+                .ThenBy(address => address.Id)
+                .ToListAsync();
+
+            return Ok(addressList);
         }
     }
 }

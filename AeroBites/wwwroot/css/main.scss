@@ -152,6 +152,15 @@ a.app-icon {
     color: black;
 }
 
+button.app-warning-button {
+    background: #f00;
+    color: #fff;
+    margin: 0;
+    height: 47px;
+    display: flex;
+    align-items: center;
+}
+
 .app-color-green {
     background-color: #77DD77;
 }

@@ -1,5 +1,6 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
+using AeroBites.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 namespace AeroBites.Controllers
 {
     [Authorize]
-    public class MyRestaurantController(AeroBitesContext context) : Controller
+    public class MyRestaurantController(AeroBitesContext context, AddressService addressService) : Controller
     {
         private Restaurant? MyRestaurant => context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.OwnerId == User.GetId());
         private IQueryable<Cart>? MyOrders => context.Cart.Where(c => MyRestaurant != null && c.RestaurantId == MyRestaurant.Id);
+
 
         /// <summary>
         /// Displays the restaurant's home page or redirects to the create page if no restaurant exists.
@@ -184,6 +186,28 @@ namespace AeroBites.Controllers
 
             // Restaurante removido, redirect para a página de criar novo
             return RedirectToAction(nameof(Create));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAddress(double lat, double lng, string fullAddress)
+        {
+            var address = await context.Address.FirstOrDefaultAsync(address => address.AccountId == MyRestaurant.Id);
+
+            if (address == null)
+            {
+                address = await addressService.AddAddress(lat, lng, fullAddress, MyRestaurant.Id);
+                MyRestaurant.AddressId = address.Id;
+            }
+            else
+            {
+                address.Latitude = lat;
+                address.Longitude = lng;
+                address.FullAddress = fullAddress;
+            }
+
+            await context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

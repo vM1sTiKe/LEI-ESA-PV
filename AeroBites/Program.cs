@@ -1,4 +1,5 @@
 using AeroBites.Data;
+using AeroBites.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AeroBitesContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AeroBitesContext")));
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<AddressService>();
 
 builder.Services.AddAuthentication("Cookies").AddCookie("Cookies", options =>
 {

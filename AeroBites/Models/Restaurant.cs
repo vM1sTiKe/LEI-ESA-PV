@@ -20,6 +20,8 @@ namespace AeroBites.Models
         [JsonIgnore]
         public List<Category>? Categories { get; set; }
 
+        public int AddressId { get; set; }
+
         public required int OwnerId { get; set; }
 
         public List<Cart>? Orders { get; }

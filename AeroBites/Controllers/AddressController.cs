@@ -1,5 +1,6 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
+using AeroBites.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,10 +9,12 @@ namespace AeroBites.Controllers
     public class AddressController : Controller
     {
         private AeroBitesContext _context;
+        private readonly AddressService _addressService;
 
-        public AddressController(AeroBitesContext context)
+        public AddressController(AeroBitesContext context, AddressService addressService)
         {
             _context = context;
+            _addressService = addressService;
         }
 
         public IActionResult Index()
@@ -20,27 +23,11 @@ namespace AeroBites.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAddress(double lat, double lng, string fullAddress)
+        public async Task<IActionResult> AddAddress(double lat, double lng, string fullAddress, int id)
         {
-            var address = new Address
-            {
-                Latitude = lat,
-                Longitude = lng,
-                FullAddress = fullAddress,
-                AccountId = User.GetId(),
-                isActive = await _context.Address.AnyAsync(address => address.AccountId == User.GetId()) ? false : true,
-            };
+            var address = await _addressService.AddAddress(lat, lng, fullAddress, id);
 
-            for(int i = 0; i <= 10; i++)
-            {
-                _context.Add(address);
-                
-            }
-
-            await _context.SaveChangesAsync();
-
-
-            return Ok();
+            return Ok(address);
         }
 
         [HttpPost]

@@ -2,8 +2,83 @@
     ViewData["Title"] = "Moradas";
 }
 
-<div class="content-address">
-    <div class="address-grid-container">
+<div class="content-address address-general">
+    <div class="grid-container">
+        <div class="lbl-title">
+            <h2>Pontos de Entrega</h2>
+        </div>
+        <div class="display-address-grid-container">
+            <div class="btns">
+                <button class="btn-saved-address">Moradas Guardadas</button>
+                <button class="btn-saved-delivery-points">Pontos de Recolha</button>
+            </div>
+            <div class="lbl-address">
+                <h4 style="margin: 0;">Morada</h4>
+            </div>
+            <div class="address-inputs">
+                <input type="text" name="adrs"/>
+                <button class="btn-save-address">Guardar</button>
+            </div>
+            <div class="lbl-list">
+                <h4 style="margin: 0;">Lista</h4>
+            </div>
+            <div class="list-addresses">
+                <p style="margin: 0;">Rua irineu voce não sabe nem eu lote 31 1º esq</p>
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" width="17.5" viewBox="0 0 448 512">
+                    <path fill="#000000" d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z" />
+                </svg>
+            </div>
+        </div>
+        <div class="display-map">
+            <div id="map"></div>
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Criar o mapa centrado em Lisboa
+                    var map = L.map('map').setView([38.52165, -8.83977], 10);
 
+                    // Adicionar camada do OpenStreetMap
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+
+                    // Criar um marcador inicial
+                    var marker = L.marker([38.52165, -8.83977]).addTo(map)
+                        .bindPopup('Clique em qualquer lugar para mover o marcador')
+                        .openPopup();
+
+                    // Função para converter coordenadas em endereço
+                    function getAddress(lat, lng) {
+                        var url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data && data.display_name) {
+                                    document.querySelector('input[name="adrs"]').value = data.display_name; // Atualiza o input com a morada
+                                } else {
+                                    document.querySelector('input[name="adrs"]').value = "Morada não encontrada";
+                                }
+                            })
+                            .catch(error => console.error('Erro ao obter endereço:', error));
+                    }
+
+                    // Evento de clique no mapa
+                    map.on('click', function (e) {
+                        var newLatLng = e.latlng; // Capturar nova posição
+
+                        // Mover o marcador para o novo local
+                        marker.setLatLng(newLatLng)
+                            .bindPopup(`Novo local: ${newLatLng.lat.toFixed(5)}, ${newLatLng.lng.toFixed(5)}`)
+                            .openPopup();
+
+                        // Obter e preencher a morada no input
+                        getAddress(newLatLng.lat, newLatLng.lng);
+                    });
+                });
+            </script>
+        </div>
     </div>
 </div>

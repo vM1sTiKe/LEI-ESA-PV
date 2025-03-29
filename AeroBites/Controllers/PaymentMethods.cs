@@ -23,5 +23,13 @@ namespace AeroBites.Controllers
             // Codigo para remover método
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        public IActionResult Default(int id)
+        {
+            // código para adicionar o método como default removendo o atual default.
+            // se o metodo enviado ja for o default ele vai parar de ser default
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

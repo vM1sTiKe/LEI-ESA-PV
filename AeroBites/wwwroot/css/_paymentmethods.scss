@@ -23,6 +23,25 @@ main.app-content > div.content-paymentmethods {
                     border: 1px solid black;
                     border-radius: 15px;
                 }
+
+                > div.actions {
+                    display: flex;
+                    gap: 17px;
+                    align-items: center;
+
+                    > div.default-method {
+                        height: 28px;
+
+                        > svg {
+                            width: 32px;
+                            cursor: pointer;
+
+                            &[data-default="true"] {
+                                fill: #f0dd0c;
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -1,0 +1,29 @@
+main.app-content > div.content-paymentmethods {
+
+    > div.header {
+        > h1 {
+            margin: 0;
+            margin-bottom: 22px;
+        }
+
+        display: flex;
+        justify-content: space-between;
+    }
+
+    > div.payment-methods {
+        > div.method {
+            > div.info {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                > div.account {
+                    height: 75px;
+                    width: 365px;
+                    border: 1px solid black;
+                    border-radius: 15px;
+                }
+            }
+        }
+    }
+}

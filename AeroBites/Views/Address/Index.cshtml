@@ -77,6 +77,38 @@
                         // Obter e preencher a morada no input
                         getAddress(newLatLng.lat, newLatLng.lng);
                     });
+
+                    // Função para converter a morada em coordenadas
+                    function getCoordinates(address) {
+                        var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            if(data.length > 0) {
+                                var lat = parseFloat(data[0].lat);
+                                var lng = parseFloat(data[0].lon);
+
+                                //Mover o mapa e o marcador para a nova localização
+                                map.setView([lat, lng], 15);
+                                marker.setLatLng([lat, lng])
+                                    .bindPopup('Novo local: ${lat.toFixed(5)}, ${lng.toFixed(5)}')
+                                    .openPopup();
+                            } else {
+                                alert("Morada não encontrada!");
+                            }
+                        })
+                        .catch(error => console.error('Erro ao obter coordenadas:', error));
+                    }
+
+                    // Capturar mudanças no input e atualizar a posição no mapa
+                    document.querySelector('input[name="adrs"]').addEventListener("change", function ()  {
+                        var address = this.value;
+                        if (address.length > 3) { //Evita chamadas para inputs vazios
+                            getCoordinates(address);
+                        }
+                    })
+                    
                 });
             </script>
         </div>

@@ -23,7 +23,7 @@ namespace AeroBitesTest
                 .Options;
 
             _context = new AeroBitesContext(options);
-            _controller = new MyRestaurantController(_context);
+            //_controller = new MyRestaurantController(_context);
 
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "1") }; // Criar o utilizador falso com um ID fixo
             var identity = new ClaimsIdentity(claims, "Cookies");

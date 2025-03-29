@@ -1,0 +1,30 @@
+﻿@* @model AeroBites.Models.Restaurant; *@
+
+@{
+    ViewData["Title"] = "Meu métodos de pagamento";
+    ViewData["CurrentPage"] = Enums.CurrentPage.MyPayments;
+}
+
+<div class="content-paymentmethods">
+    <div class="header">
+        <h1>Seus métodos de pagamento</h1>
+        <button class="app-button app-color-green save clickable">Adicionar</button>
+    </div>
+
+    <div class="payment-methods">
+        @foreach (var payment_method in new List<int> { 1, 2, 3 } ?? [])
+        {
+            <div class="method">
+                <div class="info">
+                    <div class="account">
+                        Detalhes da conta
+                    </div>
+
+                    @* asp-route-id="@Model.Id" *@ <form asp-action="Remove" style="display: none"><input type="submit" /></form>
+                    <button class="app-button app-warning-button clickable" onclick="call_hidden_form(this)">Remover</button>
+                </div>
+                <hr />
+            </div>
+        }
+    </div>
+</div>

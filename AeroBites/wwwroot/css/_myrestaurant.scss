@@ -1,25 +1,35 @@
 ﻿main.app-content > div.content-myrestaurant {
 
     &.myrestaurant-geral {
-        > div.actions {
-            display: flex;
 
-            > div.save-div {
+        > div.bank-account {
+            margin-top: 56px;
+
+            > div.header {
                 display: flex;
                 align-items: center;
+                justify-content: space-between;
+                margin-bottom: 15px;
+
+                > h1 {
+                    margin: 0;
+                }
             }
 
-            > div > .remove {
-                background: red;
-                color: white;
-                margin: 0;
-                height: 47px;
-                display: flex;
-                margin-left: 26px;
+            > div.account {
+                height: 75px;
+                width: 365px;
+                border: 1px solid black;
+                border-radius: 15px;
+            }
+        }
 
-                > svg {
-                    fill: white;
-                }
+        > div.actions {
+            display: flex;
+            align-items: center;
+
+            > div.remove-restaurant {
+                margin-left: 21px;
             }
         }
 

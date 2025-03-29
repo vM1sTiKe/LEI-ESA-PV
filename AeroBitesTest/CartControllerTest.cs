@@ -29,7 +29,7 @@ namespace AeroBitesTest
             _context = new AeroBitesContext(options);
             _controllerCart = new CartController(_context);
             _controllerCheck = new CheckoutController(_context);
-            _controllerRest = new MyRestaurantController(_context);
+            _controllerRest = new MyRestaurantController(_context, null);
 
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "1") };
             var identity = new ClaimsIdentity(claims, "Cookies");

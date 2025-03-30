@@ -22,14 +22,27 @@ namespace AeroBites.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Adiciona um novo endereço à conta do utilizador.
+        /// </summary>
+        /// <param name="lat">Latitude do endereço.</param>
+        /// <param name="lng">Longitude do endereço.</param>
+        /// <param name="fullAddress">Endereço completo.</param>
+        /// <param name="id">Identificador da conta.</param>
+        /// <returns>Retorna o endereço adicionado.</returns>
         [HttpPost]
         public async Task<IActionResult> AddAddress(double lat, double lng, string fullAddress, int id)
         {
-            var address = await _addressService.AddAddress(lat, lng, fullAddress, id);
+            var address = await _addressService.AddAddressAccount(lat, lng, fullAddress, id);
 
             return Ok(address);
         }
 
+        /// <summary>
+        /// Remove um endereço com base no seu identificador.
+        /// </summary>
+        /// <param name="id">Identificador do endereço a remover.</param>
+        /// <returns>Retorna uma resposta HTTP 200 se for bem-sucedido.</returns>
         [HttpPost]
         public async Task<IActionResult> RemoveAddress(int id)
         {
@@ -40,25 +53,34 @@ namespace AeroBites.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Define um endereço como o endereço ativo do utilizador.
+        /// </summary>
+        /// <param name="id">Identificador do novo endereço ativo.</param>
+        /// <returns>Retorna uma resposta HTTP 200 se for bem-sucedido.</returns>
         [HttpPost]
         public async Task<IActionResult> SelectAddress(int id)
         {
-            var oldAddress = await _context.Address.FirstOrDefaultAsync(address => address.isActive == true && address.AccountId == User.GetId());
-            oldAddress.isActive = false;
+            var oldAddress = await _context.Address.FirstOrDefaultAsync(address => address.IsActive == true && address.AccountId == User.GetId());
+            oldAddress.IsActive = false;
 
             var newAddress = await _context.Address.FindAsync(id);
-            newAddress.isActive = true;
+            newAddress.IsActive = true;
 
             await _context.SaveChangesAsync();
 
             return Ok();
         }
 
+        /// <summary>
+        /// Obtém todos os endereços do utilizador ordenados pelo estado ativo.
+        /// </summary>
+        /// <returns>Retorna a lista de endereços do utilizador.</returns>
         public async Task<IActionResult> GetAllAddresses()
         {
             var addressList = await _context.Address
                 .Where(address => address.AccountId == User.GetId())
-                .OrderByDescending(address => address.isActive == true)
+                .OrderByDescending(address => address.IsActive == true)
                 .ThenBy(address => address.Id)
                 .ToListAsync();
 

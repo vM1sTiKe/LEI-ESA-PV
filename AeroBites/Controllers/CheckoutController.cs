@@ -1,4 +1,6 @@
 ﻿using AeroBites.Data;
+using AeroBites.Migrations;
+using AeroBites.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -51,7 +53,25 @@ namespace AeroBites.Controllers
             cart.Status = Enums.OrderStatus.Placed;
             cart.TotalPrice = total_price;
             cart.PlacedDate = DateOnly.FromDateTime(DateTime.Now);
-            cart.AddressID = await context.Address.Where(address => address.AccountId == User.GetId() && address.isActive).Select(address => address.Id).FirstOrDefaultAsync();
+            
+            var activeAddress = await context.Address.Where(address => address.AccountId == User.GetId() && address.IsActive).FirstOrDefaultAsync();
+            var cartAddress = await context.CartAddress.Where(address => address.Latitude == activeAddress.Latitude && address.Longitude == activeAddress.Longitude).FirstOrDefaultAsync();
+            
+            if(cartAddress == null) 
+            {
+                cartAddress = new CartAddress
+                {
+                    Latitude = activeAddress.Latitude,
+                    Longitude = activeAddress.Longitude,
+                    FullAddress = activeAddress.FullAddress
+                };
+               
+                context.CartAddress.Add(cartAddress);
+                await context.SaveChangesAsync();
+            }
+
+            cart.CartAddressId = cartAddress.Id;
+
             context.Cart.Update(cart);
             await context.SaveChangesAsync();
 

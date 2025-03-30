@@ -19,6 +19,7 @@ namespace AeroBites.Models
 
         public required int RestaurantId { get; set; }
         public required int AccountId { get; set; }
+        public int AddressID { get; set; }
 
         public DateOnly PlacedDate { get; set; }
         public float TotalPrice { get; set; }

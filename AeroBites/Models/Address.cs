@@ -7,21 +7,18 @@ namespace AeroBites.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
         [Range(-90, 90, ErrorMessage = "Latitude inválida.")]
-        public double Latitude { get; set; }
+        public required double Latitude { get; set; }
 
-        [Required]
         [Range(-180, 180, ErrorMessage = "Longitude inválida.")]
-        public double Longitude { get; set; }
+        public required double Longitude { get; set; }
 
-        [Required]
         [StringLength(255, ErrorMessage = "O endereço deve ter no máximo 255 caracteres.")]
-        public string FullAddress { get; set; }
+        public required string FullAddress { get; set; }
 
-        public required int AccountId { get; set; }
+        public int RestaurantId { get; set; }
+        public int AccountId { get; set; }
 
-        [Required]
-        public bool isActive { get; set; }
+        public required bool IsActive { get; set; }
     }
 }

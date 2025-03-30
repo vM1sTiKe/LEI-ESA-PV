@@ -51,6 +51,7 @@ namespace AeroBites.Controllers
             cart.Status = Enums.OrderStatus.Placed;
             cart.TotalPrice = total_price;
             cart.PlacedDate = DateOnly.FromDateTime(DateTime.Now);
+            cart.AddressID = await context.Address.Where(address => address.AccountId == User.GetId() && address.isActive).Select(address => address.Id).FirstOrDefaultAsync();
             context.Cart.Update(cart);
             await context.SaveChangesAsync();
 

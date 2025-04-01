@@ -27,12 +27,13 @@ namespace AeroBites.Controllers.MyRestaurant
             if(MyRestaurant.FirstOrDefault() is null) return RedirectToAction("Index", "MyRestaurant");
             // Não pode adicionar se este restaurante já tem um paypal associado
             if(MyMethod.FirstOrDefault() is not null) return RedirectToAction("Index", "MyRestaurant");
-
-            // TODO
-            // Fazer como no PaymentMethods controller
-            // Chamar await new PayPalService(config).SetupBusinessPaymentMethod(); em vez do método que está no outro lado
-            // No fim alterar este redirect para ser como oq está no payment controller
-            var url = "www.google.com";
+            
+            // Chama o endpoint to PayPal para começar o flow de criar um método de pagamento
+            JsonNode response = await new PayPalService(config).SetupBusinessPaymentMethod();
+            // Redireciona para o URL dado pelo serviço do PayPal
+            var url = config["PayPalSettings:AproveUrl"] + response["id"];
+            
+            // Redireciona para a página do PayPal
             return Redirect(url);
         }
 
@@ -50,12 +51,15 @@ namespace AeroBites.Controllers.MyRestaurant
             // Não pode adicionar se este restaurante já tem um paypal associado
             if (MyMethod.FirstOrDefault() is not null) return RedirectToAction("Index", "MyRestaurant");
 
-            // TODO
-            // mesma lógica do AproveAdd do payment controller
-            // A unica diferença é ao adicionar o paymentmethod ao contexto não vamos linkar com um AccountId mas sim com RestaurantId
-            // Nao é preciso inserir o IsDefault a true
-            // Como tambem nao é preciso ir ao MyMethod validar se existe ou nao algum ja default
-
+            // Chama endpoint do PayPal para finalizar a criação do método de pagamento
+            JsonNode response = await new PayPalService(config).CreatePaymentMethod(approval_token_id);
+            if (response is null) return RedirectToAction(nameof(Index));
+            // Recolhe informação da resposta
+            var id = response["id"]?.ToString() ?? "";
+            String email = response["payment_source"]?["paypal"]?["email_address"]?.ToString() ?? "";
+            // Cria método de pagamento
+            context.PaymentMethod.Add(new PaymentMethod { Details = email, ApiToken = id, RestaurantId = MyRestaurant.First().Id});
+            await context.SaveChangesAsync();
 
             // Redireciona para a página de editar o restaurante
             return RedirectToAction("Index", "MyRestaurant");
@@ -78,13 +82,14 @@ namespace AeroBites.Controllers.MyRestaurant
             // Não pode remover se este nao existe paypal associado
             if (MyMethod.FirstOrDefault() is null) return RedirectToAction("Index", "MyRestaurant");
 
-            // TODO
-            // Validar que o MyMethod.Where o id enviado é o Id existente na BD
-            // So se esse id for o correto que ele pode apagar
-            // Se nao for o correto então return RedirectToAction("Index", "MyRestaurant");
-            // Se então esse método existir chamar o serviço do paypal para remover esse paypal (igual ao payment controller)
-            // Dps remover da BD (igual ao payment controller)
-
+            // Procura o método de pagamento
+            var method = MyMethod.Where(m => m.Id == id).ToList().FirstOrDefault();
+            if (method is null) return RedirectToAction("Index", "MyRestaurant");
+            // Apagar método de pagamento na API do PayPal
+            await new PayPalService(config).DeletePaymentMethod(method.ApiToken);
+            // Remover método de pagamento da DB
+            context.PaymentMethod.Remove(method);
+            await context.SaveChangesAsync();
 
             // Redireciona para a página de editar o restaurante
             return RedirectToAction("Index", "MyRestaurant");

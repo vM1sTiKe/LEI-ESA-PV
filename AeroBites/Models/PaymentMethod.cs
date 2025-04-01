@@ -15,8 +15,8 @@ namespace AeroBites.Models
 
         public required string ApiToken { get; set; }
 
-        public int RestaurantId { get; set; }
-        public int AccountId { get; set; }
+        public int? RestaurantId { get; set; }
+        public int? AccountId { get; set; }
 
         [DefaultValue(false)]
         public bool? IsDefault { get; set; }

@@ -85,6 +85,9 @@ namespace AeroBites.Controllers
             MyRestaurant.Name = restaurant.Name;
             context.Update(MyRestaurant);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Nome do restaurante alterado.";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -154,6 +157,8 @@ namespace AeroBites.Controllers
             context.Cart.Update(order);
             await context.SaveChangesAsync();
 
+            TempData[Enums.MessageType.successMessage.ToString()] = "O pedido irá ser preparado.";
+
             return RedirectToAction(nameof(Orders));
         }
 
@@ -170,6 +175,8 @@ namespace AeroBites.Controllers
             context.Cart.Update(order);
             await context.SaveChangesAsync();
 
+            TempData[Enums.MessageType.successMessage.ToString()] = "Pedido enviado.";
+
             return RedirectToAction(nameof(Orders));
         }
 
@@ -183,6 +190,8 @@ namespace AeroBites.Controllers
 
             context.Restaurant.Remove(MyRestaurant);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Restaurante eliminado.";
 
             // Restaurante removido, redirect para a página de criar novo
             return RedirectToAction(nameof(Create));
@@ -203,12 +212,16 @@ namespace AeroBites.Controllers
             if(address == null)
             {
                 address = await addressService.AddAddressRestaurant(lat, lng, fullAddress, MyRestaurant.Id);
+
+                TempData[Enums.MessageType.successMessage.ToString()] = "Morada adicionada.";
             }
             else
             {
                 address.Latitude = lat;
                 address.Longitude = lng;
                 address.FullAddress = fullAddress;
+
+                TempData[Enums.MessageType.successMessage.ToString()] = "Morada editada.";
             }
 
             await context.SaveChangesAsync();

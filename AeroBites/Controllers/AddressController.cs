@@ -35,6 +35,8 @@ namespace AeroBites.Controllers
         {
             var address = await _addressService.AddAddressAccount(lat, lng, fullAddress, id);
 
+            TempData[Enums.MessageType.successMessage.ToString()] = "Morada adicionada.";
+
             return Ok(address);
         }
 
@@ -49,6 +51,8 @@ namespace AeroBites.Controllers
             var address = await _context.Address.FindAsync(id);
             _context.Address.Remove(address);
             await _context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Morada eliminada.";
 
             return Ok();
         }

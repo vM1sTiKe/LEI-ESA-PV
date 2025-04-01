@@ -20,6 +20,7 @@ namespace AeroBites.Controllers
 
             if(cart == null)
             {
+                TempData[Enums.MessageType.errorMessage.ToString()] = "O carrinho está vazio.";
                 return RedirectToAction("Index", "Restaurant");
             }
 

@@ -40,7 +40,7 @@ namespace AeroBites.Controllers
             _context.CartItem.Add(new CartItem { Name = i.Name, Price = i.Price, CartId = MyCart.Id });
             await _context.SaveChangesAsync();
 
-            TempData[Enums.MessageType.infoMessage.ToString()] = "Item adicionado.";
+            TempData[Enums.MessageType.successMessage.ToString()] = "Item adicionado.";
 
             return RedirectToAction("Menu", "Restaurant", new { id= restaurant });
         }
@@ -62,6 +62,8 @@ namespace AeroBites.Controllers
                 await _context.SaveChangesAsync();
             }
 
+            TempData[Enums.MessageType.successMessage.ToString()] = "Item removido.";
+
             return RedirectToAction("Menu", "Restaurant", new { id = restaurant });
         }
 
@@ -75,7 +77,7 @@ namespace AeroBites.Controllers
                 _context.Cart.Remove(MyCart);
                 await _context.SaveChangesAsync();
             }
-            
+
             return RedirectToAction("Index", "Restaurant");
         }
 

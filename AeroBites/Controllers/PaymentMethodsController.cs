@@ -11,11 +11,11 @@ namespace AeroBites.Controllers
         /// <summary>
         /// Holds a query to get all the User payment methods
         /// </summary>
-        private IQueryable<PaymentMethod>? MyMethods => context.PaymentMethod.Where(m => m.AccountId == User.GetId());
+        private IQueryable<PaymentMethod> MyMethods => context.PaymentMethod.Where(m => m.AccountId == User.GetId());
 
         public IActionResult Index()
         {
-            var methods = MyMethods?.OrderByDescending(m => m.IsDefault).ToList() ?? [];
+            var methods = MyMethods.OrderByDescending(m => m.IsDefault).ToList() ?? [];
             return View(methods);
         }
 
@@ -51,7 +51,7 @@ namespace AeroBites.Controllers
             String email = response["payment_source"]?["paypal"]?["email_address"]?.ToString() ?? "";
 
             // Procura se já existe um método do user
-            bool is_first_method = (MyMethods?.Where(m => m.IsDefault == true).ToList().Count == 0) || false;
+            bool is_first_method = (MyMethods.Where(m => m.IsDefault == true).ToList().Count == 0) || false;
 
             // Cria método de pagamento
             context.PaymentMethod.Add(new PaymentMethod { Details = email, ApiToken = id, AccountId = User.GetId(), IsDefault = is_first_method });
@@ -75,7 +75,7 @@ namespace AeroBites.Controllers
         public async Task<IActionResult> Remove(int id)
         {
             // Procura o método de pagamento
-            var method = MyMethods?.Where(m => m.Id == id).ToList().First();
+            var method = MyMethods.Where(m => m.Id == id).ToList().FirstOrDefault();
             if(method is null) return RedirectToAction(nameof(Index));
 
             // Apagar método de pagamento na API do PayPal
@@ -84,11 +84,11 @@ namespace AeroBites.Controllers
             context.PaymentMethod.Remove(method);
             await context.SaveChangesAsync();
 
-            // Procura se existe um default (tem que existir um se existem métodos)
-            if(MyMethods?.Where(m => m.IsDefault == true).ToList().Count == 0)
+            // Procura se existe um default (se existem métodos, tem que existir um)
+            if (MyMethods.Where(m => m.IsDefault == true).ToList().Count == 0)
             {
                 // Recolhe o primeiro metodo da lista e verifica se existe, se sim mete ele como default
-                var first_method = MyMethods.First();
+                var first_method = MyMethods.FirstOrDefault();
                 if(first_method is not null)
                 {
                     first_method.IsDefault = true;
@@ -108,7 +108,7 @@ namespace AeroBites.Controllers
         public async Task<IActionResult> Default(int id)
         {
             // Procura por todos os métodos do cliente que estejam com o default a true
-            var default_methods = MyMethods?.Where(m => m.IsDefault == true).ToList() ?? [];
+            var default_methods = MyMethods.Where(m => m.IsDefault == true).ToList() ?? [];
 
 
             foreach (var method in default_methods) {
@@ -118,7 +118,7 @@ namespace AeroBites.Controllers
             }
 
             // Procura pelo método enviado para o endpoint
-            var current_method = MyMethods?.Where(m => m.Id == id).First();
+            var current_method = MyMethods.Where(m => m.Id == id).FirstOrDefault();
             // Se nao existir retorna diretamente para a listagem
             if(current_method == null) return RedirectToAction(nameof(Index));
 

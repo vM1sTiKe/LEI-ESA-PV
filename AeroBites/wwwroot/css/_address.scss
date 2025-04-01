@@ -3,7 +3,7 @@
         > div.grid-container {
             display: grid;
             grid-template-rows: auto 1fr;
-            grid-template-columns: auto 1fr;
+            grid-template-columns: .5fr 1fr;
 
             > div.lbl-title {
                 grid-row-start: 1;
@@ -70,6 +70,10 @@
                     align-content: center;
                     margin-left: 1%;
 
+                    > input.text-input {
+                        width: 55%;
+                    }
+
                     > button.btn-save-address {
                         border-style: none;
                         border-radius: 5%;
@@ -94,9 +98,40 @@
                     grid-row-start: 5;
                     grid-row-end: 6;
                     display: flex;
-                    justify-content: space-around;
+                    flex-direction: column;
                     align-content: center;
+                    gap: 10px;
                     border: 2px solid black;
+                    max-height: 400px;
+                    overflow-y: auto;
+
+                    .address-item {
+                        background: #f8f9fa; 
+                        padding: 10px;
+                        border-radius: 5px;
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+
+                    .btn-select,
+                    .btn-delete {
+                        margin-left: 5px;
+                        padding: 5px 10px;
+                        border: none;
+                        cursor: pointer;
+                    }
+
+                    .btn-select {
+                        background-color: #007bff;
+                        color: white;
+                    }
+
+                    .btn-delete {
+                        background-color: #dc3545;
+                        color: white;
+                    }
                 }
             }
 

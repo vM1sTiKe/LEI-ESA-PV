@@ -23,9 +23,16 @@ namespace AeroBites.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAddress(double lat, double lng, string fullAddress, int id)
+        public async Task<IActionResult> AddAddress(double lat, double lng, string fullAddress)
         {
-            var address = await _addressService.AddAddress(lat, lng, fullAddress, id);
+            var userId = User.GetId();
+
+            if(userId == null)
+            {
+                return Unauthorized();
+            }
+            
+            var address = await _addressService.AddAddress(lat, lng, fullAddress, userId);
 
             return Ok(address);
         }
@@ -33,7 +40,14 @@ namespace AeroBites.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveAddress(int id)
         {
+            var userId = User.GetId();  
             var address = await _context.Address.FindAsync(id);
+
+            if (address == null || address.AccountId != userId)
+            {
+                return NotFound();
+            }
+
             _context.Address.Remove(address);
             await _context.SaveChangesAsync();
 
@@ -43,11 +57,21 @@ namespace AeroBites.Controllers
         [HttpPost]
         public async Task<IActionResult> SelectAddress(int id)
         {
-            var oldAddress = await _context.Address.FirstOrDefaultAsync(address => address.isActive == true && address.AccountId == User.GetId());
-            oldAddress.isActive = false;
+            var userId = User.GetId();
+
+            var oldAddress = await _context.Address.FirstOrDefaultAsync(address => address.isActive && address.AccountId == userId);
+            if (oldAddress != null)
+            {
+                oldAddress.isActive = false; // Desativa a antiga morada
+            }
 
             var newAddress = await _context.Address.FindAsync(id);
-            newAddress.isActive = true;
+            if (newAddress == null || newAddress.AccountId != userId)
+            {
+                return NotFound();
+            }
+
+            newAddress.isActive = true; // Ativa a nova morada
 
             await _context.SaveChangesAsync();
 
@@ -56,9 +80,10 @@ namespace AeroBites.Controllers
 
         public async Task<IActionResult> GetAllAddresses()
         {
+            var userId = User.GetId();
             var addressList = await _context.Address
-                .Where(address => address.AccountId == User.GetId())
-                .OrderByDescending(address => address.isActive == true)
+                .Where(address => address.AccountId == userId)
+                .OrderByDescending(address => address.isActive)
                 .ThenBy(address => address.Id)
                 .ToListAsync();
 

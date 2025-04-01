@@ -14,15 +14,15 @@ namespace AeroBites.Services
             _context = context;
         }
 
-        public async Task<Address> AddAddress(double lat, double lng, string fullAddress, int id)
+        public async Task<Address> AddAddress(double lat, double lng, string fullAddress, int userId)
         {
             var address = new Address
             {
                 Latitude = lat,
                 Longitude = lng,
                 FullAddress = fullAddress,
-                AccountId = id,
-                isActive = await _context.Address.AnyAsync(address => address.AccountId == id) ? false : true,
+                AccountId = userId,
+                isActive = false
             };
 
             _context.Add(address);

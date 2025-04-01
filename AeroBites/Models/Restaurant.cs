@@ -23,5 +23,8 @@ namespace AeroBites.Models
         public required int OwnerId { get; set; }
 
         public List<Cart>? Orders { get; }
+
+        public PaymentMethod? PaymentMethod { get; set; }
+
     }
 }

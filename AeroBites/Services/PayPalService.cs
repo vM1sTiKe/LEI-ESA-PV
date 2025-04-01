@@ -85,8 +85,8 @@ namespace AeroBites.Services
                             payment_method_preference = "IMMEDIATE_PAYMENT_REQUIRED",
                             brand_name = "AeroBites",
                             locale = "en-US",
-                            return_url = type == "CONSUMER" ? "http://localhost:7263/PaymentMethods/AproveAdd": "",
-                            cancel_url = type == "CONSUMER" ? "http://localhost:7263/PaymentMethods/CancelAdd" : ""
+                            return_url = type == "CONSUMER" ? config["PayPalSettings:ConsumerAddSuccess"] : config["PayPalSettings:BusinessAddSuccess"],
+                            cancel_url = type == "CONSUMER" ? config["PayPalSettings:ConsumerAddCancel"] : config["PayPalSettings:BusinessAddCancel"],
                         }
                     }
                 }

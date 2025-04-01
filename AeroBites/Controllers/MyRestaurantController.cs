@@ -10,7 +10,7 @@ namespace AeroBites.Controllers
     [Authorize]
     public class MyRestaurantController(AeroBitesContext context, AddressService addressService) : Controller
     {
-        private Restaurant? MyRestaurant => context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.OwnerId == User.GetId());
+        private Restaurant? MyRestaurant => context.Restaurant.Include(r => r.PaymentMethod).Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.OwnerId == User.GetId());
         private IQueryable<Cart>? MyOrders => context.Cart.Where(c => MyRestaurant != null && c.RestaurantId == MyRestaurant.Id);
 
 

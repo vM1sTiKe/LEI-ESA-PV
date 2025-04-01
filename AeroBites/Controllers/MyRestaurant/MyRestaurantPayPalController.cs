@@ -5,9 +5,11 @@ using AeroBites.Data;
 using AeroBites.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AeroBites.Controllers.MyRestaurant
 {
+    [Authorize]
     [Route("/MyRestaurant/PayPal")]
     public class MyRestaurantPayPalController(AeroBitesContext context, IConfiguration config) : Controller
     {

@@ -1,10 +1,12 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AeroBites.Controllers
 {
+    [Authorize]
     public class CartController(AeroBitesContext _context) : Controller
     {
         private Cart? MyCart => _context.Cart.Where(c => c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing).FirstOrDefault();

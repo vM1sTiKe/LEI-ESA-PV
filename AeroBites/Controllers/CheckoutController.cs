@@ -1,11 +1,13 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace AeroBites.Controllers
 {
+    [Authorize]
     public class CheckoutController(AeroBitesContext context) : Controller
     {
         private IQueryable<PaymentMethod> MyMethods => context.PaymentMethod.Where(m => m.AccountId == User.GetId());

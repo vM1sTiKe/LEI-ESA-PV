@@ -2,10 +2,12 @@
 using AeroBites.Data;
 using AeroBites.Models;
 using AeroBites.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AeroBites.Controllers
 {
+    [Authorize]
     public class PaymentMethodsController(AeroBitesContext context, IConfiguration config) : Controller
     {
         /// <summary>

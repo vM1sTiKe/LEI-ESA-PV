@@ -1,11 +1,13 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
 using AeroBites.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AeroBites.Controllers
 {
+    [Authorize]
     public class AddressController : Controller
     {
         private AeroBitesContext _context;

@@ -19,9 +19,17 @@ main.app-content > div.content-paymentmethods {
 
                 > div.account {
                     height: 75px;
-                    width: 365px;
+                    width: 420px;
                     border: 1px solid black;
                     border-radius: 15px;
+                    display: flex;
+                    align-items: center;
+                    gap: 13px;
+
+                    > svg {
+                        height: 32px;
+                        margin-left: 22px;
+                    }
                 }
 
                 > div.actions {

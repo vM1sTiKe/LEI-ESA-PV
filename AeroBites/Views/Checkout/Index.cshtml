@@ -6,75 +6,72 @@
 
 <div class="content-payment">
     <!--Left Side-->
-    <div class="checkout-grid-container">
-        <span class="lbl-checkout">Checkout</span>
-        <a asp-controller="Restaurant" asp-action="Menu" asp-route-id="@ViewBag.RestaurantId" class="go-back btn-back">Voltar</a>
-        <div class="personal-info">
-            <div class="personal-info-container">
-                <div class="address-info">
-                    <div class="lbl-personal-address">
-                        Morada de entrega
-                    </div>
-                    <div class="address-input">
-                        Selecione a sua morada.
-                    </div>
-                </div>
-                <div class="personal-payment">
-                    <div class="lbl-personal-payment">
-                        Detalhes do Pagamento
-                    </div>
-                    <div class="payment-input">
-                        <div class="payment-icon">
-                            <!--
-                            <svg xmlns="http://www.w3.org/2000/svg" height="32" width="24" viewBox="0 0 384 512">
-                                <path fill="#2597d0" d="M111.4 295.9c-3.5 19.2-17.4 108.7-21.5 134-.3 1.8-1 2.5-3 2.5H12.3c-7.6 0-13.1-6.6-12.1-13.9L58.8 46.6c1.5-9.6 10.1-16.9 20-16.9 152.3 0 165.1-3.7 204 11.4 60.1 23.3 65.6 79.5 44 140.3-21.5 62.6-72.5 89.5-140.1 90.3-43.4 .7-69.5-7-75.3 24.2zM357.1 152c-1.8-1.3-2.5-1.8-3 1.3-2 11.4-5.1 22.5-8.8 33.6-39.9 113.8-150.5 103.9-204.5 103.9-6.1 0-10.1 3.3-10.9 9.4-22.6 140.4-27.1 169.7-27.1 169.7-1 7.1 3.5 12.9 10.6 12.9h63.5c8.6 0 15.7-6.3 17.4-14.9 .7-5.4-1.1 6.1 14.4-91.3 4.6-22 14.3-19.7 29.3-19.7 71 0 126.4-28.8 142.9-112.3 6.5-34.8 4.6-71.4-23.8-92.6z" />
-                            </svg>-->
+    <form asp-action="SendOrder" asp-route-cartId="@Model.Id" asp-route-restaurantId="@ViewBag.RestaurantId" class="confirm-payment">
+        <div class="checkout-grid-container">
+            <span class="lbl-checkout">Checkout</span>
+            <a asp-controller="Restaurant" asp-action="Menu" asp-route-id="@ViewBag.RestaurantId" class="go-back btn-back">Voltar</a>
+            <div class="personal-info">
+                <div class="personal-info-container">
+                    <div class="address-info">
+                        <div class="lbl-personal-address">
+                            Morada de entrega
                         </div>
-                        <div class="payment-method-choose">
-                            Selecione o seu metodo de pagamento.
+                        <div class="address-input">
+                            Selecione a sua morada.
+                        </div>
+                    </div>
+                    <div class="personal-payment">
+                        <div class="lbl-personal-payment">
+                            Método de Pagamento
+                        </div>
+                        <div class="payment-input">
+                            <div class="payment-icon">
+                                <svg viewBox="0 0 384 512"><path d="M111.4 295.9c-3.5 19.2-17.4 108.7-21.5 134-.3 1.8-1 2.5-3 2.5H12.3c-7.6 0-13.1-6.6-12.1-13.9L58.8 46.6c1.5-9.6 10.1-16.9 20-16.9 152.3 0 165.1-3.7 204 11.4 60.1 23.3 65.6 79.5 44 140.3-21.5 62.6-72.5 89.5-140.1 90.3-43.4 .7-69.5-7-75.3 24.2zM357.1 152c-1.8-1.3-2.5-1.8-3 1.3-2 11.4-5.1 22.5-8.8 33.6-39.9 113.8-150.5 103.9-204.5 103.9-6.1 0-10.1 3.3-10.9 9.4-22.6 140.4-27.1 169.7-27.1 169.7-1 7.1 3.5 12.9 10.6 12.9h63.5c8.6 0 15.7-6.3 17.4-14.9 .7-5.4-1.1 6.1 14.4-91.3 4.6-22 14.3-19.7 29.3-19.7 71 0 126.4-28.8 142.9-112.3 6.5-34.8 4.6-71.4-23.8-92.6z" /></svg>
+                            </div>
+                            <div class="payment-method-choose">
+                                <select name="PaymentMethod" asp-items=@ViewBag.PaymentMethods></select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!--Right Side-->
-        <div class="client-order">
-            <div class="client-order-container">
-                <span class="lbl-order-info">Resumo do Pedido</span>
-                @{
-                    if (Model.Items != null && Model.Items.Any())
-                    {
-                        <div class="form-items-resume">
-                            @foreach (var item in Model.Items)
-                            {
+            <!--Right Side-->
+            <div class="client-order">
+                <div class="client-order-container">
+                    <span class="lbl-order-info">Resumo do Pedido</span>
+                    @{
+                        if (Model.Items != null && Model.Items.Any())
+                        {
+                            <div class="form-items-resume">
+                                @foreach (var item in Model.Items)
+                                {
 
-                                <span>@item.Name</span>
+                                    <span class="checkout-item">@item.Name <span>@item.Price€</span></span>
+                                
 
-                            }
-                        </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p>O carrinho está vazio.</p>
+                        }
+
                     }
-                    else
-                    {
-                        <p>O carrinho está vazio.</p>
-                    }
 
-                }
-
-                <span class="lbl-total-price">Total do Pedido</span>
-                <div class="price-info-container">
-                    <span class="lbl-subtotal">Subtotal</span>
-                    <span class="subtotal-euros">@Model.Items?.Sum(i => i.Price).ToString("N2")€</span>
-                    <span class="lbl-entrega">Entrega</span>
-                    <span class="entrega-euros">00.00€</span>
-                    <span class="lbl-total">Total</span>
-                    <span class="total-euros">@Model.Items?.Sum(i => i.Price).ToString("N2")€</span>
-                </div>
-                    
-                <form asp-action="SendOrder" asp-route-cartId="@Model.Id" asp-route-restaurantId="@ViewBag.RestaurantId" class="confirm-payment">
+                    <span class="lbl-total-price">Total do Pedido</span>
+                    <div class="price-info-container">
+                        <span class="lbl-subtotal">Subtotal</span>
+                        <span class="subtotal-euros">@Model.Items?.Sum(i => i.Price).ToString("N2")€</span>
+                        <span class="lbl-entrega">Entrega</span>
+                        <span class="entrega-euros">00.00€</span>
+                        <span class="lbl-total">Total</span>
+                        <span class="total-euros">@Model.Items?.Sum(i => i.Price).ToString("N2")€</span>
+                    </div>
                     <button class="btn-confirm-payment">Pagar</button>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>

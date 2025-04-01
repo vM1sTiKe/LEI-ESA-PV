@@ -1,11 +1,13 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace AeroBites.Controllers
 {
+    [Authorize]
     public class ItemController(AeroBitesContext context) : Controller
     {
         private Restaurant? MyRestaurant => context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.OwnerId == User.GetId());

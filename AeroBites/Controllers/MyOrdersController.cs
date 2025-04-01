@@ -1,10 +1,12 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AeroBites.Controllers
 {
+    [Authorize]
     public class MyOrdersController(AeroBitesContext context) : Controller
     {
         private IQueryable<Cart>? Orders => context.Cart.Include(c => c.Items).Where(c => c.AccountId == User.GetId());

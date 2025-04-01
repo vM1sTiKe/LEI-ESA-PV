@@ -4,6 +4,7 @@ using AeroBites.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AeroBites.Migrations
 {
     [DbContext(typeof(AeroBitesContext))]
-    partial class AeroBitesContextModelSnapshot : ModelSnapshot
+    [Migration("20250401144922_RestaurantPayPalAccount")]
+    partial class RestaurantPayPalAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,7 +241,7 @@ namespace AeroBites.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AccountId")
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<string>("ApiToken")
@@ -252,7 +255,7 @@ namespace AeroBites.Migrations
                     b.Property<bool?>("IsDefault")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("RestaurantId")
+                    b.Property<int>("RestaurantId")
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
@@ -261,8 +264,7 @@ namespace AeroBites.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RestaurantId")
-                        .IsUnique()
-                        .HasFilter("[RestaurantId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("PaymentMethod");
                 });
@@ -333,7 +335,9 @@ namespace AeroBites.Migrations
                 {
                     b.HasOne("AeroBites.Models.Restaurant", null)
                         .WithOne("PaymentMethod")
-                        .HasForeignKey("AeroBites.Models.PaymentMethod", "RestaurantId");
+                        .HasForeignKey("AeroBites.Models.PaymentMethod", "RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AeroBites.Models.Cart", b =>

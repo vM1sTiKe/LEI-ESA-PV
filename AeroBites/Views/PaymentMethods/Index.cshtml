@@ -1,4 +1,4 @@
-﻿@* @model AeroBites.Models.Restaurant; *@
+﻿@model IEnumerable<AeroBites.Models.PaymentMethod>;
 
 @{
     ViewData["Title"] = "Meu métodos de pagamento";
@@ -13,21 +13,22 @@
     </div>
 
     <div class="payment-methods">
-        @foreach (var payment_method in new List<int> { 1, 2, 3 } ?? [])
+        @foreach (var payment_method in Model ?? [])
         {
             <div class="method">
                 <div class="info">
                     <div class="account">
-                        Detalhes da conta
+                        <svg viewBox="0 0 384 512"><path d="M111.4 295.9c-3.5 19.2-17.4 108.7-21.5 134-.3 1.8-1 2.5-3 2.5H12.3c-7.6 0-13.1-6.6-12.1-13.9L58.8 46.6c1.5-9.6 10.1-16.9 20-16.9 152.3 0 165.1-3.7 204 11.4 60.1 23.3 65.6 79.5 44 140.3-21.5 62.6-72.5 89.5-140.1 90.3-43.4 .7-69.5-7-75.3 24.2zM357.1 152c-1.8-1.3-2.5-1.8-3 1.3-2 11.4-5.1 22.5-8.8 33.6-39.9 113.8-150.5 103.9-204.5 103.9-6.1 0-10.1 3.3-10.9 9.4-22.6 140.4-27.1 169.7-27.1 169.7-1 7.1 3.5 12.9 10.6 12.9h63.5c8.6 0 15.7-6.3 17.4-14.9 .7-5.4-1.1 6.1 14.4-91.3 4.6-22 14.3-19.7 29.3-19.7 71 0 126.4-28.8 142.9-112.3 6.5-34.8 4.6-71.4-23.8-92.6z" /></svg>
+                        @payment_method.Details
                     </div>
 
                     <div class="actions">
-                        @* asp-route-id="@Model.Id" *@ <form asp-action="Remove" style="display: none"><input type="submit" /></form>
+                        <form asp-action="Remove" asp-route-id="@payment_method.Id" style="display: none"><input type="submit" /></form>
                         <button class="app-button app-warning-button clickable" onclick="call_hidden_form(this)">Remover</button>
 
                         <div class="default-method">
-                            @* asp-route-id="@Model.Id" *@ <form asp-action="Default" style="display: none"><input type="submit" /></form>
-                            @if(true) {
+                            <form asp-action="Default" asp-route-id="@payment_method.Id" style="display: none"><input type="submit" /></form>
+                            @if(payment_method.IsDefault != true) {
                                 <svg onclick="call_hidden_form(this)" viewBox="0 0 576 512"><path d="M287.9 0c9.2 0 17.6 5.2 21.6 13.5l68.6 141.3 153.2 22.6c9 1.3 16.5 7.6 19.3 16.3s.5 18.1-5.9 24.5L433.6 328.4l26.2 155.6c1.5 9-2.2 18.1-9.7 23.5s-17.3 6-25.3 1.7l-137-73.2L151 509.1c-8.1 4.3-17.9 3.7-25.3-1.7s-11.2-14.5-9.7-23.5l26.2-155.6L31.1 218.2c-6.5-6.4-8.7-15.9-5.9-24.5s10.3-14.9 19.3-16.3l153.2-22.6L266.3 13.5C270.4 5.2 278.7 0 287.9 0zm0 79L235.4 187.2c-3.5 7.1-10.2 12.1-18.1 13.3L99 217.9 184.9 303c5.5 5.5 8.1 13.3 6.8 21L171.4 443.7l105.2-56.2c7.1-3.8 15.6-3.8 22.6 0l105.2 56.2L384.2 324.1c-1.3-7.7 1.2-15.5 6.8-21l85.9-85.1L358.6 200.5c-7.8-1.2-14.6-6.1-18.1-13.3L287.9 79z" /></svg>
                             } else {
                                 <svg onclick="call_hidden_form(this)" data-default="true" viewBox="0 0 576 512"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z" /></svg>

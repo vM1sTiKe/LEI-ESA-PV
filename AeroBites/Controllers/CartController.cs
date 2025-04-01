@@ -1,10 +1,12 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AeroBites.Controllers
 {
+    [Authorize]
     public class CartController(AeroBitesContext _context) : Controller
     {
         private Cart? MyCart => _context.Cart.Where(c => c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing).FirstOrDefault();
@@ -40,7 +42,7 @@ namespace AeroBites.Controllers
             _context.CartItem.Add(new CartItem { Name = i.Name, Price = i.Price, CartId = MyCart.Id });
             await _context.SaveChangesAsync();
 
-            TempData[Enums.MessageType.infoMessage.ToString()] = "Item adicionado.";
+            TempData[Enums.MessageType.successMessage.ToString()] = "Item adicionado.";
 
             return RedirectToAction("Menu", "Restaurant", new { id= restaurant });
         }
@@ -62,6 +64,8 @@ namespace AeroBites.Controllers
                 await _context.SaveChangesAsync();
             }
 
+            TempData[Enums.MessageType.successMessage.ToString()] = "Item removido.";
+
             return RedirectToAction("Menu", "Restaurant", new { id = restaurant });
         }
 
@@ -75,7 +79,7 @@ namespace AeroBites.Controllers
                 _context.Cart.Remove(MyCart);
                 await _context.SaveChangesAsync();
             }
-            
+
             return RedirectToAction("Index", "Restaurant");
         }
 

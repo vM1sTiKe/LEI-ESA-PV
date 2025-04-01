@@ -87,7 +87,7 @@
                                 </div>
 
                                 <span class="cart-total-label">Total: @total.ToString("N2")€</span>
-                                <a asp-controller="Checkout" asp-action="" class="btn-payment frm-to-payment">Check-Out</a>
+                                <a asp-controller="Checkout" asp-action="" asp-route-restaurant="@Model.Id" class="btn-payment frm-to-payment">Check-Out</a>
                             </div>
                         </div>
                     </div>

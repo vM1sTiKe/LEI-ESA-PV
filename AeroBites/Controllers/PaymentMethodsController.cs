@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AeroBites.Controllers
 {
-    public class PaymentMethodsController(AeroBitesContext context, IConfiguration config, PayPalService paypal) : Controller
+    public class PaymentMethodsController(AeroBitesContext context, IConfiguration config) : Controller
     {
         /// <summary>
         /// Holds a query to get all the User payment methods
@@ -15,33 +15,21 @@ namespace AeroBites.Controllers
 
         public IActionResult Index()
         {
-            // TODO
-            // Acrescentar um .orderby /.orderbydescending (nao sei qual é o correto) .orderby(m => m.IsDefault)
-            // para devolver a listagem dos métodos do cliente onde em primeiro vem aquele que é default
-            // Devolver a view enviando entao essa listagem
-
-            if(MyMethods==null) return View();
-
-            var list=MyMethods.OrderBy(m => m.IsDefault);
-
-            return View(list);
+            var methods = MyMethods?.OrderByDescending(m => m.IsDefault).ToList() ?? [];
+            return View(methods);
         }
 
-
+        /// <summary>
+        /// Starts the flow to add a new payment method to the user
+        /// </summary>
         [HttpPost]
-        public IActionResult Add()
+        public async Task<IActionResult> Add()
         {
-            // TODO
-            // Chamar o serviço do paypal SetupClientPaymentMethod()
-            // Ao chamar este serviço agarrar na resposta do json json["id"]
-            // concatenar json["id"] à string do appsettings config["PayPalSettings:AproveUrl"], isto vai criar o URL que temos que dar href
-            // e com aquele href, em vez de fazer redirectToAction vamos é fazer redirect para o URL que queremos
-            // O código acaba dps do redirect
-
-            JsonNode response = paypal.SetupClientPaymentMethod().Result;
-
+            // Chama o endpoint to PayPal para começar o flow de criar um método de pagamento
+            JsonNode response = await new PayPalService(config).SetupClientPaymentMethod();
+            // Redireciona para o URL dado pelo serviço do PayPal
             var url = config["PayPalSettings:AproveUrl"] + response["id"];
-
+            // Redireciona para a página do PayPal
             return Redirect(url);
         }
 
@@ -52,25 +40,24 @@ namespace AeroBites.Controllers
         /// </summary>
         /// <param name="approval_token_id">The token sent by the PayPal API</param>
         [HttpGet]
-        public async Task<IActionResult> AproveAddAsync(string approval_token_id)
+        public async Task<IActionResult> AproveAdd(string approval_token_id)
         {
-            // TODO
-            // Agarrar no approval token e chamar o serviço do paypal CreatePaymentMethod() enviando esse token para a funcao
-            // Agarrar na resposta json["id"]
-            // Agarrar no email do paypal utilizado json["payment_source"]["paypal"]["email_address"]
-            // Criar um PaymentMethod (model) e associar ele ao utilizador atual (User.GetId())
-            // O model do PaymentMethod precisa de details (email), do ApiToken (id) e associar entao o AccountId ao User.getid
-            // After saving the PaymentMethod redirect to the listing page
-            // O código acaba dps do redirect
+            // Chama endpoint do PayPal para finalizar a criação do método de pagamento
+            JsonNode response = await new PayPalService(config).CreatePaymentMethod(approval_token_id);
+            if(response is null) return RedirectToAction(nameof(Index));
 
-            JsonNode response = paypal.CreatePaymentMethod(approval_token_id).Result;
+            // Recolhe informação da resposta
+            var id = response["id"]?.ToString() ?? "";
+            String email = response["payment_source"]?["paypal"]?["email_address"]?.ToString() ?? "";
 
-            var id = response["id"];
-            var email = response["payment_source"]["paypal"]["email_address"];
+            // Procura se já existe um método do user
+            bool is_first_method = (MyMethods?.Where(m => m.IsDefault == true).ToList().Count == 0) || false;
 
-            context.PaymentMethod.Add(new PaymentMethod { Details = (string)email, ApiToken = (string)id, AccountId = User.GetId() });
+            // Cria método de pagamento
+            context.PaymentMethod.Add(new PaymentMethod { Details = email, ApiToken = id, AccountId = User.GetId(), IsDefault = is_first_method });
             await context.SaveChangesAsync();
 
+            // Redireciona para a página de listagem de métodos de pagamento do utilizador
             return RedirectToAction(nameof(Index));
         }
 
@@ -81,51 +68,66 @@ namespace AeroBites.Controllers
         public IActionResult CancelAdd() { return RedirectToAction(nameof(Index)); }
 
 
+        /// <summary>
+        /// Removes from the PayPal API and from the DB the given payment method
+        /// </summary>
         [HttpPost]
-        public async Task<IActionResult> RemoveAsync(int id)
+        public async Task<IActionResult> Remove(int id)
         {
-            // TODO
-            // Acrescentar ao MyMethods um .Where para filtrar ainda mais para devolver o metodo com o id enviado
-            // Com o objeto do método de pagamento entao chamamos o serviço do paypal DeletePaymentMethod() enviando o method.ApiToken para essa funcao
-            // Dps de esperar a funcao acabar removemos o objeto do metodo da 
-            // O código acaba dps do redirect
+            // Procura o método de pagamento
+            var method = MyMethods?.Where(m => m.Id == id).ToList().First();
+            if(method is null) return RedirectToAction(nameof(Index));
 
-            var method = MyMethods.Where(m => m.Id == id);
+            // Apagar método de pagamento na API do PayPal
+            await new PayPalService(config).DeletePaymentMethod(method.ApiToken);
+            // Remover método de pagamento da DB
+            context.PaymentMethod.Remove(method);
+            await context.SaveChangesAsync();
 
-            if(method != null) await paypal.DeletePaymentMethod(method.First().ApiToken);
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        public IActionResult Default(int id)
-        {
-            // TODO
-            // acrescentar um .Where no Mymethod para procurar por metodos que sejam IsDefault == true
-            // se esse objeto existir entao alterar o IsDefault para false e guardar o objeto
-            // Dps entao no Mymethod adicionar fazer outra pesquisa com um .Where onde procura onde o id == id
-            // Se esse objeto existir entao troca o IsDefault para true e salva
-            // O código acaba dps do redirect
-
-            var list=MyMethods.Where(m => m.IsDefault == true);
-            
-            if(list != null)
+            // Procura se existe um default (tem que existir um se existem métodos)
+            if(MyMethods?.Where(m => m.IsDefault == true).ToList().Count == 0)
             {
-                foreach (var method in list)
+                // Recolhe o primeiro metodo da lista e verifica se existe, se sim mete ele como default
+                var first_method = MyMethods.First();
+                if(first_method is not null)
                 {
-                    method.IsDefault = false;
+                    first_method.IsDefault = true;
+                    context.PaymentMethod.Update(first_method);
+                    await context.SaveChangesAsync();
                 }
             }
 
-            var selected=list.Where(m => m.Id == id);
-            if(selected != null) selected.First().IsDefault = true;
+            // Redireciona para a página de listagem
+            return RedirectToAction(nameof(Index));
+        }
 
-            //salvar??
+        /// <summary>
+        /// Sets the given payment method as the default
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> Default(int id)
+        {
+            // Procura por todos os métodos do cliente que estejam com o default a true
+            var default_methods = MyMethods?.Where(m => m.IsDefault == true).ToList() ?? [];
 
 
+            foreach (var method in default_methods) {
+                method.IsDefault = false;
+                context.PaymentMethod.Update(method);
+                await context.SaveChangesAsync();
+            }
 
-            // código para adicionar o método como default removendo o atual default.
-            // se o metodo enviado ja for o default ele vai parar de ser default
+            // Procura pelo método enviado para o endpoint
+            var current_method = MyMethods?.Where(m => m.Id == id).First();
+            // Se nao existir retorna diretamente para a listagem
+            if(current_method == null) return RedirectToAction(nameof(Index));
+
+            // Altera o método atual para o default
+            current_method.IsDefault = true;
+            context.PaymentMethod.Update(current_method);
+            await context.SaveChangesAsync();
+
+            // Retorna para a listagem
             return RedirectToAction(nameof(Index));
         }
     }

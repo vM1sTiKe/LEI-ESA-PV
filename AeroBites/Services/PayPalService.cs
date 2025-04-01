@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.Diagnostics;
+using System.Text.Json.Nodes;
 
 namespace AeroBites.Services
 {
@@ -76,6 +77,7 @@ namespace AeroBites.Services
             var fetch_content = JsonContent.Create(new {
                 payment_source = new {
                     paypal = new {
+                        permit_multiple_payment_tokens = true,
                         usage_pattern = "IMMEDIATE",
                         usage_type = "MERCHANT",
                         customer_type = type,
@@ -143,7 +145,7 @@ namespace AeroBites.Services
 
             var fetch_uri = config["PayPalSettings:Url"] + "/v3/vault/payment-tokens/" + token_id;
 
-            await new Http(config, fetch_uri).Post();
+            await new Http(config, fetch_uri).Delete();
             return true;
         }
 
@@ -186,7 +188,11 @@ namespace AeroBites.Services
 
                 // Throws if status code is not success
                 // If there is any wierd bad request, Debug the response.Content.ReadAsStringAsync to see the content of the response
-                response.EnsureSuccessStatusCode();
+                if(!response.IsSuccessStatusCode) {
+                    var problem = response.Content.ReadAsStringAsync();
+                    Debug.WriteLine(problem);
+                    response.EnsureSuccessStatusCode();
+                }
 
                 // Returns data
                 return await response.Content.ReadAsStringAsync();
@@ -226,14 +232,27 @@ namespace AeroBites.Services
             /// </summary>
             public async Task<string> Post(HttpContent? content = null)
             {
-                if (this._disposed) throw new Exception("Cannot use the same Http Client");
-
                 // Add Headers
                 this._client.DefaultRequestHeaders.Add("Authorization", "Bearer " + config["PayPalSettings:APIToken"]);
                 this._client.DefaultRequestHeaders.Add("ContentType", "application/json");
 
                 // Fetch and return response
                 var response = await this.Request(HttpMethod.Post, content);
+                return await this.Response(response);
+            }
+
+
+            /// <summary>
+            /// Executes a Delete request with the given content
+            /// </summary>
+            public async Task<string> Delete(HttpContent? content = null)
+            {
+                // Add Headers
+                this._client.DefaultRequestHeaders.Add("Authorization", "Bearer " + config["PayPalSettings:APIToken"]);
+                this._client.DefaultRequestHeaders.Add("ContentType", "application/json");
+
+                // Fetch and return response
+                var response = await this.Request(HttpMethod.Delete, content);
                 return await this.Response(response);
             }
         }

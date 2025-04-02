@@ -131,7 +131,7 @@ namespace AeroBitesTest
             var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.AccountId == _userId && c.RestaurantId == _restaurantId && c.Status.ToString() == "Choosing");
             
             Assert.Equal("Choosing", cart.Status.ToString());
-            var result = await _controllerCheck.SendOrder(cart.Id, cart.RestaurantId);
+            var result = await _controllerCheck.SendOrder(cart.Id, cart.RestaurantId, 0);
             Assert.Equal("Placed", cart.Status.ToString());
 
             var redirectResult = result as RedirectToActionResult;

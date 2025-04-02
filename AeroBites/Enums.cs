@@ -13,6 +13,7 @@
             MyRestaurant,
             MyOrders,
             MyPayments,
+            MyAddresses,
         }
 
         /// <summary>

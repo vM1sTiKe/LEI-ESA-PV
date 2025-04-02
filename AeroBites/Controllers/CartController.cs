@@ -80,6 +80,8 @@ namespace AeroBites.Controllers
                 await _context.SaveChangesAsync();
             }
 
+            TempData[Enums.MessageType.infoMessage.ToString()] = "O carrinho foi eliminado.";
+
             return RedirectToAction("Index", "Restaurant");
         }
 

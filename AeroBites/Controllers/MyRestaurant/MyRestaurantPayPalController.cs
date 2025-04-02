@@ -28,7 +28,11 @@ namespace AeroBites.Controllers.MyRestaurant
             // Não pode adicionar se não exsitir restaurante
             if(MyRestaurant.FirstOrDefault() is null) return RedirectToAction("Index", "MyRestaurant");
             // Não pode adicionar se este restaurante já tem um paypal associado
-            if(MyMethod.FirstOrDefault() is not null) return RedirectToAction("Index", "MyRestaurant");
+            if (MyMethod.FirstOrDefault() is not null)
+            {
+                TempData[Enums.MessageType.infoMessage.ToString()] = "Só é possível associar um método de pagamento.";
+                return RedirectToAction("Index", "MyRestaurant");
+            }
             
             // Chama o endpoint to PayPal para começar o flow de criar um método de pagamento
             JsonNode response = await new PayPalService(config).SetupBusinessPaymentMethod();
@@ -51,17 +55,27 @@ namespace AeroBites.Controllers.MyRestaurant
             // Não pode adicionar se não exsitir restaurante
             if (MyRestaurant.FirstOrDefault() is null) return RedirectToAction("Index", "MyRestaurant");
             // Não pode adicionar se este restaurante já tem um paypal associado
-            if (MyMethod.FirstOrDefault() is not null) return RedirectToAction("Index", "MyRestaurant");
+            if (MyMethod.FirstOrDefault() is not null)
+            {
+                TempData[Enums.MessageType.infoMessage.ToString()] = "Só é possível associar um método de pagamento.";
+                return RedirectToAction("Index", "MyRestaurant");
+            }
 
             // Chama endpoint do PayPal para finalizar a criação do método de pagamento
             JsonNode response = await new PayPalService(config).CreatePaymentMethod(approval_token_id);
-            if (response is null) return RedirectToAction(nameof(Index));
+            if (response is null)
+            {
+                TempData[Enums.MessageType.errorMessage.ToString()] = "Não foi possível adicionar o método de pagamento.";
+                return RedirectToAction(nameof(Index));
+            }
             // Recolhe informação da resposta
             var id = response["id"]?.ToString() ?? "";
             String email = response["payment_source"]?["paypal"]?["email_address"]?.ToString() ?? "";
             // Cria método de pagamento
             context.PaymentMethod.Add(new PaymentMethod { Details = email, ApiToken = id, RestaurantId = MyRestaurant.First().Id});
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Foi adicionado o método de pagamento.";
 
             // Redireciona para a página de editar o restaurante
             return RedirectToAction("Index", "MyRestaurant");
@@ -71,7 +85,10 @@ namespace AeroBites.Controllers.MyRestaurant
         /// Cancels the flow of the addition of the restaurant paypal
         /// </summary>
         [HttpGet("CancelAdd")]
-        public IActionResult CancelAdd() { return RedirectToAction("Index", "MyRestaurant"); }
+        public IActionResult CancelAdd() {
+            TempData[Enums.MessageType.errorMessage.ToString()] = "A operação foi cancelada.";
+            return RedirectToAction("Index", "MyRestaurant");
+        }
 
         /// <summary>
         /// Removes from the PayPal API and from the DB
@@ -82,16 +99,26 @@ namespace AeroBites.Controllers.MyRestaurant
             // Não pode remover se não exsitir restaurante
             if (MyRestaurant.FirstOrDefault() is null) return RedirectToAction("Index", "MyRestaurant");
             // Não pode remover se este nao existe paypal associado
-            if (MyMethod.FirstOrDefault() is null) return RedirectToAction("Index", "MyRestaurant");
+            if (MyMethod.FirstOrDefault() is null)
+            {
+                TempData[Enums.MessageType.errorMessage.ToString()] = "Não existe nenhum método de pagamento associado.";
+                return RedirectToAction("Index", "MyRestaurant");
+            }
 
             // Procura o método de pagamento
             var method = MyMethod.Where(m => m.Id == id).ToList().FirstOrDefault();
-            if (method is null) return RedirectToAction("Index", "MyRestaurant");
+            if (method is null)
+            {
+                TempData[Enums.MessageType.errorMessage.ToString()] = "Não existe nenhum método de pagamento associado.";
+                return RedirectToAction("Index", "MyRestaurant");
+            }
             // Apagar método de pagamento na API do PayPal
             await new PayPalService(config).DeletePaymentMethod(method.ApiToken);
             // Remover método de pagamento da DB
             context.PaymentMethod.Remove(method);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "O método de pagamento foi removido.";
 
             // Redireciona para a página de editar o restaurante
             return RedirectToAction("Index", "MyRestaurant");

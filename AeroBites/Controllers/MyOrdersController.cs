@@ -56,6 +56,8 @@ namespace AeroBites.Controllers
             context.Cart.Update(thisOrder);
             await context.SaveChangesAsync();
 
+            TempData[Enums.MessageType.successMessage.ToString()] = "O estado do pedido foi alterado para recebido.";
+
             return RedirectToAction(nameof(Index));
         }
     }

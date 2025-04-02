@@ -46,7 +46,11 @@ namespace AeroBites.Controllers
         {
             // Chama endpoint do PayPal para finalizar a criação do método de pagamento
             JsonNode response = await new PayPalService(config).CreatePaymentMethod(approval_token_id);
-            if(response is null) return RedirectToAction(nameof(Index));
+            if (response is null)
+            {
+                TempData[Enums.MessageType.errorMessage.ToString()] = "Erro ao criar token de acesso ao paypal.";
+                return RedirectToAction(nameof(Index));
+            }
 
             // Recolhe informação da resposta
             var id = response["id"]?.ToString() ?? "";
@@ -58,6 +62,8 @@ namespace AeroBites.Controllers
             // Cria método de pagamento
             context.PaymentMethod.Add(new PaymentMethod { Details = email, ApiToken = id, AccountId = User.GetId(), IsDefault = is_first_method });
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Método de pagamento adicionado com sucesso.";
 
             // Redireciona para a página de listagem de métodos de pagamento do utilizador
             return RedirectToAction(nameof(Index));
@@ -78,7 +84,11 @@ namespace AeroBites.Controllers
         {
             // Procura o método de pagamento
             var method = MyMethods.Where(m => m.Id == id).ToList().FirstOrDefault();
-            if(method is null) return RedirectToAction(nameof(Index));
+            if (method is null)
+            {
+                TempData[Enums.MessageType.errorMessage.ToString()] = "Não foram encontrados métodos de pagamento.";
+                return RedirectToAction(nameof(Index));
+            }
 
             // Apagar método de pagamento na API do PayPal
             await new PayPalService(config).DeletePaymentMethod(method.ApiToken);
@@ -98,6 +108,8 @@ namespace AeroBites.Controllers
                     await context.SaveChangesAsync();
                 }
             }
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Método de pagamento removido com sucesso.";
 
             // Redireciona para a página de listagem
             return RedirectToAction(nameof(Index));
@@ -122,12 +134,18 @@ namespace AeroBites.Controllers
             // Procura pelo método enviado para o endpoint
             var current_method = MyMethods.Where(m => m.Id == id).FirstOrDefault();
             // Se nao existir retorna diretamente para a listagem
-            if(current_method == null) return RedirectToAction(nameof(Index));
+            if (current_method == null)
+            {
+                TempData[Enums.MessageType.infoMessage.ToString()] = "Não existem mais métodos de pagamento.";
+                return RedirectToAction(nameof(Index));
+            }
 
             // Altera o método atual para o default
             current_method.IsDefault = true;
             context.PaymentMethod.Update(current_method);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.infoMessage.ToString()] = "Foi definido outro método de pagamento como default.";
 
             // Retorna para a listagem
             return RedirectToAction(nameof(Index));

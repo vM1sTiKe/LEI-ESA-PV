@@ -17,7 +17,14 @@
                             Morada de entrega
                         </div>
                         <div class="address-input">
-                            Selecione a sua morada.
+                            @if (ViewBag.ActiveAddress != null)
+                            {
+                                <span>@ViewBag.ActiveAddress.FullAddress</span>
+                            }
+                            else
+                            {
+                                <span>Selecione a sua morada.</span>
+                            }
                         </div>
                     </div>
                     <div class="personal-payment">

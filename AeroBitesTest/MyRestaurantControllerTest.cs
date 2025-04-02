@@ -17,7 +17,7 @@ namespace AeroBitesTest
 
         public MyRestaurantControllerTests()
         {
-            // Configuração inicial
+            // Configuraï¿½ï¿½o inicial
             var options = new DbContextOptionsBuilder<AeroBitesContext>()
                 .UseInMemoryDatabase(databaseName: "TestDB")
                 .Options;
@@ -50,15 +50,15 @@ namespace AeroBitesTest
 
             var createdRestaurant = await _context.Restaurant.FirstOrDefaultAsync(r => r.Name == "Test Restaurant");
             Assert.NotNull(createdRestaurant); // Verifica se o restaurante foi criado
-            Assert.Equal("Test Restaurant", createdRestaurant.Name); // Verifica se o nome do restaurante é correto
+            Assert.Equal("Test Restaurant", createdRestaurant.Name); // Verifica se o nome do restaurante ï¿½ correto
 
-            // Verifica se o resultado da ação foi uma redireção
+            // Verifica se o resultado da aï¿½ï¿½o foi uma redireï¿½ï¿½o
             var redirectResult = result as RedirectToActionResult;
             Assert.NotNull(redirectResult);
-            Assert.Equal("Reviewing", redirectResult.ActionName); // Verifica se a ação foi redirecionada para "Reviewing"
+            Assert.Equal("Reviewing", redirectResult.ActionName); // Verifica se a aï¿½ï¿½o foi redirecionada para "Reviewing"
         }
 
-        // Limpa a bd após cada teste
+        // Limpa a bd apï¿½s cada teste
         public void Dispose()
         {
             _context.Database.EnsureDeleted();

@@ -6,6 +6,17 @@
 }
 
 <div class="content-restaurant">
+    <div class="address-selector-container">
+        <label for="addressDropdown">Selecione sua morada:</label>
+        <select id="addressDropdown" onchange="changeAddress(this.value)">
+            @foreach (var address in ViewBag.Addresses)
+            {
+                <option value="@address.Value" selected="@(ViewBag.ActiveAddressId == int.Parse(address.Value) ? "selected" : null)">
+                    @address.Text
+                </option>
+            }
+        </select>
+    </div>
     <h1>Apetece-lhe algo? Faça um pedido</h1>
     @* Endpoint will send only available restaurants, meaning close to the loc, if no localization then send all valid (active) restaurants *@
     
@@ -25,3 +36,19 @@
         </div>
     }
 </div>
+<script>
+    function changeAddress(addressId) {
+        fetch('/Restaurant/SetActiveAddress', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'addressId=' + addressId
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload(); // Recarregar a página para aplicar a nova morada ativa
+            }
+        });
+    }
+</script>

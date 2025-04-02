@@ -149,8 +149,38 @@ namespace AeroBites.Services
             return true;
         }
 
+        public async Task<JsonNode> Pay(string token_id, float price)
+        {
+            // First validate current Token
+            await this.ValidateApiToken();
+            // Only after procceed with logic
 
+            var fetch_uri = config["PayPalSettings:Url"] + "/v2/checkout/orders";
+            var fetch_content = JsonContent.Create(new
+            {
+                intent = "CAPTURE",
+                payment_source = new
+                {
+                    paypal = new
+                    {
+                        vault_id = token_id
+                    }
+                },
+                purchase_units = new List<object>
+                {
+                    new {
+                        amount = new
+                        {
+                            currency_code = "EUR",
+                            value = price
+                        }
+                    }
+                }
+            });
 
+            var response = await new Http(config, fetch_uri).Post(fetch_content);
+            return JsonNode.Parse(response ?? "{}") ?? "";
+        }
 
         /// <summary>
         /// Class to execute Http Requests to the PayPal API
@@ -190,7 +220,11 @@ namespace AeroBites.Services
                 // If there is any wierd bad request, Debug the response.Content.ReadAsStringAsync to see the content of the response
                 if(!response.IsSuccessStatusCode) {
                     var problem = response.Content.ReadAsStringAsync();
+                    Debug.WriteLine("");
+                    Debug.WriteLine("");
                     Debug.WriteLine(problem);
+                    Debug.WriteLine("");
+                    Debug.WriteLine("");
                     response.EnsureSuccessStatusCode();
                 }
 
@@ -235,6 +269,7 @@ namespace AeroBites.Services
                 // Add Headers
                 this._client.DefaultRequestHeaders.Add("Authorization", "Bearer " + config["PayPalSettings:APIToken"]);
                 this._client.DefaultRequestHeaders.Add("ContentType", "application/json");
+                this._client.DefaultRequestHeaders.Add("PayPal-Request-Id", Guid.NewGuid().ToString());
 
                 // Fetch and return response
                 var response = await this.Request(HttpMethod.Post, content);

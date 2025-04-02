@@ -1,5 +1,7 @@
-﻿using AeroBites.Data;
+﻿using System.Text.Json.Nodes;
+using AeroBites.Data;
 using AeroBites.Models;
+using AeroBites.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AeroBites.Controllers
 {
     [Authorize]
-    public class CheckoutController(AeroBitesContext context) : Controller
+    public class CheckoutController(AeroBitesContext context, IConfiguration config) : Controller
     {
         private IQueryable<PaymentMethod> MyMethods => context.PaymentMethod.Where(m => m.AccountId == User.GetId());
 
@@ -54,9 +56,9 @@ namespace AeroBites.Controllers
             // Não pode criar pedido se o método enviado não for do utilizador / não for válido
             if (payment_method is null)
             {
+                
                 return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });
             }
-
 
             var cart = await context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == cartId && c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing);
 
@@ -65,6 +67,10 @@ namespace AeroBites.Controllers
                 return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });
             }
 
+            var activeAddress = await context.Address.Where(address => address.AccountId == User.GetId() && address.IsActive).FirstOrDefaultAsync();
+            // Se não existe carrinho ativo não pode finalizar o checkout
+            if (activeAddress is null) return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });
+
             float total_price = 0f;
             // For everyitem go calculate the total price of the order
             foreach (var item in cart.Items ?? [])
@@ -72,14 +78,14 @@ namespace AeroBites.Controllers
                 total_price += item.Price;
             }
 
+            JsonNode response = await new PayPalService(config).Pay(payment_method.ApiToken, total_price);
+            if(response["status"]?.ToString() != "COMPLETED") return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });
+
             cart.Status = Enums.OrderStatus.Placed;
             cart.TotalPrice = total_price;
             cart.PlacedDate = DateOnly.FromDateTime(DateTime.Now);
 
-            var activeAddress = await context.Address.Where(address => address.AccountId == User.GetId() && address.IsActive).FirstOrDefaultAsync();
-            // Se não existe carrinho ativo não pode finalizar o checkout
-            if (activeAddress is null) return RedirectToAction("Menu", "Restaurant", new { id = restaurantId });
-
+           
             var cartAddress = await context.CartAddress.Where(address => address.Latitude == activeAddress.Latitude && address.Longitude == activeAddress.Longitude).FirstOrDefaultAsync();
 
             if (cartAddress == null)

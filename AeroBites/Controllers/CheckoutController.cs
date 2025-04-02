@@ -33,6 +33,11 @@ namespace AeroBites.Controllers
             ViewBag.RestaurantId = cart.RestaurantId;
             ViewBag.PaymentMethods = new SelectList(MyMethods.ToList(), "Id", "Details", MyMethods.Where(m => m.IsDefault == true).FirstOrDefault()?.Id);
 
+            var activeAddress = context.Address
+                .FirstOrDefault(a => a.AccountId == userId && a.IsActive);
+
+            ViewBag.ActiveAddress = activeAddress;
+
             return View(cart);
         }
 

@@ -98,10 +98,10 @@
                 "hideMethod": "fadeOut"
             }
 
-            var successMessage = '@TempData[Enums.MessageType.Success.ToString()]';
-            var errorMessage = '@TempData[Enums.MessageType.Error.ToString()]';
-            var infoMessage = '@TempData["infoMessage"]';
-            var warningMessage = '@TempData["warningMessage"]';
+            var successMessage = '@TempData[Enums.MessageType.successMessage.ToString()]';
+            var errorMessage = '@TempData[Enums.MessageType.errorMessage.ToString()]';
+            var infoMessage = '@TempData[Enums.MessageType.infoMessage.ToString()]';
+            var warningMessage = '@TempData[Enums.MessageType.warningMessage.ToString()]';
 
             if (successMessage) {
                 toastr.success(successMessage, "Sucesso");

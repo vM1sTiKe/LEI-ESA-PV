@@ -99,7 +99,7 @@
                 if (!response.ok) {
                     return response.text().then(text => { throw new Error(text); });
                 }
-                return response.json();
+                return response;
             })
             .then(data => {
                 alert("Morada guardada com sucesso!");
@@ -180,10 +180,8 @@
 
         async function selectAddress(addressId) {
             try {
-                const response = await fetch('/Address/SelectAddress', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: addressId })
+                const response = await fetch(`/Address/SelectAddress?id=${addressId}`, {
+                    method: 'POST'
                 });
 
                 if (response.ok) {

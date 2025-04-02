@@ -19,9 +19,16 @@ namespace AeroBites.Controllers
             _addressService = addressService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var userId = User.GetId();
+            var addresses = await _context.Address
+                .Where(a => a.AccountId == userId)
+                .OrderByDescending(a => a.IsActive)
+                .ThenBy(a => a.Id)
+                .ToListAsync();
+
+            return View(addresses);
         }
 
         /// <summary>
@@ -35,11 +42,12 @@ namespace AeroBites.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAddress(double lat, double lng, string fullAddress)
         {
-            var address = await _addressService.AddAddressAccount(lat, lng, fullAddress, id);
+            var userId = User.GetId();
+            await _addressService.AddAddressAccount(lat, lng, fullAddress, userId);
 
             TempData[Enums.MessageType.successMessage.ToString()] = "Morada adicionada.";
 
-            return Ok(address);
+            return RedirectToAction("Index");
         }
 
         /// <summary>
@@ -63,7 +71,7 @@ namespace AeroBites.Controllers
 
             TempData[Enums.MessageType.successMessage.ToString()] = "Morada eliminada.";
 
-            return Ok();
+            return RedirectToAction("Index");
         }
 
         /// <summary>

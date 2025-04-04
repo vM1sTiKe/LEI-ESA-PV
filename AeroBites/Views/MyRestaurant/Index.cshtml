@@ -5,6 +5,8 @@
     ViewData["CurrentPage"] = Enums.CurrentPage.MyRestaurant;
 }
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <div class="content-myrestaurant myrestaurant-geral">
     <div class="actions">
         <nav class="app-tab">
@@ -29,12 +31,13 @@
             <input asp-for="Name" class="form-control" autocomplete="off" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
+
         <input type="submit"/>
     </form>
 
     <div class="bank-account">
         <hr />
-        <div class="header">
+        <div class="header-bank-account">
             <h1>Minha Conta Bancária</h1>
             @if (Model.PaymentMethod is null) {
                 <form asp-action="Add" asp-controller="MyRestaurantPayPal" style="display: none"><input type="submit" /></form>
@@ -53,8 +56,284 @@
             }
         </div>
     </div>
+    <div class="restaurant-location">
+        <hr />
+        <h1>Minha Localização</h1>
+        <div class="header-restaurant-location">
+            <div class="display-address-grid-container">
+                <div class="lbl-address">
+                    <h4 style="margin: 0;">Morada</h4>
+                </div>
+                <div class="address-inputs">
+                    
+                        <!-- Campo da morada com autocomplete -->
+                        <input class="text-input" type="text" name="adrs" id="addressInput" autocomplete="off" />
+                        <div id="suggestions" class="autocomplete-suggestions"></div>
+
+                        <!-- Campos escondidos para latitude, longitude e endereço completo -->
+                        <input type="hidden" name="Latitude" id="Latitude" />
+                        <input type="hidden" name="Longitude" id="Longitude" />
+                        <input type="hidden" name="FullAddress" id="FullAddress" />
+
+                        <button type="submit" class="app-button app-color-green save clickable">Atualizar a morada</button>
+                    
+                </div>
+                <div class="lbl-list">
+                    <h4 style="margin: 0;">Lista</h4>
+                </div>
+                <div class="list-addresses"></div>
+            </div>
+            <div class="display-map">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loadAddresses();
+
+        var marker = null;
+        var map = L.map('map').setView([38.52165, -8.83977], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+         function placeMarker(lat, lng, popupText = null){
+             if(!marker) {
+                 marker = L.marker([lat, lng]).addTo(map);
+             }
+             else {
+                 marker.setLatLng([lat, lng]);
+             }
+
+             if(popupText) {
+                 marker.bindPopup(popupText).openPopup();
+             }
+         }
+
+        function getAddress(lat, lng) {
+            var url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const displayName = data.display_name || "Morada não encontrada";
+                    document.querySelector('input[name="adrs"]').value = displayName;
+                    document.getElementById("FullAddress").value = displayName;
+                    document.getElementById("Latitude").value = lat;
+                    document.getElementById("Longitude").value = lng;
+                })
+                .catch(error => console.error('Erro ao obter endereço:', error));
+        }
+
+        map.on('click', function (e) {
+
+            const {lat, lng} = e.latlng;
+            placeMarker(lat, lng);
+            getAddress(lat, lng);
+        });
+
+        let timer;
+        document.getElementById("addressInput").addEventListener("input", function () {
+            clearTimeout(timer);
+            const query = this.value.trim();
+            if(query.length < 3) {
+                document.getElementById("suggestions").innerHTML = "";
+                return;
+            }
+            timer = setTimeout(() => autocompleteAddress(query), 500);
+        });
+
+            function autocompleteAddress(query) {
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        const suggestionsContainer = document.getElementById("suggestions");
+                        suggestionsContainer.innerHTML = "";
+                        if(data.length === 0) return;
+
+                        data.forEach(location => {
+                            const item = document.createElement("div");
+                            item.classList.add("suggestion-item");
+                            item.textContent = location.display_name;
+                            item.addEventListener("click", function() {
+                                document.getElementById("addressInput").value = location.display_name;
+                                placeMarker(location.lat, location.lon);
+                                suggestionsContainer.innerHTML = "";
+
+                                document.getElementById("FullAddress").value = location.display_name;
+                                document.getElementById("Latitude").value = location.lat;
+                                document.getElementById("Longitude").value = location.lon;
+                            });
+                            suggestionsContainer.appendChild(item);
+                        });
+                    })
+                    .catch(error => console.error("Erro no autocomplete:", error));
+            }
+
+        document.getElementById("btn-save-address").addEventListener("click", function () {
+            var address = document.querySelector('input[name="adrs"]').value;
+            var latLng = marker.getLatLng();
+
+            if (!address || !latLng) {
+                alert("Por favor, selecione uma morada válida.");
+                return;
+            }
+
+            // Atualizar os hidden inputs para envio posterior (caso necessário)
+            document.getElementById("Latitude").value = latLng.lat;
+            document.getElementById("Longitude").value = latLng.lng;
+            document.getElementById("FullAddress").value = address;
+
+                fetch('/MyRestaurant/AddAddress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                lat: latLng.lat,
+                lng: latLng.lng,
+                fullAddress: address
+            })
+        }).then(r => {
+            if (r.ok) {
+                alert("Morada guardada com sucesso!");
+            }
+        });
+    });
+
+
+
+        // Função para converter a morada em coordenadas
+        function getCoordinates(address) {
+            var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if(data.length > 0) {
+                    var lat = parseFloat(data[0].lat);
+                    var lng = parseFloat(data[0].lon);
+
+                    //Mover o mapa e o marcador para a nova localização
+                    map.setView([lat, lng], 25);
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    alert("Morada não encontrada!");
+                }
+            })
+            .catch(error => console.error('Erro ao obter coordenadas:', error));
+        }
+
+        // Capturar mudanças no input e atualizar a posição no mapa
+        document.querySelector('input[name="adrs"]').addEventListener("change", function ()  {
+            var address = this.value;
+            if (address.length > 3) { //Evita chamadas para inputs vazios
+                getCoordinates(address);
+            }
+        })
+
+        function loadAddresses() {
+        fetch("/Address/GetAllAddresses")
+            .then(response => response.json())
+            .then(addresses => {
+                const listContainer = document.querySelector(".list-addresses");
+                listContainer.innerHTML = ""; // Limpa a lista antes de carregar
+
+                let activeAddress = addresses.find(a => a.isActive);
+                if(activeAddress) {
+                    placeMarker(activeAddress.latitude, activeAddress.longitude);
+                    map.setView([activeAddress.latitude, activeAddress.longitude], 25);
+                    document.querySelector('input[name="adrs"]').value = activeAddress.fullAddress;
+                }
+
+                addresses.forEach(address => {
+                    const addressElement = document.createElement("div");
+                    addressElement.classList.add("address-item");
+                    if(address.isActive) addressElement.style.backgroundColor = "#d4edda";
+                    addressElement.innerHTML = `
+                        <p>${address.fullAddress}</p>
+                        <button class="btn-select" data-id="${address.id}">Selecionar</button>
+                        <button class="btn-delete" data-id="${address.id}">X</button>
+                    `;
+                    listContainer.appendChild(addressElement);
+                });
+
+                // Adicionar eventos aos botões
+                document.querySelectorAll(".btn-select").forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        selectAddress(this.dataset.id);
+                    });
+                });
+
+                document.querySelectorAll(".btn-delete").forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        removeAddress(this.dataset.id);
+                    });
+                });
+            })
+            .catch(error => console.error("Erro ao carregar moradas:", error));
+        }
+
+        async function selectAddress(addressId) {
+            try {
+                const response = await fetch(`/Address/SelectAddress?id=${addressId}`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    alert("Morada selecionada com sucesso!");
+                    loadAddresses(); // Atualiza a lista de moradas
+                } else {
+                    alert("Erro ao selecionar a morada.");
+                }
+            } catch (error) {
+                console.error("Erro na requisição:", error);
+            }
+        }
+
+        function removeAddress(id) {
+            fetch(`/Address/RemoveAddress?id=${id}`, { method: "POST" })
+                .then(response => {
+                    if (!response.ok) throw new Error("Erro ao remover morada");
+                    loadAddresses(); // Atualiza a lista
+                })
+                .catch(error => console.error(error));
+        }
+
+        function renderAddresses(addresses) {
+            const list = document.querySelector('.list-addresses');
+            list.innerHTML = '';
+
+            addresses.forEach(address => {
+                const item = document.createElement('div');
+                item.classList.add('address-item');
+                if (address.isActive) item.style.backgroundColor = "#d4edda"; // Cor diferente para a ativa
+
+                item.innerHTML = `
+                    <span>${address.fullAddress}</span>
+                    <button class="btn-select" onclick="selectAddress(${address.id})">Selecionar</button>
+                `;
+
+                list.appendChild(item);
+            });
+        }
+
+    });
+
+        document.querySelector("form.app-form").addEventListener("submit", function (e) {
+        const fullAddress = document.getElementById("FullAddress").value;
+        const lat = document.getElementById("Latitude").value;
+        const lng = document.getElementById("Longitude").value;
+
+        if (!fullAddress || !lat || !lng) {
+            e.preventDefault();
+            alert("Por favor, selecione uma morada da lista para atualizar.");
+        }
+    });
+</script>

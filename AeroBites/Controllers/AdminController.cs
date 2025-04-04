@@ -1,24 +1,13 @@
 ﻿using AeroBites.Data;
-using AeroBites.Models;
+using AeroBites.Models.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AeroBites.Controllers
 {
     [Authorize(Policy = "AdminOnly")]
-    public class AdminController : Controller
+    public class AdminController(AeroBitesContext context) : Controller
     {
-        private readonly AeroBitesContext _context;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AdminController"/> class.
-        /// </summary>
-        /// <param name="context">The context to interact with the database. This is injected by the dependency injection container.</param>
-        public AdminController(AeroBitesContext context)
-        {
-            _context = context;
-        }
-
         /// <summary>
         /// Displays a list of restaurants pending approval, as well as already approved ones for management actions.
         /// </summary>
@@ -27,7 +16,7 @@ namespace AeroBites.Controllers
         /// </returns>
         public IActionResult Restaurants()
         {
-            return View(_context.Restaurant.ToList());
+            return View(context.Restaurant.ToList());
         }
 
         /// <summary>
@@ -51,10 +40,10 @@ namespace AeroBites.Controllers
         [HttpGet]
         public IActionResult ApproveRestaurant(int id)
         {
-            var restaurant = _context.Restaurant.Find(id);
+            var restaurant = context.Restaurant.Find(id);
 
             restaurant.Status = Enums.RestaurantStatus.Valid;
-            _context.SaveChanges();
+            context.SaveChanges();
 
             TempData[Enums.MessageType.successMessage.ToString()] = "Restaurante aprovado.";
 
@@ -71,10 +60,10 @@ namespace AeroBites.Controllers
         [HttpGet]
         public IActionResult DenyRestaurant(int id)
         {
-            var restaurant = _context.Restaurant.Find(id);
+            var restaurant = context.Restaurant.Find(id);
 
-            _context.Restaurant.Remove(restaurant);
-            _context.SaveChanges();
+            context.Restaurant.Remove(restaurant);
+            context.SaveChanges();
 
             TempData[Enums.MessageType.successMessage.ToString()] = "Restaurante negado.";
 
@@ -91,14 +80,40 @@ namespace AeroBites.Controllers
         [HttpGet]
         public IActionResult DeleteRestaurant(int id)
         {
-            var restaurant = _context.Restaurant.FirstOrDefault(restaurant => restaurant.Id == id);
+            var restaurant = context.Restaurant.FirstOrDefault(restaurant => restaurant.Id == id);
 
-            _context.Restaurant.Remove(restaurant);
-            _context.SaveChanges();
+            context.Restaurant.Remove(restaurant);
+            context.SaveChanges();
 
             TempData[Enums.MessageType.successMessage.ToString()] = "Restaurante eliminado.";
 
             return RedirectToAction(nameof(Index));
+        }
+
+
+        /// <summary>
+        /// Returns the view to visualize statistics and give needed data to populate the view
+        /// </summary>
+        public IActionResult Statistics()
+        {
+            // Create list to hold the sells
+            List<DailySells> sells = [];
+
+            // Get all sells and iterate them
+            foreach(var cart in context.Cart.Where(c => c.Status >= Enums.OrderStatus.Placed).OrderBy(c => c.PlacedDate).ToList())
+            {
+                // Search on the array if there is already a entry with that date
+                var match = sells.Find(s => s.Date == cart.PlacedDate);
+                // if there is no match then add a new entry
+                if(match is null) {
+                    sells.Add(new DailySells { Date = cart.PlacedDate, Amount = 1 });
+                    continue;
+                }
+                // Update the amount of times this daily sell happened, this will also update the value on the list
+                match.Amount += 1;
+            }
+
+            return View(sells);
         }
     }
 }

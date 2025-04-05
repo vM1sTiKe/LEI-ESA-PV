@@ -11,15 +11,15 @@ namespace AeroBites.Data
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<AeroBites.Models.Account> Account { set; get; } = default!;
-        public DbSet<AeroBites.Models.PaymentMethod> PaymentMethod { set; get; } = default!;
-        public DbSet<AeroBites.Models.AccountLog> AccountLog { set; get; } = default!;
-        public DbSet<AeroBites.Models.Address> Address { set; get; } = default!;
-        public DbSet<AeroBites.Models.Restaurant> Restaurant { set; get; } = default!;
-        public DbSet<AeroBites.Models.Category> Category { set; get; } = default!;
-        public DbSet<AeroBites.Models.Item> Item { set; get; } = default!;
-        public DbSet<AeroBites.Models.Cart> Cart { set; get; } = default!;
-        public DbSet<AeroBites.Models.CartAddress> CartAddress { set; get; } = default!;
-        public DbSet<AeroBites.Models.CartItem> CartItem { set; get; } = default!;
+        public DbSet<AeroBites.Models.Account> Account => Set<AeroBites.Models.Account>();
+        public DbSet<AeroBites.Models.PaymentMethod> PaymentMethod => Set<AeroBites.Models.PaymentMethod>();
+        public DbSet<AeroBites.Models.AccountLog> AccountLog => Set<AeroBites.Models.AccountLog>();
+        public DbSet<AeroBites.Models.Address> Address => Set<AeroBites.Models.Address>();
+        public DbSet<AeroBites.Models.Restaurant> Restaurant => Set<AeroBites.Models.Restaurant>();
+        public DbSet<AeroBites.Models.Category> Category => Set<AeroBites.Models.Category>();
+        public DbSet<AeroBites.Models.Item> Item => Set<AeroBites.Models.Item>();
+        public DbSet<AeroBites.Models.Cart> Cart => Set<AeroBites.Models.Cart>();
+        public DbSet<AeroBites.Models.CartAddress> CartAddress => Set<AeroBites.Models.CartAddress>();
+        public DbSet<AeroBites.Models.CartItem> CartItem => Set<AeroBites.Models.CartItem>();
     }
 }

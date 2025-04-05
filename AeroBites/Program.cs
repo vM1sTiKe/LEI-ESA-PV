@@ -1,10 +1,13 @@
 using AeroBites.Data;
 using AeroBites.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using AeroBites;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AeroBitesContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AeroBitesContext")));
+builder.Services.AddSqlServer<AeroBitesContext>(builder.Configuration.GetConnectionString("AeroBitesContext"), options => options.EnableRetryOnFailure());
 
 builder.Services.AddControllersWithViews();
 
@@ -35,5 +38,7 @@ app.MapControllerRoute(
     pattern: "{controller=Account}/{action=Index}/{id?}");
 
 app.MapControllerRoute(name: "/Admin/", pattern: "{controller=Admin}/{action=Restaurants}");
+
+app.CreateDbIfNotExists();
 
 app.Run();

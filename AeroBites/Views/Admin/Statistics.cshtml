@@ -11,7 +11,7 @@
         <a class="app-tab-action active-tab">Estatísticas</a>
     </nav>
 
-    <div class="statistics-data">
+    <div class="statistics-data test-cicd">
         @foreach(var daily_sell in @Model) {
             <span data-day="@daily_sell.Date" data-amount="@daily_sell.Amount"></span>
         }

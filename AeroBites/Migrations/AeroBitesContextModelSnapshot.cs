@@ -61,6 +61,39 @@ namespace AeroBites.Migrations
                     b.ToTable("AccountLog");
                 });
 
+            modelBuilder.Entity("AeroBites.Models.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FullAddress")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Address");
+                });
+
             modelBuilder.Entity("AeroBites.Models.Cart", b =>
                 {
                     b.Property<int>("Id")
@@ -70,6 +103,9 @@ namespace AeroBites.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CartAddressId")
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("PlacedDate")
@@ -93,6 +129,29 @@ namespace AeroBites.Migrations
                     b.HasIndex("RestaurantId");
 
                     b.ToTable("Cart");
+                });
+
+            modelBuilder.Entity("AeroBites.Models.CartAddress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FullAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CartAddress");
                 });
 
             modelBuilder.Entity("AeroBites.Models.CartItem", b =>
@@ -128,6 +187,9 @@ namespace AeroBites.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -155,7 +217,8 @@ namespace AeroBites.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(17)
+                        .HasColumnType("nvarchar(17)");
 
                     b.Property<float>("Price")
                         .HasColumnType("real");
@@ -165,6 +228,43 @@ namespace AeroBites.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Item");
+                });
+
+            modelBuilder.Entity("AeroBites.Models.PaymentMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApiToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("RestaurantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId")
+                        .IsUnique()
+                        .HasFilter("[RestaurantId] IS NOT NULL");
+
+                    b.ToTable("PaymentMethod");
                 });
 
             modelBuilder.Entity("AeroBites.Models.Restaurant", b =>
@@ -177,7 +277,8 @@ namespace AeroBites.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
@@ -228,6 +329,13 @@ namespace AeroBites.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("AeroBites.Models.PaymentMethod", b =>
+                {
+                    b.HasOne("AeroBites.Models.Restaurant", null)
+                        .WithOne("PaymentMethod")
+                        .HasForeignKey("AeroBites.Models.PaymentMethod", "RestaurantId");
+                });
+
             modelBuilder.Entity("AeroBites.Models.Cart", b =>
                 {
                     b.Navigation("Items");
@@ -243,6 +351,8 @@ namespace AeroBites.Migrations
                     b.Navigation("Categories");
 
                     b.Navigation("Orders");
+
+                    b.Navigation("PaymentMethod");
                 });
 #pragma warning restore 612, 618
         }

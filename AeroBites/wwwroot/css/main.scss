@@ -8,6 +8,8 @@
 @import "_myrestaurant.scss";
 @import "_myorders.scss";
 @import "_payment.scss";
+@import "_address.scss";
+@import "_paymentmethods.scss";
 
 table.app-table {
     width: 100%;
@@ -150,6 +152,15 @@ a.app-icon {
     width: fit-content;
     text-decoration: none;
     color: black;
+}
+
+button.app-warning-button {
+    background: #f00;
+    color: #fff;
+    margin: 0;
+    height: 47px;
+    display: flex;
+    align-items: center;
 }
 
 .app-color-green {

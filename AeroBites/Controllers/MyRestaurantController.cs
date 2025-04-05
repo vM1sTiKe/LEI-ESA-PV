@@ -1,5 +1,6 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
+using AeroBites.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 namespace AeroBites.Controllers
 {
     [Authorize]
-    public class MyRestaurantController(AeroBitesContext context) : Controller
+    public class MyRestaurantController(AeroBitesContext context, AddressService addressService) : Controller
     {
-        private Restaurant? MyRestaurant => context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.OwnerId == User.GetId());
+        private Restaurant? MyRestaurant => context.Restaurant.Include(r => r.PaymentMethod).Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.OwnerId == User.GetId());
         private IQueryable<Cart>? MyOrders => context.Cart.Where(c => MyRestaurant != null && c.RestaurantId == MyRestaurant.Id);
+
 
         /// <summary>
         /// Displays the restaurant's home page or redirects to the create page if no restaurant exists.
@@ -49,6 +51,10 @@ namespace AeroBites.Controllers
             context.Add(restaurant);
             await context.SaveChangesAsync();
 
+            // Criar categoria default do nosso restaurante
+            context.Category.Add(new Category { Name = "Sem Categoria", IsDefault = true, RestaurantId = restaurant.Id });
+            await context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Reviewing));
         }
 
@@ -79,6 +85,9 @@ namespace AeroBites.Controllers
             MyRestaurant.Name = restaurant.Name;
             context.Update(MyRestaurant);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Nome do restaurante alterado.";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -148,6 +157,8 @@ namespace AeroBites.Controllers
             context.Cart.Update(order);
             await context.SaveChangesAsync();
 
+            TempData[Enums.MessageType.successMessage.ToString()] = "O pedido irá ser preparado.";
+
             return RedirectToAction(nameof(Orders));
         }
 
@@ -164,7 +175,58 @@ namespace AeroBites.Controllers
             context.Cart.Update(order);
             await context.SaveChangesAsync();
 
+            TempData[Enums.MessageType.successMessage.ToString()] = "Pedido enviado.";
+
             return RedirectToAction(nameof(Orders));
+        }
+
+        /// <summary>
+        /// Elimina restaurante e dados associados
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> Remove(int id) {
+            // Id inválido
+            if (MyRestaurant?.Id != id) return RedirectToAction(nameof(Index));
+
+            context.Restaurant.Remove(MyRestaurant);
+            await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "Restaurante eliminado.";
+
+            // Restaurante removido, redirect para a página de criar novo
+            return RedirectToAction(nameof(Create));
+        }
+
+        /// <summary>
+        /// Adiciona ou atualiza o endereço de um restaurante.
+        /// </summary>
+        /// <param name="lat">Latitude do endereço.</param>
+        /// <param name="lng">Longitude do endereço.</param>
+        /// <param name="fullAddress">Endereço completo.</param>
+        /// <returns>Retorna uma resposta HTTP 200 se for bem-sucedido.</returns>
+        [HttpPost]
+        public async Task<IActionResult> AddAddress(double lat, double lng, string fullAddress)
+        {
+            var address = await context.Address.FirstOrDefaultAsync(address => address.RestaurantId == MyRestaurant.Id);
+
+            if(address == null)
+            {
+                address = await addressService.AddAddressRestaurant(lat, lng, fullAddress, MyRestaurant.Id);
+
+                TempData[Enums.MessageType.successMessage.ToString()] = "Morada adicionada.";
+            }
+            else
+            {
+                address.Latitude = lat;
+                address.Longitude = lng;
+                address.FullAddress = fullAddress;
+
+                TempData[Enums.MessageType.successMessage.ToString()] = "Morada editada.";
+            }
+
+            await context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

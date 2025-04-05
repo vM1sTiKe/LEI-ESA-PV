@@ -100,6 +100,7 @@ namespace AeroBites.Controllers
         public async Task<IActionResult> SignOff()
         {
             await HttpContext.SignOutAsync("Cookies");
+            TempData[Enums.MessageType.infoMessage.ToString()] = "Sessão terminada.";
             return RedirectToAction(nameof(Index));
         }
 

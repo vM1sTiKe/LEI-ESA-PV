@@ -1,0 +1,60 @@
+﻿@model IEnumerable<AeroBites.Models.Admin.DailySells>;
+
+@{
+    ViewData["Title"] = "Admin";
+    ViewData["CurrentPage"] = Enums.CurrentPage.Admin;
+}
+
+<div class="content-admin admin-statistics">
+    <nav class="app-tab">
+        <a asp-action="" class="app-tab-action">Restaurantes</a>
+        <a class="app-tab-action active-tab">Estatísticas</a>
+    </nav>
+
+    <div class="statistics-data test-cicd">
+        @foreach(var daily_sell in @Model) {
+            <span data-day="@daily_sell.Date" data-amount="@daily_sell.Amount"></span>
+        }
+    </div>
+
+    <div class="daily-graph graph">
+        <h1>Vendas diárias</h1>
+        <div>
+            <canvas id="chart-admin-daily-sells"></canvas>
+        </div>
+    </div>
+    
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function get_data() {
+            const obj = { labels: [], data: []};
+            for(let data_entry of document.querySelectorAll("div.content-admin.admin-statistics > div.statistics-data > span")) {
+                obj["labels"].push(data_entry.dataset.day);
+                obj["data"].push(data_entry.dataset.amount);
+            }
+            return obj;
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const data = get_data();
+            new Chart(document.getElementById("chart-admin-daily-sells").getContext("2d"), {
+                type: 'bar',
+                data: {
+                    labels: data["labels"],
+                    datasets: [{
+                        data: data["data"],
+                        backgroundColor: "#7d7",
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: { display: false },
+                    }
+                },
+            });
+        });
+    </script>
+}

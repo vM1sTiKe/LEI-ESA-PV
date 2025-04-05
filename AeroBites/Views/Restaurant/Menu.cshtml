@@ -12,9 +12,9 @@
                 <img class="banner" src="~/images/dummy-banner.jpg" alt="banner restaurant">
                 <h1 class="name-restaurant">@Model.Name</h1>
                 <div class="info">
-                    <span>Avaliação 0.0 (0)</span>
-                    <span>Tempo de entrega 00 min</span>
-                    <span>Taxa de entrega 00,00€</span>
+                    <label>Avaliação 0.0 (0)</label>
+                    <label>Tempo de entrega 00 min</label>
+                    <label>Taxa de entrega 00,00€</label>
                 </div>
             </header>
         </div>
@@ -87,7 +87,7 @@
                                 </div>
 
                                 <span class="cart-total-label">Total: @total.ToString("N2")€</span>
-                                <a asp-controller="Checkout" asp-action="" class="btn-payment frm-to-payment">Check-Out</a>
+                                <a asp-controller="Checkout" asp-action="" asp-route-restaurant="@Model.Id" class="btn-payment frm-to-payment">Check-Out</a>
                             </div>
                         </div>
                     </div>

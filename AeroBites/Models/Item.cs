@@ -9,6 +9,7 @@ namespace AeroBites.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "O nome do Item é obrigatório.")]
+        [MaxLength(17, ErrorMessage = "O nome é demasiado grande.")]
         [Display(Name = "Nome do Item")]
         public required string Name { get; set; }
 

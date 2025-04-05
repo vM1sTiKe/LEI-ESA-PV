@@ -1,0 +1,56 @@
+main.app-content > div.content-paymentmethods {
+
+    > div.header {
+        > h1 {
+            margin: 0;
+            margin-bottom: 22px;
+        }
+
+        display: flex;
+        justify-content: space-between;
+    }
+
+    > div.payment-methods {
+        > div.method {
+            > div.info {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                > div.account {
+                    height: 75px;
+                    width: 420px;
+                    border: 1px solid black;
+                    border-radius: 15px;
+                    display: flex;
+                    align-items: center;
+                    gap: 13px;
+
+                    > svg {
+                        height: 32px;
+                        margin-left: 22px;
+                    }
+                }
+
+                > div.actions {
+                    display: flex;
+                    gap: 17px;
+                    align-items: center;
+
+                    > div.default-method {
+                        height: 28px;
+
+                        > svg {
+                            width: 32px;
+                            cursor: pointer;
+
+                            &[data-default="true"] {
+                                fill: #f0dd0c;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

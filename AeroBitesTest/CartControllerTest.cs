@@ -3,7 +3,9 @@ using AeroBites.Data;
 using AeroBites.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using System.Security.Claims;
 
 namespace AeroBitesTest
@@ -27,11 +29,14 @@ namespace AeroBitesTest
             _context = new AeroBitesContext(options);
             _controllerCart = new CartController(_context);
             _controllerCheck = new CheckoutController(_context);
-            _controllerRest = new MyRestaurantController(_context);
+            _controllerRest = new MyRestaurantController(_context, null);
 
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "1") };
             var identity = new ClaimsIdentity(claims, "Cookies");
             var principal = new ClaimsPrincipal(identity);
+
+            var httpContext = new DefaultHttpContext();
+
 
             _controllerCart.ControllerContext = new ControllerContext
             {
@@ -46,6 +51,10 @@ namespace AeroBitesTest
             {
                 HttpContext = new DefaultHttpContext { User = principal }
             };
+
+            var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
+            _controllerCart.TempData = tempData;
+
 
             _userId = int.Parse(claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
@@ -122,7 +131,7 @@ namespace AeroBitesTest
             var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.AccountId == _userId && c.RestaurantId == _restaurantId && c.Status.ToString() == "Choosing");
             
             Assert.Equal("Choosing", cart.Status.ToString());
-            var result = await _controllerCheck.SendOrder(cart.Id, cart.RestaurantId);
+            var result = await _controllerCheck.SendOrder(cart.Id, cart.RestaurantId, 0);
             Assert.Equal("Placed", cart.Status.ToString());
 
             var redirectResult = result as RedirectToActionResult;

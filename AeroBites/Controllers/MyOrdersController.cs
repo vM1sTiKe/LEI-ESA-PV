@@ -1,10 +1,12 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AeroBites.Controllers
 {
+    [Authorize]
     public class MyOrdersController(AeroBitesContext context) : Controller
     {
         private IQueryable<Cart>? Orders => context.Cart.Include(c => c.Items).Where(c => c.AccountId == User.GetId());
@@ -53,6 +55,8 @@ namespace AeroBites.Controllers
             thisOrder.Status = Enums.OrderStatus.Recieved;
             context.Cart.Update(thisOrder);
             await context.SaveChangesAsync();
+
+            TempData[Enums.MessageType.successMessage.ToString()] = "O estado do pedido foi alterado para recebido.";
 
             return RedirectToAction(nameof(Index));
         }

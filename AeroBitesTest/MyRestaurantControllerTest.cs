@@ -1,6 +1,7 @@
 using AeroBites.Controllers;
 using AeroBites.Data;
 using AeroBites.Models;
+using AeroBites.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ namespace AeroBitesTest
     public class MyRestaurantControllerTests
     {
         private readonly AeroBitesContext _context;
+        private readonly AddressService _service;
         private readonly MyRestaurantController _controller;
         private readonly int _ownerId;
 
@@ -23,7 +25,8 @@ namespace AeroBitesTest
                 .Options;
 
             _context = new AeroBitesContext(options);
-            _controller = new MyRestaurantController(_context, null);
+            _service = new AddressService(_context);
+            _controller = new MyRestaurantController(_context, _service);
 
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "1") }; // Criar o utilizador falso com um ID fixo
             var identity = new ClaimsIdentity(claims, "Cookies");
@@ -45,6 +48,17 @@ namespace AeroBitesTest
                 Name = "Test Restaurant",
                 OwnerId = _ownerId // Usa o OwnerId configurado no setup
             };
+
+            var formCollection = new FormCollection(new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>
+            {
+                { "Latitude", "38.52165" },
+                { "Longitude", "-8.83977" },
+                { "FullAddress", "Test Address" }
+            });
+
+            _controller.ControllerContext.HttpContext.Request.Form = formCollection;
+            _controller.ControllerContext.HttpContext.Request.Method = "POST";
+            _controller.ControllerContext.HttpContext.Request.ContentType = "application/x-www-form-urlencoded";
 
             var result = await _controller.Create(restaurant);
 

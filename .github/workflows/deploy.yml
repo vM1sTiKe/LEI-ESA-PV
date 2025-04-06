@@ -1,0 +1,24 @@
+# deploy action to deploy AeroBites to Azure
+
+name: Deploy AeroBites
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install dependencies
+        run: dotnet restore ./AeroBites/AeroBites.csproj
+
+      - name: Build
+        run: dotnet build ./AeroBites/AeroBites.csproj --configuration Release --no-restore

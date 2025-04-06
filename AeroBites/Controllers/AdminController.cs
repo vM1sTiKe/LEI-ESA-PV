@@ -25,10 +25,6 @@ namespace AeroBites.Controllers
         /// <returns>
         /// A view showing all delivery points.
         /// </returns>
-        public IActionResult Collections()
-        {
-            return View();
-        }
 
         /// <summary>
         /// Approves a restaurant by setting its status to Valid.

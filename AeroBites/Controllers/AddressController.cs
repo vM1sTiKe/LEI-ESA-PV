@@ -83,9 +83,17 @@ namespace AeroBites.Controllers
         public async Task<IActionResult> SelectAddress(int id)
         {
             var oldAddress = await _context.Address.FirstOrDefaultAsync(address => address.IsActive == true && address.AccountId == User.GetId());
-            oldAddress.IsActive = false;
+            if(oldAddress != null)
+            {
+                oldAddress.IsActive = false;
+            }
 
             var newAddress = await _context.Address.FindAsync(id);
+            if(newAddress == null || newAddress.AccountId != User.GetId())
+            {
+                return NotFound();
+            }
+            
             newAddress.IsActive = true;
 
             await _context.SaveChangesAsync();

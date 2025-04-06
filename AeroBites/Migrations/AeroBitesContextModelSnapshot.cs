@@ -39,7 +39,7 @@ namespace AeroBites.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Account");
+                    b.ToTable("Account", (string)null);
                 });
 
             modelBuilder.Entity("AeroBites.Models.AccountLog", b =>
@@ -58,7 +58,7 @@ namespace AeroBites.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AccountLog");
+                    b.ToTable("AccountLog", (string)null);
                 });
 
             modelBuilder.Entity("AeroBites.Models.Address", b =>
@@ -91,7 +91,7 @@ namespace AeroBites.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Address");
+                    b.ToTable("Address", (string)null);
                 });
 
             modelBuilder.Entity("AeroBites.Models.Cart", b =>
@@ -128,7 +128,7 @@ namespace AeroBites.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Cart");
+                    b.ToTable("Cart", (string)null);
                 });
 
             modelBuilder.Entity("AeroBites.Models.CartAddress", b =>
@@ -151,7 +151,7 @@ namespace AeroBites.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CartAddress");
+                    b.ToTable("CartAddress", (string)null);
                 });
 
             modelBuilder.Entity("AeroBites.Models.CartItem", b =>
@@ -176,7 +176,7 @@ namespace AeroBites.Migrations
 
                     b.HasIndex("CartId");
 
-                    b.ToTable("CartItem");
+                    b.ToTable("CartItem", (string)null);
                 });
 
             modelBuilder.Entity("AeroBites.Models.Category", b =>
@@ -201,7 +201,7 @@ namespace AeroBites.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("AeroBites.Models.Item", b =>
@@ -227,7 +227,7 @@ namespace AeroBites.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Item");
+                    b.ToTable("Item", (string)null);
                 });
 
             modelBuilder.Entity("AeroBites.Models.PaymentMethod", b =>
@@ -264,7 +264,7 @@ namespace AeroBites.Migrations
                         .IsUnique()
                         .HasFilter("[RestaurantId] IS NOT NULL");
 
-                    b.ToTable("PaymentMethod");
+                    b.ToTable("PaymentMethod", (string)null);
                 });
 
             modelBuilder.Entity("AeroBites.Models.Restaurant", b =>
@@ -288,7 +288,7 @@ namespace AeroBites.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Restaurant");
+                    b.ToTable("Restaurant", (string)null);
                 });
 
             modelBuilder.Entity("AeroBites.Models.Cart", b =>

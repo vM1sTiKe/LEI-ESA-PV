@@ -3,6 +3,8 @@
 name: Deploy AeroBites
 
 on:
+  push:
+    branches: [ "release" ]
   workflow_dispatch:
 
 env:

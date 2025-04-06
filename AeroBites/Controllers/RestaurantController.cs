@@ -44,21 +44,17 @@ namespace AeroBites.Controllers
             return View(restaurant);
         }
 
-
-        [HttpPost]
-        public IActionResult SetActiveAddress(int addressId)
+        public IActionResult Edit(int id)
         {
-            var userId = User.GetId();
-
-            var addresses = context.Address.Where(a => a.AccountId == userId).ToList();
-            foreach (var address in addresses)
+            // lógica para buscar o restaurante pelo id
+            var restaurant = context.Restaurant.Find(id);
+            if (restaurant == null)
             {
-                address.IsActive = address.Id == addressId;
+                return NotFound();
             }
 
-            context.SaveChanges();
-
-            return Ok();
+            return View(restaurant);
         }
+
     }
 }

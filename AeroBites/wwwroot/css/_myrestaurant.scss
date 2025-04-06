@@ -5,7 +5,7 @@
         > div.bank-account {
             margin-top: 56px;
 
-            > div.header {
+            > div.header-bank-account {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -34,6 +34,195 @@
                 }
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+        > div.restaurant-location {
+            margin-top: 56px;
+
+            > div.header-restaurant-location {
+                display: grid;
+                grid-template-rows: auto 1fr;
+                grid-template-columns: .5fr 1fr;
+
+                div.display-address-grid-container {
+                    grid-row-start: 2;
+                    grid-column-start: 1;
+                    grid-row-end: 3;
+                    grid-column-end: 2;
+                    display: grid;
+                    grid-template-rows: auto auto auto auto 1fr;
+                    grid-template-columns: 1fr;
+                    border: solid 2px black;
+
+                    div.btns {
+                        grid-row-start: 1;
+                        grid-row-end: 2;
+                        display: flex;
+                        justify-content: space-around;
+                        align-content: center;
+                        margin-top: 1%;
+
+                        button.btn-saved-address {
+                            border-style: none;
+                            border-radius: 5%;
+                            padding: 5px;
+                            font-size: .9rem;
+                            font-weight: bold;
+                            background-color: #77dd77;
+                            cursor: pointer;
+                        }
+                    }
+
+                    div.lbl-address {
+                        grid-row-start: 2;
+                        grid-row-end: 3;
+                        margin-top: 2%;
+                        margin-left: 1%;
+                        color: #2e2e2e;
+                    }
+
+                    div.address-inputs {
+                        grid-row-start: 3;
+                        grid-row-end: 4;
+                        position: relative;
+                        display: flex;
+                        justify-content: space-between;
+                        align-content: center;
+                        margin-left: 1%;
+
+                        input.text-input {
+                            width: 75%;
+                            height: 90%;
+                        }
+
+                        .autocomplete-suggestions {
+                            position: absolute;
+                            background: white;
+                            border: 1px solid black;
+                            max-height: 250px;
+                            overflow-y: auto;
+                            width: 300px;
+                            margin-top: 5.5%;
+                            z-index: 1000;
+                        }
+
+                        .suggestion-item {
+                            padding: 8px;
+                            cursor: pointer;
+                        }
+
+                        .suggestion-item:hover {
+                            background-color: #f0f0f0;
+                        }
+
+                        button.btn-save-address {
+                            border-style: none;
+                            border-radius: 5%;
+                            margin-right: 1%;
+                            padding: 5px;
+                            font-size: .9rem;
+                            font-weight: bold;
+                            background-color: #77dd77;
+                            cursor: pointer;
+                        }
+                    }
+
+                    div.lbl-list {
+                        grid-row-start: 4;
+                        grid-row-end: 5;
+                        margin-top: 2%;
+                        margin-left: 1%;
+                        color: #2e2e2e;
+                    }
+
+                    div.list-addresses {
+                        grid-row-start: 5;
+                        grid-row-end: 6;
+                        display: flex;
+                        flex-direction: column;
+                        align-content: center;
+                        gap: 10px;
+                        border: 2px solid black;
+                        max-height: 400px;
+                        overflow-y: auto;
+
+                        .address-box {
+                            border: 1px solid #ccc;
+                            border-radius: 10px;
+                            padding: 15px;
+                            background-color: #f9f9f9;
+                            margin-top: 10px;
+                        }
+
+                        .address-item {
+                            background: #f8f9fa;
+                            padding: 10px;
+                            border-radius: 5px;
+                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+
+                        .btn-select,
+                        .btn-delete {
+                            margin-left: 5px;
+                            padding: 5px 10px;
+                            border: none;
+                            cursor: pointer;
+                        }
+
+                        .btn-select {
+                            background-color: #007bff;
+                            color: white;
+                        }
+
+                        .btn-delete {
+                            background-color: #dc3545;
+                            color: white;
+                        }
+                    }
+                }
+
+                > div.display-map {
+                    grid-row-start: 2;
+                    grid-column-start: 2;
+                    grid-row-end: 3;
+                    grid-column-end: 3;
+
+                    div#map {
+                        width: 100%;
+                        height: 500px;
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         > div.actions {
             display: flex;

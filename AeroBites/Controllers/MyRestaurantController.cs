@@ -24,7 +24,22 @@ namespace AeroBites.Controllers
         public IActionResult Index() {
             if (MyRestaurant is null) return RedirectToAction(nameof(Create));
             if (MyRestaurant.Status == Enums.RestaurantStatus.WaitingAcceptance) return RedirectToAction(nameof(Reviewing));
-            return View(MyRestaurant);
+
+            var activeAddress = context.Address.FirstOrDefault(a => a.RestaurantId == MyRestaurant.Id && a.IsActive);
+            if (activeAddress != null)
+            {
+                ViewBag.Latitude = activeAddress.Latitude;
+                ViewBag.Longitude = activeAddress.Longitude;
+                ViewBag.FullAddress = activeAddress.FullAddress;
+            }
+            else
+            {
+                ViewBag.FullAddress = "";
+                ViewBag.Latitude = 38.52165;
+                ViewBag.Longitude = -8.83977;
+            }
+
+                return View(MyRestaurant);
         }
 
         /// <summary>
@@ -53,6 +68,16 @@ namespace AeroBites.Controllers
 
             // Criar categoria default do nosso restaurante
             context.Category.Add(new Category { Name = "Sem Categoria", IsDefault = true, RestaurantId = restaurant.Id });
+
+            // Adicionar morada
+            if (double.TryParse(Request.Form["Latitude"], out double lat) &&
+                double.TryParse(Request.Form["Longitude"], out double lng) &&
+                !string.IsNullOrWhiteSpace(Request.Form["FullAddress"]))
+            {
+                var fullAddress = Request.Form["FullAddress"];
+                await addressService.AddAddressRestaurant(lat, lng, fullAddress, restaurant.Id);
+            }
+
             await context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Reviewing));
@@ -71,6 +96,7 @@ namespace AeroBites.Controllers
             return View();
         }
 
+
         /// <summary>
         /// Handles the editing of a restaurant's details.
         /// </summary>
@@ -84,10 +110,35 @@ namespace AeroBites.Controllers
 
             MyRestaurant.Name = restaurant.Name;
             context.Update(MyRestaurant);
+
+            if (double.TryParse(Request.Form["Latitude"], out double lat) &&
+               double.TryParse(Request.Form["Longitude"], out double lng) &&
+               !string.IsNullOrWhiteSpace(Request.Form["FullAddress"]))
+            {
+                var fullAddress = Request.Form["FullAddress"];
+                var existingAddress = await context.Address.FirstOrDefaultAsync(a => a.RestaurantId == MyRestaurant.Id);
+
+                if(existingAddress == null)
+                {
+                    await addressService.AddAddressRestaurant(lat, lng, fullAddress, MyRestaurant.Id);
+                    TempData[Enums.MessageType.successMessage.ToString()] = "Nome e morada alterado.";
+                }
+                else
+                {
+                    existingAddress.Latitude = lat;
+                    existingAddress.Longitude = lng;
+                    existingAddress.FullAddress = fullAddress;
+                    TempData[Enums.MessageType.successMessage.ToString()] = "Nome e morada alterado.";
+                }
+            }
+            else
+            {
+                TempData[Enums.MessageType.successMessage.ToString()] = "Nome do restaurante alterado.";
+            }
+
+                
+
             await context.SaveChangesAsync();
-
-            TempData[Enums.MessageType.successMessage.ToString()] = "Nome do restaurante alterado.";
-
             return RedirectToAction(nameof(Index));
         }
 
@@ -227,6 +278,28 @@ namespace AeroBites.Controllers
             await context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddRestaurantAddress(double lat, double lng, string fullAddress, int restaurantId)
+        {
+            await addressService.AddAddressRestaurant(lat, lng, fullAddress, restaurantId);
+            TempData[Enums.MessageType.successMessage.ToString()] = "Morada do restaurante adicionada com sucesso.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveAddress()
+        {
+            var address = await context.Address.FirstOrDefaultAsync(a => a.RestaurantId == MyRestaurant.Id && a.IsActive);
+            if (address != null)
+            {
+                context.Address.Remove(address);
+                await context.SaveChangesAsync();
+                TempData[Enums.MessageType.successMessage.ToString()] = "Morada removida com sucesso.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -5,6 +5,8 @@
     ViewData["CurrentPage"] = Enums.CurrentPage.MyRestaurant;
 }
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <div class="content-myrestaurant myrestaurant-geral">
     <div class="actions">
         <nav class="app-tab">
@@ -29,12 +31,13 @@
             <input asp-for="Name" class="form-control" autocomplete="off" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
+
         <input type="submit"/>
     </form>
 
     <div class="bank-account">
         <hr />
-        <div class="header">
+        <div class="header-bank-account">
             <h1>Minha Conta Bancária</h1>
             @if (Model.PaymentMethod is null) {
                 <form asp-action="Add" asp-controller="MyRestaurantPayPal" style="display: none"><input type="submit" /></form>
@@ -53,8 +56,213 @@
             }
         </div>
     </div>
+    <div class="restaurant-location">
+        <hr />
+        <h1>Minha Localização</h1>
+        <div class="header-restaurant-location">
+            <div class="display-address-grid-container">
+                <div class="lbl-address">
+                    <h4 style="margin: 0;">Morada</h4>
+                </div>
+                <div class="address-inputs">
+                    <input class="text-input" type="text" name="adrs" id="addressInput" autocomplete="off" />
+                    <div id="suggestions" class="autocomplete-suggestions"></div>
+                    <button id="btn-save-address" class="btn-save-address">Guardar</button>
+                    <input type="hidden" id="restaurantId" value="@Model.Id" />
+                </div>
+                <div class="lbl-list">
+                    <h4 style="margin: 0;">Lista</h4>
+                </div>
+                <div class="list-addresses">
+                    @if (ViewBag.FullAddress != null)
+                    {
+                        <div class="address-box d-flex justify-content-between align-items-center">
+                            <div>
+                                <p>@ViewBag.FullAddress</p>
+                            </div>
+                            <form asp-action="RemoveAddress" method="post">
+                                <button type="submit" class="btn-delete">Eliminar</button>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="address-box">
+                            <p><em>Sem morada definida.</em></p>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="display-map">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        
+        var marker = null;
+
+        // Recuperar valores da ViewBag (do Razor para o JS)
+        var initialLat = @ViewBag.Latitude ?? 38.52165;
+        var initialLng = @ViewBag.Longitude ?? -8.83977;
+        var fullAddress = "@ViewBag.FullAddress";
+
+        var map = L.map('map').setView([initialLat, initialLng], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        function placeMarker(lat, lng, popupText = null){
+             if(!marker) {
+                 marker = L.marker([lat, lng]).addTo(map);
+             }
+             else {
+                 marker.setLatLng([lat, lng]);
+             }
+
+             if(popupText) {
+                 marker.bindPopup(popupText).openPopup();
+             }
+         }
+
+         // Se houver endereço guardado, posiciona o marcador
+        if (fullAddress && fullAddress.trim() !== "") {
+            placeMarker(initialLat, initialLng, fullAddress);
+            document.querySelector('input[name="adrs"]').value = fullAddress;
+        }
+
+         function getAddress(lat, lng) {
+            var url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        document.querySelector('input[name="adrs"]').value = data.display_name;
+                    } else {
+                        document.querySelector('input[name="adrs"]').value = "Morada não encontrada";
+                    }
+                })
+                .catch(error => console.error('Erro ao obter endereço:', error));
+        }
+
+        map.on('click', function (e) {
+
+            const {lat, lng} = e.latlng;
+            placeMarker(lat, lng);
+            getAddress(lat, lng);
+        });
+
+        let timer;
+        document.getElementById("addressInput").addEventListener("input", function () {
+            clearTimeout(timer);
+            const query = this.value.trim();
+            if(query.length < 3) {
+                document.getElementById("suggestions").innerHTML = "";
+                return;
+            }
+            timer = setTimeout(() => autocompleteAddress(query), 500);
+        });
+
+        function autocompleteAddress(query) {
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const suggestionsContainer = document.getElementById("suggestions");
+                    suggestionsContainer.innerHTML = "";
+                    if(data.length === 0) return;
+
+                    data.forEach(location => {
+                        const item = document.createElement("div");
+                        item.classList.add("suggestion-item");
+                        item.textContent = location.display_name;
+                        item.addEventListener("click", function() {
+                            document.getElementById("addressInput").value = location.display_name;
+                            placeMarker(location.lat, location.lon);
+                            suggestionsContainer.innerHTML = "";
+                        });
+                        suggestionsContainer.appendChild(item);
+                    });
+                })
+                .catch(error => console.error("Erro no autocomplete:", error));
+        }
+
+        //Função para guardar a morada 
+        
+        document.getElementById("btn-save-address").addEventListener("click", function () {
+            var address = document.querySelector('input[name="adrs"]').value;
+            var latLng = marker.getLatLng();
+            var restaurantId = document.getElementById("restaurantId").value;
+
+            if (!address || !latLng) {
+                alert("Por favor, selecione uma morada válida.");
+                return;
+            }
+
+            fetch("/MyRestaurant/AddRestaurantAddress", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({
+                    lat: latLng.lat,
+                    lng: latLng.lng,
+                    fullAddress: address,
+                    restaurantId: restaurantId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response;
+            })
+            .then(data => {
+                alert("Morada guardada com sucesso!");
+                location.reload();
+            })
+            .catch(error => {
+                console.error("Erro ao guardar morada:", error);
+                alert("Erro ao guardar morada: " + error.message);
+            });
+        });
+        
+
+       // Função para converter a morada em coordenadas
+        function getCoordinates(address) {
+            var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if(data.length > 0) {
+                    var lat = parseFloat(data[0].lat);
+                    var lng = parseFloat(data[0].lon);
+
+                    //Mover o mapa e o marcador para a nova localização
+                    map.setView([lat, lng], 25);
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    alert("Morada não encontrada!");
+                }
+            })
+            .catch(error => console.error('Erro ao obter coordenadas:', error));
+        }
+
+        // Capturar mudanças no input e atualizar a posição no mapa
+        document.querySelector('input[name="adrs"]').addEventListener("change", function ()  {
+            var address = this.value;
+            if (address.length > 3) { //Evita chamadas para inputs vazios
+                getCoordinates(address);
+            }
+        })
+    });
+</script>

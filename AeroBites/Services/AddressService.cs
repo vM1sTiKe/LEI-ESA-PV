@@ -21,10 +21,24 @@ namespace AeroBites.Services
 
         public async Task<Address> AddAddressRestaurant(double lat, double lng, string fullAddress, int id)
         {
-            var address = this.AddAddress(lat, lng, fullAddress);
+            // Desativa moradas anteriores do restaurante
+            var existingAddresses = await _context.Address
+                .Where(a => a.RestaurantId == id && a.IsActive)
+                .ToListAsync();
 
-            address.IsActive = true;
-            address.RestaurantId = id;
+            foreach (var addr in existingAddresses)
+            {
+                addr.IsActive = false;
+            }
+
+            var address = new Address
+            {
+                Latitude = lat,
+                Longitude = lng,
+                FullAddress = fullAddress,
+                RestaurantId = id,
+                IsActive = true
+            };
 
             _context.Add(address);
             await _context.SaveChangesAsync();

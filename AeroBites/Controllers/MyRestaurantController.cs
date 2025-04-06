@@ -32,8 +32,14 @@ namespace AeroBites.Controllers
                 ViewBag.Longitude = activeAddress.Longitude;
                 ViewBag.FullAddress = activeAddress.FullAddress;
             }
+            else
+            {
+                ViewBag.FullAddress = "";
+                ViewBag.Latitude = 38.52165;
+                ViewBag.Longitude = -8.83977;
+            }
 
-            return View(MyRestaurant);
+                return View(MyRestaurant);
         }
 
         /// <summary>
@@ -272,6 +278,28 @@ namespace AeroBites.Controllers
             await context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddRestaurantAddress(double lat, double lng, string fullAddress, int restaurantId)
+        {
+            await addressService.AddAddressRestaurant(lat, lng, fullAddress, restaurantId);
+            TempData[Enums.MessageType.successMessage.ToString()] = "Morada do restaurante adicionada com sucesso.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveAddress()
+        {
+            var address = await context.Address.FirstOrDefaultAsync(a => a.RestaurantId == MyRestaurant.Id && a.IsActive);
+            if (address != null)
+            {
+                context.Address.Remove(address);
+                await context.SaveChangesAsync();
+                TempData[Enums.MessageType.successMessage.ToString()] = "Morada removida com sucesso.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

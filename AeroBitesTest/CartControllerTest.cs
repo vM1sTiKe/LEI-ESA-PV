@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using System.Security.Claims;
 namespace AeroBitesTest
@@ -27,10 +28,12 @@ namespace AeroBitesTest
                 .UseInMemoryDatabase(databaseName: "TestDB")
                 .Options;
 
+            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
             _context = new AeroBitesContext(options);
             _service = new AddressService(_context);
             _controllerCart = new CartController(_context);
-            _controllerCheck = new CheckoutController(_context, null);
+            _controllerCheck = new CheckoutController(_context, config);
             _controllerRest = new MyRestaurantController(_context, _service);
 
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "1") };
@@ -56,7 +59,8 @@ namespace AeroBitesTest
 
             var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
             _controllerCart.TempData = tempData;
-
+            _controllerCheck.TempData = tempData;
+            _controllerRest.TempData = tempData;
 
             _userId = int.Parse(claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
 

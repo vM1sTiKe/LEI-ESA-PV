@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
+    <Content Remove="Views\Admin\Collections.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using AeroBites.Data;
 
 namespace AeroBites
 {
@@ -16,6 +17,19 @@ namespace AeroBites
         /// </summary>
         public static bool IsAdmin(this ClaimsPrincipal user) {
             return (user.FindFirstValue("IsAdmin") ?? "").Equals("True");
+        }
+    }
+
+    public static class Extensions
+    {
+        public static void CreateDbIfNotExists(this IHost host)
+        {
+            using var scope = host.Services.CreateScope();
+
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<AeroBitesContext>();
+
+            context.Database.EnsureCreated();
         }
     }
 }

@@ -1,0 +1,39 @@
+# deploy action to deploy AeroBites to Azure
+
+name: Deploy AeroBites
+
+on:
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: "app-aerobites"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install dependencies
+        run: dotnet restore ./AeroBites/AeroBites.csproj
+
+      - name: Build
+        run: dotnet build ./AeroBites/AeroBites.csproj --configuration Release --no-restore
+
+      # publish
+      - name: Publish
+        run: dotnet publish ./AeroBites/AeroBites.csproj --configuration Release --output ./publish
+
+      # deploy to azure
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME  }}
+          publish-profile: ${{ secrets.PUBLISH_SECRET }}
+          package: ./publish

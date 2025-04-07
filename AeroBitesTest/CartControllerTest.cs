@@ -183,7 +183,7 @@ namespace AeroBitesTest
 
             Assert.Equal("Preparing", cart.Status.ToString());
             var result = await _controllerRest.SendOrder(cart.Id);
-            Assert.Equal("OnTheWay", cart.Status.ToString());
+            Assert.Equal("Waiting", cart.Status.ToString());
 
             var redirectResult = result as RedirectToActionResult;
             Assert.NotNull(redirectResult);

@@ -210,7 +210,7 @@ namespace AeroBites.Controllers
             var order = (MyOrders?.Where(o => o.Id == orderId && o.Status == Enums.OrderStatus.Preparing).ToList() ?? []).First();
             if (order == null) return RedirectToAction(nameof(Orders));
 
-            order.Status = Enums.OrderStatus.OnTheWay;
+            order.Status = Enums.OrderStatus.Waiting;
             context.Cart.Update(order);
             await context.SaveChangesAsync();
 

@@ -1,14 +1,10 @@
 ﻿using AeroBites;
 using AeroBites.Controllers;
 using AeroBites.Data;
-using AeroBites.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using Moq;
-using System.Security.Claims;
 
 namespace AeroBitesTest
 {
@@ -32,10 +28,9 @@ namespace AeroBitesTest
             _controller.TempData = tempData;
         }
 
-
         [Fact]
         public async Task ApproveRestaurant_ShouldApproveRestaurant()
-{
+        {
             await new MyRestaurantControllerTests().Create_ShouldCreateRestaurant_WhenValidNameIsProvided();
             var restaurants = _context.Restaurant.ToList().FindAll(r => r.Status == 0);
 

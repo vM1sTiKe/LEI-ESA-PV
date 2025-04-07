@@ -14,6 +14,14 @@ namespace AeroBites.Services
             _context = context;
         }
 
+        /// <summary>
+        /// Cria e retorna um novo objeto de morada (Address) com os dados fornecidos.
+        /// A morada criada será inicialmente marcada como inativa.
+        /// </summary>
+        /// <param name="lat">Latitude da morada.</param>
+        /// <param name="lng">Longitude da morada.</param>
+        /// <param name="fullAddress">Endereço completo da morada.</param>
+        /// <returns>Um novo objeto Address com os dados fornecidos e a propriedade IsActive definida como false.</returns>
         private Address AddAddress(double lat, double lng, string fullAddress)
         {
             return new Address { Latitude = lat, Longitude = lng, FullAddress = fullAddress, IsActive = false };
@@ -46,6 +54,14 @@ namespace AeroBites.Services
             return address;
         }
 
+        /// <summary>
+        /// Adiciona uma nova morada ativa para o restaurante especificado e desativa as moradas anteriores.
+        /// </summary>
+        /// <param name="lat">Latitude da nova morada.</param>
+        /// <param name="lng">Longitude da nova morada.</param>
+        /// <param name="fullAddress">Nova morada.</param>
+        /// <param name="id">ID do restaurante ao qual a morada será associada.</param>
+        /// <returns>O objeto Address com os dados da nova morada criada.</returns>
         public async Task<Address> AddAddressAccount(double lat, double lng, string fullAddress, int id)
         {
             var address = this.AddAddress(lat, lng, fullAddress);

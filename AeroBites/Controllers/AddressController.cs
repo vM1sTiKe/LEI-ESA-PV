@@ -19,6 +19,10 @@ namespace AeroBites.Controllers
             _addressService = addressService;
         }
 
+        /// <summary>
+        /// Ação que retorna a lista de moradas do utilizador autenticado, ordenadas por estado ativo e ID.
+        /// </summary>
+        /// <returns>Uma view com a lista de moradas do utilizador.</returns>
         public async Task<IActionResult> Index()
         {
             var userId = User.GetId();
@@ -32,13 +36,12 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Adiciona um novo endereço à conta do utilizador.
+        /// Adiciona uma nova morada para o utilizador autenticado com base nas coordenadas e endereço fornecidos.
         /// </summary>
-        /// <param name="lat">Latitude do endereço.</param>
-        /// <param name="lng">Longitude do endereço.</param>
-        /// <param name="fullAddress">Endereço completo.</param>
-        /// <param name="id">Identificador da conta.</param>
-        /// <returns>Retorna o endereço adicionado.</returns>
+        /// <param name="lat">Latitude da morada.</param>
+        /// <param name="lng">Longitude da morada.</param>
+        /// <param name="fullAddress">Endereço completo da morada.</param>
+        /// <returns>Redireciona para a página Index após adicionar a morada.</returns>
         [HttpPost]
         public async Task<IActionResult> AddAddress(double lat, double lng, string fullAddress)
         {
@@ -51,10 +54,10 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Remove um endereço com base no seu identificador.
+        /// Remove uma morada do utilizador autenticado com base no ID fornecido.
         /// </summary>
-        /// <param name="id">Identificador do endereço a remover.</param>
-        /// <returns>Retorna uma resposta HTTP 200 se for bem-sucedido.</returns>
+        /// <param name="id">ID da morada a remover.</param>
+        /// <returns>Redireciona para a página Index após remover a morada, ou NotFound se a morada não existir ou não pertencer ao utilizador.</returns>
         [HttpPost]
         public async Task<IActionResult> RemoveAddress(int id)
         {
@@ -75,10 +78,10 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Define um endereço como o endereço ativo do utilizador.
+        /// Define uma morada como ativa para o utilizador autenticado, desativando a anterior se existir.
         /// </summary>
-        /// <param name="id">Identificador do novo endereço ativo.</param>
-        /// <returns>Retorna uma resposta HTTP 200 se for bem-sucedido.</returns>
+        /// <param name="id">ID da nova morada a definir como ativa.</param>
+        /// <returns>Retorna OK se a operação for bem-sucedida, ou NotFound se a morada não existir ou não pertencer ao utilizador.</returns>
         [HttpPost]
         public async Task<IActionResult> SelectAddress(int id)
         {
@@ -102,9 +105,9 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Obtém todos os endereços do utilizador ordenados pelo estado ativo.
+        /// Obtém todas as moradas do utilizador ordenadas pelo estado ativo.
         /// </summary>
-        /// <returns>Retorna a lista de endereços do utilizador.</returns>
+        /// <returns>Retorna a lista de moradas do utilizador.</returns>
         public async Task<IActionResult> GetAllAddresses()
         {
             var userId = User.GetId();

@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using static AeroBites.Enums;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Moq;
+
 
 namespace AeroBitesTest
 {
@@ -32,6 +35,9 @@ namespace AeroBitesTest
             {
                 HttpContext = new DefaultHttpContext { User = principal }
             };
+
+            var tempData = new TempDataDictionary(_controller.ControllerContext.HttpContext, Mock.Of<ITempDataProvider>());
+            _controller.TempData = tempData;
 
             _userId = int.Parse(claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
 

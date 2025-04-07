@@ -15,12 +15,11 @@ namespace AeroBites.Controllers
 
 
         /// <summary>
-        /// Displays the restaurant's home page or redirects to the create page if no restaurant exists.
-        /// Redirects to the Reviewing page if the restaurant is still waiting for acceptance.
+        /// Ação que apresenta a página principal do restaurante autenticado. 
+        /// Redireciona para a view create se o restaurante ainda não estiver pronto.
+        /// Define a morada ativa nas variáveis de ViewBag, ou usa coordenadas padrão se não existir.
         /// </summary>
-        /// <returns>
-        /// The restaurant's homepage view or the create page.
-        /// </returns>
+        /// <returns>View com os dados do restaurante.</returns>
         public IActionResult Index() {
             if (MyRestaurant is null) return RedirectToAction(nameof(Create));
             if (MyRestaurant.Status == Enums.RestaurantStatus.WaitingAcceptance) return RedirectToAction(nameof(Reviewing));
@@ -43,23 +42,19 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Displays the restaurant creation page if no restaurant exists.
-        /// Redirects to the index if a restaurant is already created.
+        /// Mostra o formulário de criação do restaurante, caso ainda não exista.
+        /// Caso o restaurante já exista, redireciona para a página principal (Index).
         /// </summary>
-        /// <returns>
-        /// The restaurant creation view or redirect to the index.
-        /// </returns>
+        /// <returns>View de criação ou redirecionamento para Index.</returns>
         public IActionResult Create() {
             return MyRestaurant is null ? View() : RedirectToAction(nameof(Index));
         }
 
         /// <summary>
-        /// Handles the creation of a new restaurant.
+        /// Cria um novo restaurante, associando-o ao utilizador autenticado e criando uma categoria default e uma morada.
         /// </summary>
-        /// <param name="restaurant">The new restaurant data to be created.</param>
-        /// <returns>
-        /// A redirect to the Reviewing page after creation.
-        /// </returns>
+        /// <param name="restaurant">Objeto com os dados do restaurante a ser criado.</param>
+        /// <returns>Redireciona para a página de reviewing do restaurante após a criação.</returns>
         [HttpPost]
         public async Task<IActionResult> Create([Bind("Name")] Restaurant restaurant) {
             restaurant.OwnerId = User.GetId();
@@ -84,12 +79,10 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Displays the reviewing page for a restaurant that is waiting for acceptance.
-        /// Redirects to the index page if the restaurant is already accepted.
+        /// Mostra a página de revisão do restaurante, caso o restaurante exista e esteja no estado "WaitingAcceptance".
+        /// Caso contrário, redireciona para a criação ou para a página principal, dependendo do estado do restaurante.
         /// </summary>
-        /// <returns>
-        /// The restaurant reviewing view or redirect to the index.
-        /// </returns>
+        /// <returns>View de revisão ou redirecionamento para criação ou página principal.</returns>
         public IActionResult Reviewing() {
             if (MyRestaurant is null) return RedirectToAction(nameof(Create));
             if (MyRestaurant.Status != Enums.RestaurantStatus.WaitingAcceptance) return RedirectToAction(nameof(Index));
@@ -98,12 +91,10 @@ namespace AeroBites.Controllers
 
 
         /// <summary>
-        /// Handles the editing of a restaurant's details.
+        /// Edita o nome e a morada do restaurante. Se a morada já existir, ela será atualizada, caso contrário, será criada uma nova.
         /// </summary>
-        /// <param name="restaurant">The restaurant data to be updated.</param>
-        /// <returns>
-        /// A redirect to the index page after editing.
-        /// </returns>
+        /// <param name="restaurant">Objeto com os dados atualizados do restaurante.</param>
+        /// <returns>Redireciona para a página principal após as alterações.</returns>
         [HttpPost]
         public async Task<IActionResult> Edit([Bind("Name")] Restaurant restaurant) {
             if( MyRestaurant is null ) return RedirectToAction(nameof(Index));
@@ -136,18 +127,15 @@ namespace AeroBites.Controllers
                 TempData[Enums.MessageType.successMessage.ToString()] = "Nome do restaurante alterado.";
             }
 
-                
-
             await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
-        /// Displays a list of all items in the restaurant, including those from all categories.
+        /// Mostra a lista de itens do restaurante, agrupados pelas categorias do restaurante.
+        /// Se o restaurante não existir, redireciona para a página principal.
         /// </summary>
-        /// <returns>
-        /// A view displaying the restaurant's items.
-        /// </returns>
+        /// <returns>View com a lista de itens do restaurante.</returns>
         public IActionResult Items() {
             if (MyRestaurant is null) return RedirectToAction(nameof(Index));
 
@@ -159,10 +147,10 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Displays the list of categories in the restaurant.
+        /// Mostra a lista com as categorias do restaurante.
         /// </summary>
         /// <returns>
-        /// A view displaying the restaurant's categories.
+        /// View com as categorias do restaurante.
         /// </returns>
         public IActionResult Categories() {
             if (MyRestaurant is null) return RedirectToAction(nameof(Index));
@@ -222,7 +210,7 @@ namespace AeroBites.Controllers
             var order = (MyOrders?.Where(o => o.Id == orderId && o.Status == Enums.OrderStatus.Preparing).ToList() ?? []).First();
             if (order == null) return RedirectToAction(nameof(Orders));
 
-            order.Status = Enums.OrderStatus.OnTheWay;
+            order.Status = Enums.OrderStatus.Waiting;
             context.Cart.Update(order);
             await context.SaveChangesAsync();
 
@@ -249,12 +237,12 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Adiciona ou atualiza o endereço de um restaurante.
+        /// Adiciona ou edita a morada do restaurante, dependendo se uma morada já existe associada ao restaurante.
         /// </summary>
-        /// <param name="lat">Latitude do endereço.</param>
-        /// <param name="lng">Longitude do endereço.</param>
-        /// <param name="fullAddress">Endereço completo.</param>
-        /// <returns>Retorna uma resposta HTTP 200 se for bem-sucedido.</returns>
+        /// <param name="lat">Latitude da morada.</param>
+        /// <param name="lng">Longitude da morada.</param>
+        /// <param name="fullAddress">Morada.</param>
+        /// <returns>Retorna um status OK após adicionar ou editar a morada.</returns>
         [HttpPost]
         public async Task<IActionResult> AddAddress(double lat, double lng, string fullAddress)
         {
@@ -280,6 +268,14 @@ namespace AeroBites.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Adiciona uma morada ao restaurante.
+        /// </summary>
+        /// <param name="lat">Latitude da morada.</param>
+        /// <param name="lng">Longitude da morada.</param>
+        /// <param name="fullAddress">Morada.</param>
+        /// <param name="restaurantId">ID do restaurante ao qual a morada será associada.</param>
+        /// <returns>Redireciona para a página principal após adicionar a morada.</returns>
         [HttpPost]
         public async Task<IActionResult> AddRestaurantAddress(double lat, double lng, string fullAddress, int restaurantId)
         {
@@ -288,6 +284,10 @@ namespace AeroBites.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Remove a morada associada ao restaurante.
+        /// </summary>
+        /// <returns>Redireciona para a página principal após remover a morada.</returns>
         [HttpPost]
         public async Task<IActionResult> RemoveAddress()
         {

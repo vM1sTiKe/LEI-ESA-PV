@@ -1,13 +1,14 @@
 ﻿using AeroBites.Controllers;
 using AeroBites.Data;
 using AeroBites.Models;
+using AeroBites.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using System.Security.Claims;
-
 namespace AeroBitesTest
 {
     public class CartControllerTest
@@ -16,6 +17,7 @@ namespace AeroBitesTest
         private readonly CartController _controllerCart;
         private readonly CheckoutController _controllerCheck;
         private readonly MyRestaurantController _controllerRest;
+        private readonly AddressService _service;
         private readonly int _userId;
         private readonly int _restaurantId;
         private readonly Item _item;
@@ -26,10 +28,13 @@ namespace AeroBitesTest
                 .UseInMemoryDatabase(databaseName: "TestDB")
                 .Options;
 
+            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
             _context = new AeroBitesContext(options);
+            _service = new AddressService(_context);
             _controllerCart = new CartController(_context);
-            _controllerCheck = new CheckoutController(_context, null);
-            _controllerRest = new MyRestaurantController(_context, null);
+            _controllerCheck = new CheckoutController(_context, config);
+            _controllerRest = new MyRestaurantController(_context, _service);
 
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "1") };
             var identity = new ClaimsIdentity(claims, "Cookies");
@@ -54,7 +59,8 @@ namespace AeroBitesTest
 
             var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
             _controllerCart.TempData = tempData;
-
+            _controllerCheck.TempData = tempData;
+            _controllerRest.TempData = tempData;
 
             _userId = int.Parse(claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
@@ -128,10 +134,23 @@ namespace AeroBitesTest
         {
             await this.AddItem_ShouldAddItemToCart_WhenValidIdsAreProvided();
 
+            var paymentMethod = new PaymentMethod
+            {
+                Details = "Details",
+                ApiToken = "61x944489e861151y",
+                AccountId = _userId,
+            };
+
+            await _context.PaymentMethod.AddAsync(paymentMethod);
+            await _context.SaveChangesAsync();
+
+            paymentMethod = await _context.PaymentMethod.FirstAsync();
+            var address = _service.AddAddressAccount(30.00, -9.00, "Morada", _userId);
+
             var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.AccountId == _userId && c.RestaurantId == _restaurantId && c.Status.ToString() == "Choosing");
-            
+
             Assert.Equal("Choosing", cart.Status.ToString());
-            var result = await _controllerCheck.SendOrder(cart.Id, cart.RestaurantId, 0);
+            var result = await _controllerCheck.SendOrder(cart.Id, cart.RestaurantId, paymentMethod.Id);
             Assert.Equal("Placed", cart.Status.ToString());
 
             var redirectResult = result as RedirectToActionResult;
@@ -164,7 +183,7 @@ namespace AeroBitesTest
 
             Assert.Equal("Preparing", cart.Status.ToString());
             var result = await _controllerRest.SendOrder(cart.Id);
-            Assert.Equal("OnTheWay", cart.Status.ToString());
+            Assert.Equal("Waiting", cart.Status.ToString());
 
             var redirectResult = result as RedirectToActionResult;
             Assert.NotNull(redirectResult);

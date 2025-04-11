@@ -62,7 +62,7 @@ namespace AeroBites.Controllers
             await context.SaveChangesAsync();
 
             // Criar categoria default do nosso restaurante
-            context.Category.Add(new Category { Name = "Sem Categoria", IsDefault = true, RestaurantId = restaurant.Id });
+            context.Category.Add(new Category { Name = "Categoria Não Atribuída", IsDefault = true, RestaurantId = restaurant.Id });
 
             // Adicionar morada
             if (double.TryParse(Request.Form["Latitude"], out double lat) &&

@@ -18,6 +18,17 @@ namespace AeroBites.Controllers
             var userId = User.GetId();
 
             var addresses = context.Address.Where(a => a.AccountId == userId).ToList();
+            var hasAddresses = addresses.Any();
+
+            var hasPaymentMethod = context.PaymentMethod.Any(p => p.AccountId == userId);
+
+            ViewBag.HasAddresses = hasAddresses;
+            ViewBag.HasPaymentMethod = hasPaymentMethod;
+
+            if (!hasAddresses || !hasPaymentMethod)
+            {
+                return View();
+            }
 
             var activeAddressId = addresses.FirstOrDefault(a => a.IsActive)?.Id;
 

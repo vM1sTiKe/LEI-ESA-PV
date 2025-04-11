@@ -2,6 +2,8 @@
 using AeroBites.Models.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace AeroBites.Controllers
 {
@@ -92,24 +94,55 @@ namespace AeroBites.Controllers
         /// </summary>
         public IActionResult Statistics()
         {
-            // Create list to hold the sells
-            List<DailySells> sells = [];
-
+            // Daily Sells
+            List<DailySells> dailySells = [];
             // Get all sells and iterate them
-            foreach(var cart in context.Cart.Where(c => c.Status >= Enums.OrderStatus.Placed).OrderBy(c => c.PlacedDate).ToList())
+            foreach (var cart in context.Cart.Where(c => c.Status >= Enums.OrderStatus.Placed).OrderBy(c => c.PlacedDate).ToList())
             {
                 // Search on the array if there is already a entry with that date
-                var match = sells.Find(s => s.Date == cart.PlacedDate);
+                var match = dailySells.Find(s => s.Date == cart.PlacedDate);
                 // if there is no match then add a new entry
                 if(match is null) {
-                    sells.Add(new DailySells { Date = cart.PlacedDate, Amount = 1 });
+                    dailySells.Add(new DailySells { Date = cart.PlacedDate, Amount = 1 });
                     continue;
                 }
                 // Update the amount of times this daily sell happened, this will also update the value on the list
                 match.Amount += 1;
             }
+            ViewBag.DailySells = dailySells;
 
-            return View(sells);
+            // Top five sellers
+            List<TopFiveSellers> topFiveSellers = [];
+            foreach (var cart in context.Cart.Where(c => c.Status >= Enums.OrderStatus.Placed).ToList())
+            {
+                var match = topFiveSellers.Find(s => s.Restaurant == cart.Restaurant);
+                if (match is null)
+                {
+                    topFiveSellers.Add(new TopFiveSellers { Restaurant = cart.Restaurant, Sales = 1 });
+                    continue;
+                }
+                match.Sales += 1;
+            }
+            ViewBag.TopFiveSellers = topFiveSellers.OrderByDescending(s => s.Sales).Take(5).ToList();
+
+            // Top ten items
+            List<TopTenBestSeller> topTenBestSeller = [];
+            foreach (var cart in context.Cart.Where(c => c.Status >= Enums.OrderStatus.Placed).Include(c => c.Items).ToList())
+            {
+                foreach (var item in cart.Items ?? [])
+                {
+                    var match = topTenBestSeller.Find(s => s.Restaurant == cart.Restaurant && s.Item == item.Name);
+                    if (match is null)
+                    {
+                        topTenBestSeller.Add(new TopTenBestSeller { Restaurant = cart.Restaurant, Item = item.Name, Sales = 1 });
+                        continue;
+                    }
+                    match.Sales += 1;
+                }
+            }
+            ViewBag.TopTenBestSeller = topTenBestSeller.OrderByDescending(s => s.Sales).Take(10).ToList();
+
+            return View();
         }
     }
 }

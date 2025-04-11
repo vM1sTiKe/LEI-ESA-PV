@@ -1,4 +1,4 @@
-﻿@model IEnumerable<AeroBites.Models.Admin.DailySells>;
+﻿@using AeroBites.Models.Admin
 
 @{
     ViewData["Title"] = "Admin";
@@ -11,9 +11,24 @@
         <a class="app-tab-action active-tab">Estatísticas</a>
     </nav>
 
-    <div class="statistics-data test-cicd12">
-        @foreach(var daily_sell in @Model) {
+    <div class="statistics-data daily_sell">
+        @foreach (var daily_sell in ViewBag.DailySells as List<DailySells> ?? [])
+        {
             <span data-day="@daily_sell.Date" data-amount="@daily_sell.Amount"></span>
+        }
+    </div>
+
+    <div class="statistics-data topFiveSellers">
+        @foreach (var topFiveSellers in ViewBag.TopFiveSellers as List<TopFiveSellers> ?? [])
+        {
+            <span data-restaurant="@topFiveSellers.Restaurant" data-sales="@topFiveSellers.Sales"></span>
+        }
+    </div>
+
+    <div class="statistics-data topTenBestSeller">
+        @foreach (var topTenBestSeller in ViewBag.TopTenBestSeller as List<TopTenBestSeller> ?? [])
+        {
+            <span data-string="@topTenBestSeller.Restaurant | @topTenBestSeller.Item" data-sales="@topTenBestSeller.Sales"></span>
         }
     </div>
 
@@ -23,29 +38,75 @@
             <canvas id="chart-admin-daily-sells"></canvas>
         </div>
     </div>
+
+    <div class="topFiveSellers graph">
+        <h1>Top 5 vendedores</h1>
+        <div>
+            <canvas id="chart-admin-topFiveSellers"></canvas>
+        </div>
+    </div>
+
+    <div class="topTenBestSeller graph">
+        <h1>Top 10 items vendidos</h1>
+        <div>
+            <canvas id="chart-admin-topTenBestSeller"></canvas>
+        </div>
+    </div>
     
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        function get_data() {
+        function get_data(classe, label, data) {
             const obj = { labels: [], data: []};
-            for(let data_entry of document.querySelectorAll("div.content-admin.admin-statistics > div.statistics-data > span")) {
-                obj["labels"].push(data_entry.dataset.day);
-                obj["data"].push(data_entry.dataset.amount);
+            for(let data_entry of document.querySelectorAll(`div.content-admin.admin-statistics > div.statistics-data.` + classe + ` > span`)) {
+                obj["labels"].push(data_entry.dataset[label]);
+                obj["data"].push(data_entry.dataset[data]);
             }
             return obj;
         };
 
         document.addEventListener("DOMContentLoaded", () => {
-            const data = get_data();
+            const data1 = get_data("daily_sell", "day", "amount");
             new Chart(document.getElementById("chart-admin-daily-sells").getContext("2d"), {
                 type: 'bar',
                 data: {
-                    labels: data["labels"],
+                    labels: data1["labels"],
                     datasets: [{
-                        data: data["data"],
+                        data: data1["data"],
+                        backgroundColor: "#7d7",
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: { display: false },
+                    }
+                },
+            });
+            const data2 = get_data("topFiveSellers", "restaurant", "sales");
+            new Chart(document.getElementById("chart-admin-topFiveSellers").getContext("2d"), {
+                type: 'bar',
+                data: {
+                    labels: data2["labels"],
+                    datasets: [{
+                        data: data2["data"],
+                        backgroundColor: "#7d7",
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: { display: false },
+                    }
+                },
+            });
+            const data3 = get_data("topTenBestSeller", "string", "sales");
+            new Chart(document.getElementById("chart-admin-topTenBestSeller").getContext("2d"), {
+                type: 'bar',
+                data: {
+                    labels: data3["labels"],
+                    datasets: [{
+                        data: data3["data"],
                         backgroundColor: "#7d7",
                     }]
                 },

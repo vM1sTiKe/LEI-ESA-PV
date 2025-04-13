@@ -115,10 +115,10 @@ namespace AeroBites.Controllers
             List<TopFiveSellers> topFiveSellers = [];
             foreach (var cart in context.Cart.Where(c => c.Status >= Enums.OrderStatus.Placed).ToList())
             {
-                var match = topFiveSellers.Find(s => s.Restaurant == cart.Restaurant);
+                var match = topFiveSellers.Find(s => s.Restaurant == cart.RestaurantName);
                 if (match is null)
                 {
-                    topFiveSellers.Add(new TopFiveSellers { Restaurant = cart.Restaurant, Sales = 1 });
+                    topFiveSellers.Add(new TopFiveSellers { Restaurant = cart.RestaurantName, Sales = 1 });
                     continue;
                 }
                 match.Sales += 1;
@@ -131,10 +131,10 @@ namespace AeroBites.Controllers
             {
                 foreach (var item in cart.Items ?? [])
                 {
-                    var match = topTenBestSeller.Find(s => s.Restaurant == cart.Restaurant && s.Item == item.Name);
+                    var match = topTenBestSeller.Find(s => s.Restaurant == cart.RestaurantName && s.Item == item.Name);
                     if (match is null)
                     {
-                        topTenBestSeller.Add(new TopTenBestSeller { Restaurant = cart.Restaurant, Item = item.Name, Sales = 1 });
+                        topTenBestSeller.Add(new TopTenBestSeller { Restaurant = cart.RestaurantName, Item = item.Name, Sales = 1 });
                         continue;
                     }
                     match.Sales += 1;

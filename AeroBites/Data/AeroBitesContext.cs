@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AeroBites.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace AeroBites.Data
 {
@@ -9,6 +11,9 @@ namespace AeroBites.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Não remover pedidos ao apagar restaurantes
+			modelBuilder.Entity<Cart>().HasOne(e => e.Restaurant).WithMany(u => u.Orders).OnDelete(DeleteBehavior.SetNull);
         }
 
         public DbSet<AeroBites.Models.Account> Account => Set<AeroBites.Models.Account>();

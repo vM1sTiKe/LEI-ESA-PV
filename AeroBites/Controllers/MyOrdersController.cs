@@ -19,7 +19,7 @@ namespace AeroBites.Controllers
         public async Task<IActionResult> Index() {
             if (Orders == null) { return View(new List<Cart>());}
 
-            var orders = await Orders.Where(c => c.Status >= Enums.OrderStatus.Placed && c.Status <= Enums.OrderStatus.Waiting).OrderByDescending(c => c.Status).ToListAsync();
+            var orders = await Orders.Where(c => c.Status >= Enums.OrderStatus.Placed && c.Status <= Enums.OrderStatus.Waiting).Include(c => c.CartAddress).OrderByDescending(c => c.Status).ToListAsync();
 
             return View(orders);
         }
@@ -33,7 +33,7 @@ namespace AeroBites.Controllers
         public async Task<IActionResult> History() {
             if(Orders == null) { return View(new List<Cart>()); }
 
-            var orders = await Orders.Where(c => c.Status >= Enums.OrderStatus.Recieved).OrderByDescending(c => c.Id).ToListAsync();
+            var orders = await Orders.Where(c => c.Status >= Enums.OrderStatus.Recieved).Include(c => c.CartAddress).OrderByDescending(c => c.Id).ToListAsync();
 
             return View(orders);
         }

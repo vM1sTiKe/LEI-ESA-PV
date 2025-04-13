@@ -4,6 +4,7 @@ using AeroBites.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AeroBites.Migrations
 {
     [DbContext(typeof(AeroBitesContext))]
-    partial class AeroBitesContextModelSnapshot : ModelSnapshot
+    [Migration("20250413180400_RestaurantOnDeleteNoOrders")]
+    partial class RestaurantOnDeleteNoOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,13 +108,13 @@ namespace AeroBites.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CartAddressId")
+                    b.Property<int>("CartAddressId")
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("PlacedDate")
                         .HasColumnType("date");
 
-                    b.Property<int?>("RestaurantId")
+                    b.Property<int>("RestaurantId")
                         .HasColumnType("int");
 
                     b.Property<string>("RestaurantName")
@@ -299,16 +302,19 @@ namespace AeroBites.Migrations
 
             modelBuilder.Entity("AeroBites.Models.Cart", b =>
                 {
-                    b.HasOne("AeroBites.Models.CartAddress", "CartAddress")
+                    b.HasOne("AeroBites.Models.CartAddress", "Address")
                         .WithMany()
-                        .HasForeignKey("CartAddressId");
+                        .HasForeignKey("CartAddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("AeroBites.Models.Restaurant", "Restaurant")
                         .WithMany("Orders")
                         .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("CartAddress");
+                    b.Navigation("Address");
 
                     b.Navigation("Restaurant");
                 });

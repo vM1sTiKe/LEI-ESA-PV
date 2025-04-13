@@ -79,6 +79,18 @@
             }
         </script>
 
+        <script>
+            function handle_image_change(element) {
+                const file = element.files[0];
+
+                let fileReader = new FileReader();
+                fileReader.readAsDataURL(file);
+                fileReader.onload = function (){
+                    element.parentElement.querySelector("img").setAttribute('src', fileReader.result);
+                }
+            }
+        </script>
+
         <script type="text/javascript">
             toastr.options = {
                 "closeButton": false,

@@ -1,5 +1,6 @@
 ﻿using AeroBites.Data;
 using AeroBites.Models;
+using AeroBites.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AeroBites.Controllers
 {
     [Authorize]
-    public class ItemController(AeroBitesContext context) : Controller
+    public class ItemController(AeroBitesContext context, IConfiguration config) : Controller
     {
         private Restaurant? MyRestaurant => context.Restaurant.Include(r => r.Categories).ThenInclude(c => c.Items).FirstOrDefault(r => r.OwnerId == User.GetId());
 
@@ -31,11 +32,12 @@ namespace AeroBites.Controllers
         /// A redirect to the item list view or a BadRequest if validation fails.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name", "Price", "CategoryId")] Item item) {
+        public async Task<IActionResult> Create([Bind("Name", "Price", "CategoryId")] Item item, [FromForm] IFormFile Image) {
             if (MyRestaurant is null) return BadRequest();
 
             context.Item.Add(item);
-            await context.SaveChangesAsync();
+            item.Image = await new BlobStorageService(config).Upload(Image);
+            await context.SaveChangesAsync();            
 
             TempData[Enums.MessageType.successMessage.ToString()] = "Item criado.";
 
@@ -57,6 +59,7 @@ namespace AeroBites.Controllers
             Item? item = GetMyItem(id);
             if (item is null) return BadRequest();
 
+            await new BlobStorageService(config).Delete(item.Image);
             context.Item.Remove(item);
             await context.SaveChangesAsync();
 
@@ -91,13 +94,12 @@ namespace AeroBites.Controllers
         /// A redirect to the item list view or a BadRequest if validation fails.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> Edit([Bind("Id", "Name", "Price", "CategoryId")] Item i) {
+        public async Task<IActionResult> Edit([Bind("Id", "Price", "CategoryId")] Item i) {
             if (MyRestaurant is null) return BadRequest();
 
             Item? item = GetMyItem(i.Id);
             if (item is null) return BadRequest();
 
-            item.Name = i.Name;
             item.Price = i.Price;
             item.CategoryId = i.CategoryId;
 

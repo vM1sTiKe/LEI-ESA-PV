@@ -34,9 +34,6 @@
                 @foreach (var restaurant in Model ?? [])
                 {
                     <a asp-action="Menu" class="restaurant-grid-item" asp-route-id="@restaurant.Id">
-                        @* Missing here controller and id if needed *@
-                        @* <img class="restaurant-img" /> *@
-                        <div class="restaurant-img">Img will be here</div>
                         <div class="restaurant-name">@restaurant.Name</div>
                     </a>
                 }

@@ -24,6 +24,7 @@
     <table class="items-list app-table">
         <thead>
             <tr>
+                <th class="image-column"></th>
                 <th>Nome</th>
                 <th>Preço</th>
                 <th>Categoria</th>
@@ -35,6 +36,7 @@
             @foreach (var item in Model ?? [])
             {
                 <tr class="big-row">
+                    <td class="image-column"><a href="@item.Image" target="_blank"><img src="@item.Image" /></a></td>
                     <td>@item.Name</td>
                     <td>@item.Price.ToString("N2")€</td>
                     <td>@item.Category?.Name</td>

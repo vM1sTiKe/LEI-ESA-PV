@@ -88,7 +88,8 @@ namespace AeroBitesTest
             { 
                 Name = "Burguer",
                 Price = 5.99f,
-                CategoryId = _context.Category.FirstOrDefault(c => c.Name == "Comida").Id
+                CategoryId = _context.Category.FirstOrDefault(c => c.Name == "Comida").Id,
+                Image = "",
             };
             
             _context.Item.Add(item);

@@ -1,0 +1,13 @@
+main.app-content > div.content-myrestaurant.item-data {
+    > form.app-form {
+        display: flex;
+
+        > div {
+            width: 25%;
+
+            & + div {
+                width: 100%;
+            }
+        }
+    }
+}

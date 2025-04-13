@@ -1,8 +1,6 @@
 using AeroBites.Data;
 using AeroBites.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using AeroBites;
 
 var builder = WebApplication.CreateBuilder(args);

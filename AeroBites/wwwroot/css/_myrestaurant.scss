@@ -255,6 +255,21 @@
         }
     }
 
+    &.myrestaurant-items {
+        table.items-list {
+            th.image-column {
+                width: 150px;
+            }
+
+            td.image-column {
+                img {
+                    width: 100px;
+                    height: 100px;
+                }
+            }
+        }
+    }
+
     &.myrestaurant-orders, &.myrestaurant-history-orders {
         min-width: 900px;
 

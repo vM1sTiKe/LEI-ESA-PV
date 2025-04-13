@@ -10,6 +10,7 @@
 @import "_payment.scss";
 @import "_address.scss";
 @import "_paymentmethods.scss";
+@import "_items.scss";
 
 table.app-table {
     width: 100%;
@@ -170,7 +171,7 @@ button.app-warning-button {
 form.app-form {
     width: 100%;
 
-    > div.app-form-group {
+    div.app-form-group {
         display: flex;
         flex-direction: column;
 

@@ -5,29 +5,39 @@
     ViewData["CurrentPage"] = Enums.CurrentPage.MyRestaurant;
 }
 
-<div class="content-myrestaurant">
+<div class="content-myrestaurant item-data">
 
     <a asp-action="Items" asp-controller="MyRestaurant" class="go-back">Voltar</a>
 
-    <form asp-action="Create" class="app-form">
+    <form asp-action="Create" enctype="multipart/form-data" class="app-form">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="app-form-group">
-            <label asp-for="Name" class="control-label"></label>
-            <input asp-for="Name" class="form-control" autocomplete="off" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+        <div class="left-side">
+            <div class="app-form-group">
+                <label asp-for="Image" class="control-label"></label>
+                <input type="file" asp-for="Image" onchange="handle_image_change(this)">
+                <span asp-validation-for="Image" class="text-danger"></span>
+                <img style="width: 100%"/>
+            </div>
         </div>
-        <div class="app-form-group">
-            <label asp-for="Price" class="control-label"></label>
-            <input asp-for="Price" type="number" class="form-control" autocomplete="off" />
-            <span asp-validation-for="Price" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="CategoryId" class="control-label"></label>
-            <select asp-for="CategoryId" class="form-control" asp-items=@ViewBag.Categories></select>
-            <span asp-validation-for="CategoryId" class="text-danger"></span>
-        </div>
-        <div class="app-form-group">
-            <input type="submit" value="Criar" class="app-button app-color-green clickable" />
+        <div class="right-side">
+            <div class="app-form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" autocomplete="off" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="app-form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" type="number" class="form-control" autocomplete="off" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="app-form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <select asp-for="CategoryId" class="form-control" asp-items=@ViewBag.Categories></select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="app-form-group">
+                <input type="submit" value="Criar" class="app-button app-color-green clickable" />
+            </div>
         </div>
     </form>
 </div>

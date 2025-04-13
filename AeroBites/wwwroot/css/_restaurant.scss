@@ -3,7 +3,7 @@
     > div.restaurant-menu-container {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 345px 1fr;
+        grid-template-rows: 75px 1fr;
         gap: 10px;
         margin-top: -25px;
 
@@ -294,7 +294,7 @@
     }
 
     > div.restaurants-list {
-        grid-auto-rows: 250px;
+        grid-auto-rows: 50px;
         height: 100%;
 
         > a.restaurant-grid-item {
@@ -312,11 +312,13 @@
             }
 
             > .restaurant-name {
-                border-top: 1px solid black;
-                height: 50px;
+                height: 100%;
                 text-align: center;
                 font-size: 18px;
                 word-wrap: break-word;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
 
             &:link, &:visited, &:hover, &:active {

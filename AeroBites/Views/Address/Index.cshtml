@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<AeroBites.Models.Address>;
+
+@{
     ViewData["Title"] = "Moradas";
     ViewData["CurrentPage"] = Enums.CurrentPage.MyAddresses;
 
@@ -17,12 +19,33 @@
             <div class="address-inputs">
                 <input class="text-input" type="text" name="adrs" id="addressInput" autocomplete="off"/>
                 <div id="suggestions" class="autocomplete-suggestions"></div>
-                <button id="btn-save-address" class="btn-save-address">Guardar</button>
+                <button id="btn-save-address" class="btn-save-address" onclick="call_hidden_form(this)">Guardar</button>
+                <form asp-action="AddAddress" asp-route-id="1" style="display: none" class="form-add-address">
+                    <input type="text" name="lat"/>
+                    <input type="text" name="lng" />
+                    <input type="text" name="fullAddress" />
+                    <input type="submit" />
+                </form>
             </div>
             <div class="lbl-list">
                 <h4 style="margin: 0;">Lista</h4>
             </div>
-            <div class="list-addresses"></div>
+            <div class="list-addresses">
+                @foreach(var address in Model ?? [])
+                {
+                    <div data-IsActive="@address.IsActive" class="address-item">
+                        <p>@address.FullAddress</p>
+                        <div>
+                            <button class="btn-select" data-id="@address.Id" onclick="call_hidden_form(this)">Selecionar</button>
+                            <form asp-action="SelectAddress" asp-route-id="@address.Id" style="display: none"><input type="submit" /></form>
+                        </div>
+                        <div>
+                            <button class="btn-delete" data-id="@address.Id" onclick="call_hidden_form(this)">X</button>
+                            <form asp-action="RemoveAddress" asp-route-id="@address.Id" style="display: none"><input type="submit" /></form>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
         <div class="display-map">
             <div id="map"></div>
@@ -32,8 +55,6 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        loadAddresses();
-
         var marker = null;
         var map = L.map('map').setView([38.52165, -8.83977], 10);
 
@@ -41,7 +62,7 @@
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-         function placeMarker(lat, lng, popupText = null){
+         function placeMarker(lat, lng){
              if(!marker) {
                  marker = L.marker([lat, lng]).addTo(map);
              }
@@ -49,8 +70,19 @@
                  marker.setLatLng([lat, lng]);
              }
 
-             if(popupText) {
-                 marker.bindPopup(popupText).openPopup();
+             saveData(marker.getLatLng().lat,marker.getLatLng().lng)
+             
+         }
+
+         function saveData(lat, lng, fullAddress){
+             if(lat){
+                 document.querySelector('form.form-add-address>input[name="lat"]').value=lat;
+             }
+             if(lng){
+                 document.querySelector('form.form-add-address>input[name="lng"]').value=lng;
+             }
+             if(fullAddress){
+                 document.querySelector('form.form-add-address>input[name="fullAddress"]').value=fullAddress;
              }
          }
 
@@ -60,6 +92,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data && data.display_name) {
+                        saveData(null, null, data.display_name);
                         document.querySelector('input[name="adrs"]').value = data.display_name;
                     } else {
                         document.querySelector('input[name="adrs"]').value = "Morada não encontrada";
@@ -102,6 +135,7 @@
                         item.addEventListener("click", function() {
                             document.getElementById("addressInput").value = location.display_name;
                             placeMarker(location.lat, location.lon);
+                            saveData(null, null, location.display_name);
                             suggestionsContainer.innerHTML = "";
                         });
                         suggestionsContainer.appendChild(item);
@@ -110,44 +144,6 @@
                 .catch(error => console.error("Erro no autocomplete:", error));
         }
 
-        document.getElementById("btn-save-address").addEventListener("click", function () {
-            var address = document.querySelector('input[name="adrs"]').value;
-            var latLng = marker.getLatLng();
-
-            if (!address || !latLng) {
-                alert("Por favor, selecione uma morada válida.");
-                return;
-            }
-
-            fetch("/Address/AddAddress", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: new URLSearchParams({
-                    lat: latLng.lat,
-                    lng: latLng.lng,
-                    fullAddress: address
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text); });
-                }
-                return response;
-            })
-            .then(data => {
-                alert("Morada guardada com sucesso!");
-                location.reload();
-            })
-            .catch(error => {
-                console.error("Erro ao guardar morada:", error);
-                alert("Erro ao guardar morada: " + error.message);
-            });
-        });
-   
-
-        
         // Função para converter a morada em coordenadas
         function getCoordinates(address) {
             var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
@@ -176,92 +172,6 @@
                 getCoordinates(address);
             }
         })
-
-        function loadAddresses() {
-        fetch("/Address/GetAllAddresses")
-            .then(response => response.json())
-            .then(addresses => {
-                const listContainer = document.querySelector(".list-addresses");
-                listContainer.innerHTML = ""; // Limpa a lista antes de carregar
-
-                let activeAddress = addresses.find(a => a.isActive);
-                if(activeAddress) {
-                    placeMarker(activeAddress.latitude, activeAddress.longitude);
-                    map.setView([activeAddress.latitude, activeAddress.longitude], 25);
-                    document.querySelector('input[name="adrs"]').value = activeAddress.fullAddress;
-                }
-
-                addresses.forEach(address => {
-                    const addressElement = document.createElement("div");
-                    addressElement.classList.add("address-item");
-                    if(address.isActive) addressElement.style.backgroundColor = "#d4edda";
-                    addressElement.innerHTML = `
-                        <p>${address.fullAddress}</p>
-                        <button class="btn-select" data-id="${address.id}">Selecionar</button>
-                        <button class="btn-delete" data-id="${address.id}">X</button>
-                    `;
-                    listContainer.appendChild(addressElement);
-                });
-
-                // Adicionar eventos aos botões
-                document.querySelectorAll(".btn-select").forEach(btn => {
-                    btn.addEventListener("click", function () {
-                        selectAddress(this.dataset.id);
-                    });
-                });
-
-                document.querySelectorAll(".btn-delete").forEach(btn => {
-                    btn.addEventListener("click", function () {
-                        removeAddress(this.dataset.id);
-                    });
-                });
-            })
-            .catch(error => console.error("Erro ao carregar moradas:", error));
-        }
-
-        async function selectAddress(addressId) {
-            try {
-                const response = await fetch(`/Address/SelectAddress?id=${addressId}`, {
-                    method: 'POST'
-                });
-
-                if (response.ok) {
-                    alert("Morada selecionada com sucesso!");
-                    loadAddresses(); // Atualiza a lista de moradas
-                } else {
-                    alert("Erro ao selecionar a morada.");
-                }
-            } catch (error) {
-                console.error("Erro na requisição:", error);
-            }
-        }
-
-        function removeAddress(id) {
-            fetch(`/Address/RemoveAddress?id=${id}`, { method: "POST" })
-                .then(response => {
-                    if (!response.ok) throw new Error("Erro ao remover morada");
-                    loadAddresses(); // Atualiza a lista
-                })
-                .catch(error => console.error(error));
-        }
-
-        function renderAddresses(addresses) {
-            const list = document.querySelector('.list-addresses');
-            list.innerHTML = '';
-
-            addresses.forEach(address => {
-                const item = document.createElement('div');
-                item.classList.add('address-item');
-                if (address.isActive) item.style.backgroundColor = "#d4edda"; // Cor diferente para a ativa
-
-                item.innerHTML = `
-                    <span>${address.fullAddress}</span>
-                    <button class="btn-select" onclick="selectAddress(${address.id})">Selecionar</button>
-                `;
-
-                list.appendChild(item);
-            });
-        }
         
     });
 </script>

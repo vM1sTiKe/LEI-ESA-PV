@@ -66,7 +66,9 @@ namespace AeroBites.Controllers
 
             if (address == null || address.AccountId != userId)
             {
-                return NotFound();
+                TempData[Enums.MessageType.errorMessage.ToString()] = "Impossivel remover morada.";
+
+                return RedirectToAction("Index");
             }
 
             _context.Address.Remove(address);
@@ -94,14 +96,18 @@ namespace AeroBites.Controllers
             var newAddress = await _context.Address.FindAsync(id);
             if(newAddress == null || newAddress.AccountId != User.GetId())
             {
-                return NotFound();
+                TempData[Enums.MessageType.errorMessage.ToString()] = "Impossivel selecionar morada.";
+
+                return RedirectToAction("Index");
             }
             
             newAddress.IsActive = true;
 
             await _context.SaveChangesAsync();
 
-            return Ok();
+            TempData[Enums.MessageType.successMessage.ToString()] = "Morada Selecionada.";
+
+            return RedirectToAction("Index");
         }
 
         /// <summary>

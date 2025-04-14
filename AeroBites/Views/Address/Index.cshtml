@@ -20,7 +20,7 @@
                 <input class="text-input" type="text" name="adrs" id="addressInput" autocomplete="off"/>
                 <div id="suggestions" class="autocomplete-suggestions"></div>
                 <button id="btn-save-address" class="btn-save-address" onclick="call_hidden_form(this)">Guardar</button>
-                <form asp-action="AddAddress" asp-route-id="1" style="display: none" class="form-add-address">
+                <form asp-action="AddAddress" style="display: none" class="form-add-address">
                     <input type="text" name="lat"/>
                     <input type="text" name="lng" />
                     <input type="text" name="fullAddress" />
@@ -71,7 +71,6 @@
              }
 
              saveData(marker.getLatLng().lat,marker.getLatLng().lng)
-             
          }
 
          function saveData(lat, lng, fullAddress){

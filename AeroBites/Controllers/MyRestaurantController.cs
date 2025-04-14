@@ -237,38 +237,6 @@ namespace AeroBites.Controllers
         }
 
         /// <summary>
-        /// Adiciona ou edita a morada do restaurante, dependendo se uma morada já existe associada ao restaurante.
-        /// </summary>
-        /// <param name="lat">Latitude da morada.</param>
-        /// <param name="lng">Longitude da morada.</param>
-        /// <param name="fullAddress">Morada.</param>
-        /// <returns>Retorna um status OK após adicionar ou editar a morada.</returns>
-        [HttpPost]
-        public async Task<IActionResult> AddAddress(double lat, double lng, string fullAddress)
-        {
-            var address = await context.Address.FirstOrDefaultAsync(address => address.RestaurantId == MyRestaurant.Id);
-
-            if(address == null)
-            {
-                address = await addressService.AddAddressRestaurant(lat, lng, fullAddress, MyRestaurant.Id);
-
-                TempData[Enums.MessageType.successMessage.ToString()] = "Morada adicionada.";
-            }
-            else
-            {
-                address.Latitude = lat;
-                address.Longitude = lng;
-                address.FullAddress = fullAddress;
-
-                TempData[Enums.MessageType.successMessage.ToString()] = "Morada editada.";
-            }
-
-            await context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        /// <summary>
         /// Adiciona uma morada ao restaurante.
         /// </summary>
         /// <param name="lat">Latitude da morada.</param>

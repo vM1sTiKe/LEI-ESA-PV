@@ -109,21 +109,5 @@ namespace AeroBites.Controllers
 
             return RedirectToAction("Index");
         }
-
-        /// <summary>
-        /// Obtém todas as moradas do utilizador ordenadas pelo estado ativo.
-        /// </summary>
-        /// <returns>Retorna a lista de moradas do utilizador.</returns>
-        public async Task<IActionResult> GetAllAddresses()
-        {
-            var userId = User.GetId();
-            var addressList = await _context.Address
-                .Where(address => address.AccountId == User.GetId())
-                .OrderByDescending(address => address.IsActive == true)
-                .ThenBy(address => address.Id)
-                .ToListAsync();
-
-            return Ok(addressList);
-        }
     }
 }

@@ -43,7 +43,7 @@ namespace AeroBitesTest
 
             var cart1 = new Cart { 
                 Status = AeroBites.Enums.OrderStatus.Placed,
-                Restaurant = "Pizzaria",
+                RestaurantName = "Pizzaria",
                 RestaurantId = 1,
                 AccountId = _userId,
                 PlacedDate = DateOnly.FromDateTime(DateTime.UtcNow),
@@ -53,7 +53,7 @@ namespace AeroBitesTest
             var cart2 = new Cart
             {
                 Status = AeroBites.Enums.OrderStatus.Preparing,
-                Restaurant = "Pizzaria",
+				RestaurantName = "Pizzaria",
                 RestaurantId = _userId,
                 AccountId = _userId,
                 PlacedDate = DateOnly.FromDateTime(DateTime.UtcNow),
@@ -63,7 +63,7 @@ namespace AeroBitesTest
             var cart3 = new Cart
             {
                 Status = AeroBites.Enums.OrderStatus.OnTheWay,
-                Restaurant = "Pizzaria",
+				RestaurantName = "Pizzaria",
                 RestaurantId = _userId,
                 AccountId = _userId,
                 PlacedDate = DateOnly.FromDateTime(DateTime.UtcNow),
@@ -111,7 +111,7 @@ namespace AeroBitesTest
             var cart = new Cart
             {
                 Status = OrderStatus.Waiting,
-                Restaurant = "Pizzaria",
+				RestaurantName = "Pizzaria",
                 RestaurantId = 1,
                 AccountId = _userId,
                 PlacedDate = DateOnly.FromDateTime(DateTime.UtcNow),
@@ -136,7 +136,7 @@ namespace AeroBitesTest
             var cart = new Cart
             {
                 Status = OrderStatus.Placed,
-                Restaurant = "Pizzaria",
+				RestaurantName = "Pizzaria",
                 RestaurantId = 1,
                 AccountId = _userId,
                 PlacedDate = DateOnly.FromDateTime(DateTime.UtcNow),

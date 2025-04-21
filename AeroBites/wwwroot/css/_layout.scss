@@ -54,12 +54,19 @@ body {
                     height: auto;
                     margin: auto 0;
 
-                    > div.app-action-admin, > div.app-action-myrestaurant {
+                    > div.app-action.admin, > div.app-action.myrestaurant {
                         border-right: 2px solid greenyellow;
                         padding-right: 10px;
                     }
 
-                    .app-action[data-current-page="True"] {
+                    > div.app-action {
+                        font-size: 10px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                    }
+
+                    a.app-action[data-current-page="True"] {
                         background-color: whitesmoke;
                     }
                 }

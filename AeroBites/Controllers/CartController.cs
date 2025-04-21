@@ -25,7 +25,7 @@ namespace AeroBites.Controllers
 
             // No current cart create new
             if (MyCart is null) {
-                _context.Cart.Add(CreateNewCart(restaurant));
+				_context.Cart.Add(CreateNewCart(restaurant));
                 await _context.SaveChangesAsync();
             }
             // There is a cart but its not from the current restaurant
@@ -96,7 +96,7 @@ namespace AeroBites.Controllers
             var r = this.GetRestaurant(restaurantId) ?? throw new Exception("Invalid cart creation");
 
             return new Cart {
-                Restaurant = r.Name,
+				RestaurantName = r.Name,
                 RestaurantId = r.Id,
                 AccountId = User.GetId()
             };

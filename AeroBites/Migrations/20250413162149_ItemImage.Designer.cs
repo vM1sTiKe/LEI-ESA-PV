@@ -4,6 +4,7 @@ using AeroBites.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AeroBites.Migrations
 {
     [DbContext(typeof(AeroBitesContext))]
-    partial class AeroBitesContextModelSnapshot : ModelSnapshot
+    [Migration("20250413162149_ItemImage")]
+    partial class ItemImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,18 +108,18 @@ namespace AeroBites.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CartAddressId")
+                    b.Property<int>("CartAddressId")
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("PlacedDate")
                         .HasColumnType("date");
 
-                    b.Property<int?>("RestaurantId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RestaurantName")
+                    b.Property<string>("Restaurant")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -125,8 +128,6 @@ namespace AeroBites.Migrations
                         .HasColumnType("real");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CartAddressId");
 
                     b.HasIndex("RestaurantId");
 
@@ -299,18 +300,11 @@ namespace AeroBites.Migrations
 
             modelBuilder.Entity("AeroBites.Models.Cart", b =>
                 {
-                    b.HasOne("AeroBites.Models.CartAddress", "CartAddress")
-                        .WithMany()
-                        .HasForeignKey("CartAddressId");
-
-                    b.HasOne("AeroBites.Models.Restaurant", "Restaurant")
+                    b.HasOne("AeroBites.Models.Restaurant", null)
                         .WithMany("Orders")
                         .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("CartAddress");
-
-                    b.Navigation("Restaurant");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AeroBites.Models.CartItem", b =>

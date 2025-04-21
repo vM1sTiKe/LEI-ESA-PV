@@ -66,7 +66,9 @@ namespace AeroBites.Controllers
 
             if (address == null || address.AccountId != userId)
             {
-                return NotFound();
+                TempData[Enums.MessageType.errorMessage.ToString()] = "Impossivel remover morada.";
+
+                return RedirectToAction("Index");
             }
 
             _context.Address.Remove(address);
@@ -94,30 +96,18 @@ namespace AeroBites.Controllers
             var newAddress = await _context.Address.FindAsync(id);
             if(newAddress == null || newAddress.AccountId != User.GetId())
             {
-                return NotFound();
+                TempData[Enums.MessageType.errorMessage.ToString()] = "Impossivel selecionar morada.";
+
+                return RedirectToAction("Index");
             }
             
             newAddress.IsActive = true;
 
             await _context.SaveChangesAsync();
 
-            return Ok();
-        }
+            TempData[Enums.MessageType.successMessage.ToString()] = "Morada Selecionada.";
 
-        /// <summary>
-        /// Obtém todas as moradas do utilizador ordenadas pelo estado ativo.
-        /// </summary>
-        /// <returns>Retorna a lista de moradas do utilizador.</returns>
-        public async Task<IActionResult> GetAllAddresses()
-        {
-            var userId = User.GetId();
-            var addressList = await _context.Address
-                .Where(address => address.AccountId == User.GetId())
-                .OrderByDescending(address => address.IsActive == true)
-                .ThenBy(address => address.Id)
-                .ToListAsync();
-
-            return Ok(addressList);
+            return RedirectToAction("Index");
         }
     }
 }

@@ -18,6 +18,17 @@ namespace AeroBites.Controllers
             var userId = User.GetId();
 
             var addresses = context.Address.Where(a => a.AccountId == userId).ToList();
+            var hasAddresses = addresses.Any();
+
+            var hasPaymentMethod = context.PaymentMethod.Any(p => p.AccountId == userId);
+
+            ViewBag.HasAddresses = hasAddresses;
+            ViewBag.HasPaymentMethod = hasPaymentMethod;
+
+            if (!hasAddresses || !hasPaymentMethod)
+            {
+                return View();
+            }
 
             var activeAddressId = addresses.FirstOrDefault(a => a.IsActive)?.Id;
 
@@ -40,23 +51,5 @@ namespace AeroBites.Controllers
             ViewBag.Cart = context.Cart.Include(c => c.Items).Where(c => c.AccountId == User.GetId() && c.Status == Enums.OrderStatus.Choosing).FirstOrDefault();
             return View(restaurant);
         }
-
-        /// <summary>
-        /// Exibe o formulário de edição para um restaurante específico.
-        /// Caso o restaurante não seja encontrado, retorna um erro 404 (NotFound).
-        /// </summary>
-        /// <param name="id">ID do restaurante a ser editado.</param>
-        /// <returns>View com os dados do restaurante para edição ou erro 404 caso não exista.</returns>
-        public IActionResult Edit(int id)
-        {
-            var restaurant = context.Restaurant.Find(id);
-            if (restaurant == null)
-            {
-                return NotFound();
-            }
-
-            return View(restaurant);
-        }
-
     }
 }

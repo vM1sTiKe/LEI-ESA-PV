@@ -88,7 +88,8 @@ namespace AeroBitesTest
             { 
                 Name = "Burguer",
                 Price = 5.99f,
-                CategoryId = _context.Category.FirstOrDefault(c => c.Name == "Comida").Id
+                CategoryId = _context.Category.FirstOrDefault(c => c.Name == "Comida").Id,
+                Image = "",
             };
             
             _context.Item.Add(item);
@@ -150,7 +151,7 @@ namespace AeroBitesTest
             var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.AccountId == _userId && c.RestaurantId == _restaurantId && c.Status.ToString() == "Choosing");
 
             Assert.Equal("Choosing", cart.Status.ToString());
-            var result = await _controllerCheck.SendOrder(cart.Id, cart.RestaurantId, paymentMethod.Id);
+            var result = await _controllerCheck.SendOrder(cart.Id, (int)cart.RestaurantId, paymentMethod.Id);
             Assert.Equal("Placed", cart.Status.ToString());
 
             var redirectResult = result as RedirectToActionResult;

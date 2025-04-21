@@ -67,14 +67,20 @@
                 <div class="address-inputs">
                     <input class="text-input" type="text" name="adrs" id="addressInput" autocomplete="off" />
                     <div id="suggestions" class="autocomplete-suggestions"></div>
-                    <button id="btn-save-address" class="btn-save-address">Guardar</button>
-                    <input type="hidden" id="restaurantId" value="@Model.Id" />
+                    <button id="btn-save-address" class="btn-save-address" onclick="call_hidden_form(this)">Guardar</button>
+                    <form asp-action="AddRestaurantAddress" style="display: none" class="form-add-address">
+                        <input type="text" name="lat" />
+                        <input type="text" name="lng" />
+                        <input type="text" name="fullAddress" />
+                        <input name="restaurantId" value="@Model.Id" />
+                        <input type="submit" />
+                    </form>
                 </div>
                 <div class="lbl-list">
                     <h4 style="margin: 0;">Lista</h4>
                 </div>
                 <div class="list-addresses">
-                    @if (ViewBag.FullAddress != null)
+                    @if (ViewBag.FullAddress != "")
                     {
                         <div class="address-box d-flex justify-content-between align-items-center">
                             <div>
@@ -120,7 +126,7 @@
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        function placeMarker(lat, lng, popupText = null){
+        function placeMarker(lat, lng){
              if(!marker) {
                  marker = L.marker([lat, lng]).addTo(map);
              }
@@ -128,9 +134,7 @@
                  marker.setLatLng([lat, lng]);
              }
 
-             if(popupText) {
-                 marker.bindPopup(popupText).openPopup();
-             }
+             saveData(marker.getLatLng().lat,marker.getLatLng().lng)
          }
 
          // Se houver endereço guardado, posiciona o marcador
@@ -139,12 +143,25 @@
             document.querySelector('input[name="adrs"]').value = fullAddress;
         }
 
+        function saveData(lat, lng, fullAddress){
+             if(lat){
+                 document.querySelector('form.form-add-address>input[name="lat"]').value=lat;
+             }
+             if(lng){
+                 document.querySelector('form.form-add-address>input[name="lng"]').value=lng;
+             }
+             if(fullAddress){
+                 document.querySelector('form.form-add-address>input[name="fullAddress"]').value=fullAddress;
+             }
+         }
+
          function getAddress(lat, lng) {
             var url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     if (data && data.display_name) {
+                        saveData(null, null, data.display_name);
                         document.querySelector('input[name="adrs"]').value = data.display_name;
                     } else {
                         document.querySelector('input[name="adrs"]').value = "Morada não encontrada";
@@ -187,54 +204,14 @@
                         item.addEventListener("click", function() {
                             document.getElementById("addressInput").value = location.display_name;
                             placeMarker(location.lat, location.lon);
+                            saveData(null, null, location.display_name);
                             suggestionsContainer.innerHTML = "";
                         });
                         suggestionsContainer.appendChild(item);
                     });
                 })
                 .catch(error => console.error("Erro no autocomplete:", error));
-        }
-
-        //Função para guardar a morada 
-        
-        document.getElementById("btn-save-address").addEventListener("click", function () {
-            var address = document.querySelector('input[name="adrs"]').value;
-            var latLng = marker.getLatLng();
-            var restaurantId = document.getElementById("restaurantId").value;
-
-            if (!address || !latLng) {
-                alert("Por favor, selecione uma morada válida.");
-                return;
-            }
-
-            fetch("/MyRestaurant/AddRestaurantAddress", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: new URLSearchParams({
-                    lat: latLng.lat,
-                    lng: latLng.lng,
-                    fullAddress: address,
-                    restaurantId: restaurantId
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text); });
-                }
-                return response;
-            })
-            .then(data => {
-                alert("Morada guardada com sucesso!");
-                location.reload();
-            })
-            .catch(error => {
-                console.error("Erro ao guardar morada:", error);
-                alert("Erro ao guardar morada: " + error.message);
-            });
-        });
-        
+        }    
 
        // Função para converter a morada em coordenadas
         function getCoordinates(address) {

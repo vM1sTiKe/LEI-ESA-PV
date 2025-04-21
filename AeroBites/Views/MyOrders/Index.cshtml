@@ -15,7 +15,7 @@
         @foreach (var order in Model) {
             <div class="order" data-ready-to-accept=@(order.Status == Enums.OrderStatus.Waiting) data-expanded="false">
                 <div class="info" onclick="expander_handler(this)">
-                    <span><b class="order-state">@order.Status</b>@order.Restaurant&nbsp;&nbsp;&nbsp;&nbsp;<b>Data</b>: @order.PlacedDate&nbsp;&nbsp;&nbsp;&nbsp;<b>Total</b>: @order.TotalPrice.ToString("N2")€</span>
+                    <span><b class="order-state">@order.Status</b>@order.RestaurantName&nbsp;&nbsp;&nbsp;&nbsp;<b>Data</b>: @order.PlacedDate&nbsp;&nbsp;&nbsp;&nbsp;<b>Total</b>: @order.TotalPrice.ToString("N2")€</span>
                     @if (order.Status == Enums.OrderStatus.Waiting) {
                         <button class="app-button save clickable" onclick="submit_form(this)">Recolher</button>
                         <form asp-action="RecieveOrder" asp-route-orderId="@order.Id" style="display: none"><input type="submit" /></form>
@@ -32,7 +32,7 @@
                         </ul>
                     </div>
                     <div>
-                        Other details to be here (delivery address)
+                        <span><b>Morada de entrega: </b>@order.CartAddress?.FullAddress</span>
                     </div>
                 </div>
             </div>

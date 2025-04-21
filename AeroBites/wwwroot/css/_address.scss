@@ -124,6 +124,10 @@
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
+
+                        &[data-IsActive="True"] {
+                            background-color: #d4edda;
+                        }
                     }
 
                     .btn-select,

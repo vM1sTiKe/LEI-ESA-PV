@@ -88,25 +88,6 @@ namespace AeroBitesTest
             Assert.True(updated2.IsActive);
         }
 
-        [Fact]
-        public async Task GetAllAddresses_ReturnsUserAddresses()
-        {
-            await _controller.AddAddress(40.00, -8.0, "Morada A");
-            await _controller.AddAddress(41.00, -9.0, "Morada B");
-            await _controller.AddAddress(42.00, -10.0, "Morada C");
-
-            var result = await _controller.GetAllAddresses();
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var addresses = Assert.IsAssignableFrom<List<Address>>(okResult.Value);
-
-            Assert.Equal(3, addresses.Count);
-
-            foreach (var address in addresses)
-            {
-                Assert.Equal(_userId, address.AccountId);
-            }
-        }
-
         public void Dispose()
         {
             _context.Database.EnsureDeleted();

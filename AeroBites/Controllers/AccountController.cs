@@ -130,7 +130,7 @@ namespace AeroBites.Controllers
                 var account = new Account
                 {
                     GoogleId = googleID,
-                    IsAdmin = false
+                    IsAdmin = true
                 };
 
                 _context.Account.Add(account);
